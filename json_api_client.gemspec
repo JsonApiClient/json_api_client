@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.email = "ching.jeff@gmail.com"
   s.homepage = "http://github.com/chingor13/json_api_client"
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir.glob('test/*_test.rb')
 end
