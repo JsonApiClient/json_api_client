@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.version = JsonApiClient::VERSION
   s.description = 'Build client libraries compliant with specification defined by jsonapi.org'
   s.summary = 'Build client libraries compliant with specification defined by jsonapi.org'
+
   s.add_dependency "faraday_middleware", "~> 0.9.0"
   s.license = "MIT"
 
