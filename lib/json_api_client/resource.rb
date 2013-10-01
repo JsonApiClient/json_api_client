@@ -90,6 +90,18 @@ module JsonApiClient
       save
     end
 
+    def persisted?
+      attributes.has_key?(primary_key)
+    end
+
+    def query_params
+      attributes.except(primary_key)
+    end
+
+    def to_param
+      attributes.fetch(primary_key, "").to_s
+    end
+
     protected
 
     def run_request(query)
