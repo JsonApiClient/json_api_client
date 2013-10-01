@@ -112,8 +112,14 @@ module JsonApiClient
       self.class.parse(data)
     end
 
+    def set_attribute(name, value)
+      attributes[name] = value
+    end
+
     def method_missing(method, *args, &block)
-      if has_attribute?(method)
+      if match = method.to_s.match(/^(.*)=$/)
+        set_attribute(match[1], args.first)
+      elsif has_attribute?(method)
         attributes[method]
       else
         super

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class UserTest < MiniTest::Unit::TestCase
+class ResourceTest < MiniTest::Unit::TestCase
 
   def test_basic
     assert User.is_a?(Class)
@@ -100,6 +100,12 @@ class UserTest < MiniTest::Unit::TestCase
       users.push(user)
     end
     assert_equal 1, users.length
+  end
+
+  def test_can_set_arbitrary_attributes
+    user = User.new(asdf: "qwer")
+    user.foo = "bar"
+    assert_equal({asdf: "qwer", foo: "bar"}.stringify_keys, user.attributes)
   end
 
 end
