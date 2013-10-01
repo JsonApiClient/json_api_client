@@ -11,7 +11,12 @@ Gem::Specification.new do |s|
   s.description = 'Build client libraries compliant with specification defined by jsonapi.org'
   s.summary = 'Build client libraries compliant with specification defined by jsonapi.org'
 
-  s.add_dependency "faraday_middleware", "~> 0.9.0"
+  s.add_dependency "activesupport"
+  s.add_dependency "faraday", '~> 0.8.0'
+
+  s.add_development_dependency "vcr"
+  s.add_development_dependency "mocha"
+
   s.license = "MIT"
 
   s.author = "Jeff Ching"
