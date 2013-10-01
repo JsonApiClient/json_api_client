@@ -26,7 +26,11 @@ class UserTest < ResourceTest
         ]
       }.to_json)
 
-    user = User.find(1)
+    users = User.find(1)
+
+    assert_equal 1, users.length
+
+    user = users.first
     assert_equal 1, user.id
     assert_equal "ching.jeff@gmail.com", user.email_address
     assert_equal "Jeff Ching", user.name
@@ -88,6 +92,22 @@ class UserTest < ResourceTest
       email_address: "mickey@mantle.com"
     )
     assert_equal 3, user.id
+  end
+
+  def test_each_on_scope
+    stub_request(:get, "http://localhost:3000/api/1/users.json")
+      .with(query: {name: "Jeff Ching"})
+      .to_return(body: {
+        users: [
+          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
+        ]
+      }.to_json)
+
+    users = []
+    User.where(name: "Jeff Ching").each do |user|
+      users.push(user)
+    end
+    assert_equal 1, users.length
   end
 
 end

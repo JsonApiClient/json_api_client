@@ -29,9 +29,13 @@ module JsonApiClient
     end
 
     def to_a
-      klass.find(params)
+      @to_a ||= klass.find(params)
     end
     alias all to_a
+
+    def method_missing(method_name, *args, &block)
+      to_a.send(method_name, *args, &block)
+    end
 
   end
 end
