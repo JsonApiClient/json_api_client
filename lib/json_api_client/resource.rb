@@ -20,16 +20,40 @@ module JsonApiClient
         File.join(site, table_name)
       end
 
-      def new_scope
-        Scope.new(self)
-      end
-
       def table_name
         resource_name.pluralize
       end
 
       def resource_name
         name.demodulize.underscore
+      end
+
+      def find(conditions)
+        run_request(Query::Find.new(self, conditions))
+      end
+
+      def create(conditions = {})
+        Array(run_request(Query::Create.new(self, conditions))).first
+      end
+
+      def connection
+        @connection ||= begin
+          super
+        rescue
+          build_connection
+        end
+        yield(@connection) if block_given?
+        @connection
+      end
+
+      def run_request(query)
+        parse(query.execute(connection))
+      end
+
+      private
+
+      def new_scope
+        Scope.new(self)
       end
 
       def parser
@@ -40,26 +64,8 @@ module JsonApiClient
         parser.parse(self, data)
       end
 
-      def find(conditions)
-        parse(connection.execute(Query::Find.new(self, conditions)))
-      end
-
-      def create(conditions = {})
-        Array(parse(connection.execute(Query::Create.new(self, conditions)))).first
-      end
-
-      def connection
-        @connection ||= begin
-          super
-        rescue
-          build_connection
-        end
-      end
-
-      private
-
       def build_connection
-        Connection.new(site)
+        Faraday.new(site)
       end
     end
 
@@ -105,11 +111,7 @@ module JsonApiClient
     protected
 
     def run_request(query)
-      parse(connection.execute(query))
-    end
-
-    def parse(data)
-      self.class.parse(data)
+      self.class.run_request(query)
     end
 
     def set_attribute(name, value)
