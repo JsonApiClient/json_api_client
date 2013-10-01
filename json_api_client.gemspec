@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport"
   s.add_dependency "faraday", '~> 0.8.0'
+  s.add_dependency "faraday_middleware"
 
   s.add_development_dependency "webmock"
 

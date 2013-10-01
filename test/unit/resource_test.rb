@@ -12,7 +12,7 @@ class ResourceTest < MiniTest::Unit::TestCase
 
   def test_find
     stub_request(:get, "http://localhost:3000/api/1/users/1.json")
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
         ]
@@ -31,7 +31,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   def test_find_by_ids
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .with(query: {id: [2,3]})
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
           {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
@@ -45,7 +45,7 @@ class ResourceTest < MiniTest::Unit::TestCase
 
   def test_find_all
     stub_request(:get, "http://localhost:3000/api/1/users.json")
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
           {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
@@ -60,7 +60,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   def test_find_all_with_scope
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .with(query: {name: "Jeff Ching"})
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
         ]
@@ -73,7 +73,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   def test_create
     stub_request(:post, "http://localhost:3000/api/1/users.json")
       .with(body: {user: {name: "Mickey Mantle", email_address: "mickey@mantle.com"}})
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 3, name: "Mickey Mantle", email_address: "mickey@mantle.com"}
         ]
@@ -89,7 +89,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   def test_each_on_scope
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .with(query: {name: "Jeff Ching"})
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
         ]

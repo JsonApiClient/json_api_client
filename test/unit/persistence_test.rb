@@ -20,7 +20,7 @@ class PersistenceTest < MiniTest::Unit::TestCase
 
   def test_finding
     stub_request(:get, "http://localhost:3000/api/1/users.json")
-      .to_return(body: {
+      .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
           {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},

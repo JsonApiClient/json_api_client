@@ -65,7 +65,11 @@ module JsonApiClient
       end
 
       def build_connection
-        Faraday.new(site)
+        Faraday.new(site) do |faraday|
+          faraday.request :url_encoded
+          faraday.response :json, content_type: /\bjson$/
+          faraday.adapter Faraday.default_adapter
+        end
       end
     end
 
