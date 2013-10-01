@@ -9,7 +9,6 @@ module JsonApiClient
     def execute(query)
       response = query.execute(faraday)
       json = JSON.parse(response.body)
-      Array(json).map{|data| query.klass.new(data) }
     end
 
   end

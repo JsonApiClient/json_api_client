@@ -6,6 +6,10 @@ module JsonApiClient
         :post
       end
 
+      def params
+        {klass.resource_name => @args}
+      end
+
     end
   end
 end
