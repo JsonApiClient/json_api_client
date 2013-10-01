@@ -1,9 +1,15 @@
 module JsonApiClient
   module Query
     class Base
+      class_attribute :request_method
+      attr_reader :klass, :headers
 
-      def self.method
-        :get
+      def initialize(klass, args)
+        @klass = klass
+        @args = args
+        @headers = {
+          accept: 'application/json'
+        }
       end
 
       def path
@@ -14,17 +20,8 @@ module JsonApiClient
         @args
       end
 
-      attr_reader :klass, :headers
-      def initialize(klass, args)
-        @klass = klass
-        @args = args
-        @headers = {
-          accept: 'text/json'
-        }
-      end
-
       def execute(faraday)
-        faraday.send(self.class.method, "#{path}.json", params, headers)
+        faraday.send(request_method, "#{path}.json", params, headers)
       end
 
     end

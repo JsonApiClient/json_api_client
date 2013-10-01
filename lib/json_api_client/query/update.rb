@@ -1,10 +1,7 @@
 module JsonApiClient
   module Query
     class Update < Base
-
-      def self.method
-        :put
-      end
+      self.request_method = :put
 
       def params
         {klass.resource_name => @args}

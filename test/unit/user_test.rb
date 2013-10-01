@@ -1,14 +1,6 @@
 require 'test_helper'
 
-class User < JsonApiClient::Resource
-  class << self
-    def site
-      "http://localhost:3000/api/1"
-    end
-  end
-end
-
-class UserTest < ResourceTest
+class UserTest < MiniTest::Unit::TestCase
 
   def test_basic
     assert User.is_a?(Class)

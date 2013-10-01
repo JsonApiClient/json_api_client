@@ -1,10 +1,7 @@
 module JsonApiClient
   module Query
     class Create < Base
-
-      def self.method
-        :post
-      end
+      self.request_method = :post
 
       def params
         {klass.resource_name => @args}

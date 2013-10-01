@@ -1,10 +1,7 @@
 module JsonApiClient
   module Query
     class Destroy < Base
-
-      def self.method
-        :delete
-      end
+      self.request_method = :delete
 
     end
   end
