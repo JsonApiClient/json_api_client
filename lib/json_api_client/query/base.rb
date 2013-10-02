@@ -7,9 +7,7 @@ module JsonApiClient
       def initialize(klass, args)
         @klass = klass
         @args = args
-        @headers = {
-          accept: 'application/json'
-        }
+        @headers = klass.default_headers.dup
       end
 
       def path
@@ -18,10 +16,6 @@ module JsonApiClient
 
       def params
         @args
-      end
-
-      def execute(faraday)
-        faraday.send(request_method, "#{path}.json", params, headers)
       end
 
     end

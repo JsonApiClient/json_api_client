@@ -3,7 +3,8 @@ class ResultSet < Array
   attr_accessor :total_pages, :total_entries, :offset, :per_page, :current_page
 
   def self.build(klass, data)
-    records = Array(data.fetch(klass.table_name, [])).map do |attributes|
+    result_data = data.fetch(klass.table_name, [])
+    records = Array(result_data).map do |attributes|
       klass.new(attributes)
     end
 

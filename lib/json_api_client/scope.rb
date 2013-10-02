@@ -1,41 +1,30 @@
 module JsonApiClient
   class Scope
-    attr_reader :klass
+    attr_reader :klass, :params
 
     def initialize(klass)
       @klass = klass
       @params = {}
-      @pagination = {}
-      @includes = []
-      @order = nil
     end
 
     def where(conditions = {})
       @params.merge!(conditions)
       self
     end
+    alias paginate where
 
     def order(conditions)
       where(order: conditions)
     end
 
     def includes(tables)
-      @params[:includes]
-      @includes += Array(tables)
-      self
-    end
-
-    def paginate(conditions)
-      @pagination.merge!(conditions)
+      @params[:includes] ||= []
+      @params[:includes] += Array(tables)
       self
     end
 
     def page(number)
-      paginate(page: number)
-    end
-
-    def params
-      result = @params.merge(@pagination)
+      where(page: number)
     end
 
     def build

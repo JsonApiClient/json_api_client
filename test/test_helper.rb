@@ -24,6 +24,7 @@ end
 class CustomPagination < TestResource
 end
 
+# remaps meta data
 class CustomPaginationMiddleware < Faraday::Middleware
   def call(environment)
     @app.call(environment).on_complete do |env|
@@ -38,6 +39,6 @@ class CustomPaginationMiddleware < Faraday::Middleware
   end
 end
 
-CustomPagination.connection do |faraday|
-  faraday.builder.insert_before FaradayMiddleware::ParseJson, CustomPaginationMiddleware
+CustomPagination.connection do |conn|
+  conn.use CustomPaginationMiddleware
 end

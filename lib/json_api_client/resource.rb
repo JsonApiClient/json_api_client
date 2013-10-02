@@ -5,10 +5,11 @@ require 'active_support/core_ext/class/attribute'
 
 module JsonApiClient
   class Resource
-    class_attribute :site, :primary_key, :link_style
+    class_attribute :site, :primary_key, :link_style, :default_headers
 
     self.primary_key = :id
     self.link_style = :id # or :url
+    self.default_headers = {}
 
     class << self
       # first 'scope' should build a new scope object
@@ -47,7 +48,7 @@ module JsonApiClient
       end
 
       def run_request(query)
-        parse(query.execute(connection))
+        parse(connection.execute(query))
       end
 
       private
@@ -65,11 +66,7 @@ module JsonApiClient
       end
 
       def build_connection
-        Faraday.new(site) do |faraday|
-          faraday.request :url_encoded
-          faraday.response :json, content_type: /\bjson$/
-          faraday.adapter Faraday.default_adapter
-        end
+        Connection.new(site)
       end
     end
 
