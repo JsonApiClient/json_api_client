@@ -13,7 +13,7 @@ module JsonApiClient
     class << self
       # first 'scope' should build a new scope object
       extend Forwardable
-      def_delegators :new_scope, :where, :order, :includes, :all
+      def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page
 
       # base URL for this resource
       def resource

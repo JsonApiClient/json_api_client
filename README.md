@@ -34,3 +34,17 @@ u = MyApi::User.find(1)
 u.accounts
 => MyApi::Account.where(user_id: u.id).all
 ```
+
+## Connection options
+
+You can configure your connection using Faraday middleware:
+
+```
+MyApi::Account.connection do |faraday|
+  # set OAuth2 headers
+  faraday.request :oauth2, 'MYTOKEN'
+
+  # log responses
+  faraday.response :logger
+end
+```

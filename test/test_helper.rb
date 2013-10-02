@@ -20,3 +20,24 @@ end
 class InheritedEndpoint < TestResource
   self.site = "http://foo.com"
 end
+
+class CustomPagination < TestResource
+end
+
+class CustomPaginationMiddleware < Faraday::Middleware
+  def call(environment)
+    @app.call(environment).on_complete do |env|
+      new_meta = {}
+      env[:body]["meta"].tap do |meta|
+        new_meta["per_page"] = meta["per"]
+        new_meta["current_page"] = meta["page"]
+        new_meta["total_entries"] = meta["total"]
+      end
+      env[:body]["meta"] = new_meta
+    end
+  end
+end
+
+CustomPagination.connection do |faraday|
+  faraday.builder.insert_before FaradayMiddleware::ParseJson, CustomPaginationMiddleware
+end

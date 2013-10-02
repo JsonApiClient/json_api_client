@@ -1,10 +1,11 @@
 module JsonApiClient
   class Scope
-    attr_reader :klass, :params
+    attr_reader :klass
 
     def initialize(klass)
       @klass = klass
       @params = {}
+      @pagination = {}
       @includes = []
       @order = nil
     end
@@ -15,13 +16,26 @@ module JsonApiClient
     end
 
     def order(conditions)
-      @order = conditions
-      self
+      where(order: conditions)
     end
 
     def includes(tables)
+      @params[:includes]
       @includes += Array(tables)
       self
+    end
+
+    def paginate(conditions)
+      @pagination.merge!(conditions)
+      self
+    end
+
+    def page(number)
+      paginate(page: number)
+    end
+
+    def params
+      result = @params.merge(@pagination)
     end
 
     def build
