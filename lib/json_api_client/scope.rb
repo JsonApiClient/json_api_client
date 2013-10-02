@@ -17,9 +17,9 @@ module JsonApiClient
       where(order: conditions)
     end
 
-    def includes(tables)
+    def includes(*tables)
       @params[:includes] ||= []
-      @params[:includes] += Array(tables)
+      @params[:includes] += tables.flatten
       self
     end
 

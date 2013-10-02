@@ -5,16 +5,14 @@
 ```
 module MyApi
   class User < JsonApiClient::Resource
-    belongs_to :accounts
-
   end
 end
 
 MyApi::User.all
-MyApi::User.find(1, account_id: 1)
+MyApi::User.where(account_id: 1).find(1)
 MyApi::User.where(account_id: 1).all
 
-MyApi::User.where().order().includes()
+MyApi::User.where(name: "foo").order("created_at desc").includes(:preferences, :cars).all
 
 u = MyApi::User.new(foo: "bar", bar: "foo")
 u.save
@@ -40,11 +38,13 @@ u.accounts
 You can configure your connection using Faraday middleware:
 
 ```
-MyApi::Account.connection do |faraday|
+MyApi::Account.connection do |connection|
   # set OAuth2 headers
-  faraday.request :oauth2, 'MYTOKEN'
+  connection.request :oauth2, 'MYTOKEN'
 
   # log responses
-  faraday.response :logger
+  connection.response :logger
+
+  connection.use MyCustomMiddleware
 end
 ```
