@@ -35,16 +35,23 @@ u.accounts
 
 ## Connection options
 
-You can configure your connection using Faraday middleware:
+You can configure your connection using Faraday middleware. In general, you'll want to do
+this in a base model that all your resources inherit from:
 
 ```
-MyApi::Account.connection do |connection|
+MyApi::Base.connection do |connection|
   # set OAuth2 headers
-  connection.request :oauth2, 'MYTOKEN'
+  connection.use Faraday::Request::Oauth2, 'MYTOKEN'
 
   # log responses
-  connection.response :logger
+  connection.use Faraday::Response::Logger
 
   connection.use MyCustomMiddleware
+end
+
+module MyApi
+  class User < Base
+    # will use the customized connection
+  end
 end
 ```
