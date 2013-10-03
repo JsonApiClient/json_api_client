@@ -3,7 +3,10 @@ require 'faraday_middleware'
 require 'json'
 
 module JsonApiClient
+  autoload :Associations, 'json_api_client/associations'
+  autoload :Attributes, 'json_api_client/attributes'
   autoload :Connection, 'json_api_client/connection'
+  autoload :Links, 'json_api_client/links'
   autoload :Middleware, 'json_api_client/middleware'
   autoload :Parser, 'json_api_client/parser'
   autoload :Query, 'json_api_client/query'

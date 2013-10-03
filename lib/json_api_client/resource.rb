@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'active_support/concern'
 require 'active_support/inflector'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/class/attribute'
@@ -6,10 +7,12 @@ require 'active_support/core_ext/class/attribute'
 module JsonApiClient
   class Resource
     class_attribute :site, :primary_key, :link_style, :default_headers
+    class_attribute :initializers
 
     self.primary_key = :id
     self.link_style = :id # or :url
     self.default_headers = {}
+    self.initializers = []
 
     class << self
       # first 'scope' should build a new scope object
@@ -68,17 +71,24 @@ module JsonApiClient
       def build_connection
         Connection.new(site)
       end
+
+      def initialize(method = nil, &block)
+        self.initializers.push(method || block)
+      end
     end
 
-    attr_reader :links, :attributes
+    include Attributes
+    include Associations
+    include Links
+
     def initialize(params = {})
-      @links = params.delete(:links) || {}
-      self.attributes = params
-    end
-
-    def attributes=(attrs = {})
-      @attributes ||= {}.with_indifferent_access
-      @attributes.merge!(attrs)
+      initializers.each do |initializer|
+        if initializer.respond_to?(:call)
+          initializer.call(self, params)
+        else
+          self.send(initializer, params)
+        end
+      end
     end
 
     def save
@@ -92,45 +102,10 @@ module JsonApiClient
       run_request(Query::Destroy.new(self.class, self))
     end
 
-    def update_attributes(attrs = {})
-      self.attributes = attrs
-      save
-    end
-
-    def persisted?
-      attributes.has_key?(primary_key)
-    end
-
-    def query_params
-      attributes.except(primary_key)
-    end
-
-    def to_param
-      attributes.fetch(primary_key, "").to_s
-    end
-
     protected
 
     def run_request(query)
       self.class.run_request(query)
-    end
-
-    def set_attribute(name, value)
-      attributes[name] = value
-    end
-
-    def method_missing(method, *args, &block)
-      if match = method.to_s.match(/^(.*)=$/)
-        set_attribute(match[1], args.first)
-      elsif has_attribute?(method)
-        attributes[method]
-      else
-        super
-      end
-    end
-
-    def has_attribute?(attr_name)
-      attributes.has_key?(attr_name)
     end
 
   end
