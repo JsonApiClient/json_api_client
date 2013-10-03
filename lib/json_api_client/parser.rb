@@ -2,8 +2,7 @@ module JsonApiClient
   class Parser
 
     def self.parse(klass, response)
-      data = response.body
-      ResultSet.build(klass, data)
+      ResultSet.build(klass, response.body)
     end
 
   end

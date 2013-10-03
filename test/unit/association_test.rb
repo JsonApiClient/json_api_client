@@ -38,6 +38,18 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal("Jeff Ching", property.owner.name)
   end
 
+  def test_load_has_one_nil
+    stub_request(:get, "http://localhost:3000/api/1/properties/1.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        properties: [
+          {id: 1, address: "123 Main St.", owner: nil}
+        ]
+      }.to_json)
+
+    property = Property.find(1).first
+    assert_equal(nil, property.owner)
+  end
+
   def test_load_has_many
     stub_request(:get, "http://localhost:3000/api/1/owners.json")
       .to_return(headers: {content_type: "application/json"}, body: {

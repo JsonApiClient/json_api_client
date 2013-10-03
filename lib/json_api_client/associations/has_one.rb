@@ -13,7 +13,7 @@ module JsonApiClient
 
       class Association < BaseAssociation
         def parse(params)
-          association_class.new(params)
+          params ? association_class.new(params) : nil
         end        
       end
     end
