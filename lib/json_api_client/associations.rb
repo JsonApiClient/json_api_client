@@ -1,6 +1,5 @@
 module JsonApiClient
   module Associations
-    autoload :BelongsTo, 'json_api_client/associations/belongs_to'
     autoload :HasMany, 'json_api_client/associations/has_many'
     autoload :HasOne, 'json_api_client/associations/has_one'
 
@@ -10,7 +9,6 @@ module JsonApiClient
       class_attribute :associations
       self.associations = []
 
-      include BelongsTo
       include HasMany
       include HasOne
 
@@ -21,7 +19,9 @@ module JsonApiClient
 
     def load_associations(params)
       associations.each do |association|
-        params.fetch(association.param_name)
+        if params.has_key?(association.attr_name.to_s)
+          set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
+        end
       end
     end
 
