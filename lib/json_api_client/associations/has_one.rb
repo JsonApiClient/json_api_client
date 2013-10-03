@@ -4,27 +4,16 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       module ClassMethods
-        def has_one(attr_name)
-          self.associations.push(HasOne::Association.new(attr_name))
+        def has_one(attr_name, options = {})
+          # self.associations = self.associations + [HasOne::Association.new(attr_name, self, options)]
+          self.associations += [HasOne::Association.new(attr_name, self, options)]
         end
-        # alias belongs_to has_many
+        alias belongs_to has_one
       end
 
-      class Association
-        attr_reader :attr_name, :options
-        def initialize(attr_name, options = {})
-          @attr_name = attr_name
-          @options = options
-        end
-
-        def association_klass
-          @association_klass ||= options.fetch(:class_name) do
-            attr_name.to_s.classify
-          end.constantize
-        end
-
+      class Association < BaseAssociation
         def parse(params)
-          association_klass.new(params)
+          association_class.new(params)
         end        
       end
     end

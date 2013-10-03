@@ -1,5 +1,6 @@
 module JsonApiClient
   module Associations
+    autoload :BaseAssociation, 'json_api_client/associations/base_association'
     autoload :HasMany, 'json_api_client/associations/has_many'
     autoload :HasOne, 'json_api_client/associations/has_one'
 

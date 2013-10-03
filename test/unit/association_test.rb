@@ -8,6 +8,21 @@ class Property < TestResource
   has_one :owner
 end
 
+class Specified < TestResource
+  belongs_to :foo, class_name: "Property"
+  has_many :bars, class_name: "Owner"
+end
+
+module Namespaced
+  class Owner < TestResource
+    has_many :properties
+  end
+
+  class Property < TestResource
+    belongs_to :owner
+  end
+end
+
 class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_one
@@ -58,6 +73,30 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal(1, owner.properties.length)
     assert_equal(Property, owner.properties.first.class)
     assert_equal("123 Main St.", owner.properties.first.address)
+  end
+
+  def test_namespaced_association_class_discovery
+    has_many = Namespaced::Owner.associations.first
+    assert_equal(Namespaced::Property, has_many.association_class)
+
+    has_one = Namespaced::Property.associations.first
+    assert_equal(Namespaced::Owner, has_one.association_class)
+  end
+
+  def test_specified_association_class
+    has_one = Specified.associations.first
+    assert_equal(Property, has_one.association_class)
+
+    has_many = Specified.associations.last
+    assert_equal(Owner, has_many.association_class)
+  end
+
+  def test_association_building
+    assert_equal 1, Owner.associations.length
+    assert_equal 1, Property.associations.length
+    assert_equal 2, Specified.associations.length
+    assert_equal 1, Namespaced::Owner.associations.length
+    assert_equal 1, Namespaced::Property.associations.length
   end
 
 end
