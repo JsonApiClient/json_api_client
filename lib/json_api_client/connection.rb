@@ -7,9 +7,11 @@ module JsonApiClient
       @faraday = Faraday.new(site) do |builder|
         builder.request :url_encoded
         builder.use Middleware::JsonRequest
-        builder.response :json, content_type: /\bjson$/
+        builder.use Middleware::Status
+        builder.use FaradayMiddleware::ParseJson, content_type: /\bjson$/
         builder.adapter Faraday.default_adapter
       end
+      yield(self) if block_given?
     end
 
     # insert middleware before ParseJson - middleware executed in reverse order - 
