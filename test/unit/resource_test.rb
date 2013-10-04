@@ -129,4 +129,14 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal("asdf", user.another_field, "updating a record should load new data from server")
   end
 
+  def test_destroy
+    stub_request(:delete, "http://localhost:3000/api/1/users/6.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: []
+      }.to_json)
+
+    user = User.new(id: 6)
+    assert(user.destroy, "successful deletion should return truish value")
+  end
+
 end

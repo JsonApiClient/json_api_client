@@ -20,7 +20,7 @@ class ResultSet < Array
 
       # can fall back to calculating via total entries and per_page
       array.total_pages = meta.fetch("total_pages") do
-        (1.0 * array.total_entries / array.per_page).ceil
+        (1.0 * array.total_entries / array.per_page).ceil rescue 1
       end
 
       # can fall back to calculating via per_page and current_page
