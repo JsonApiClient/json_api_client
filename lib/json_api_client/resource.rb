@@ -92,10 +92,18 @@ module JsonApiClient
     end
 
     def save
-      query = persisted? ? 
-        Query::Update.new(self.class, self) :
-        Query::Create.new(self.class, attributes)
-      run_request(query)
+      if persisted?
+        response = run_request(Query::Update.new(self.class, self))
+        if updated = response.first
+          self.attributes = updated.attributes
+          true
+        else
+          # error
+        end
+      else
+        # return list
+        run_request(Query::Create.new(self.class, attributes))
+      end
     end
 
     def destroy

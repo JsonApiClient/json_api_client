@@ -108,4 +108,25 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal({asdf: "qwer", foo: "bar"}.stringify_keys, user.attributes)
   end
 
+  def test_update
+    stub_request(:put, "http://localhost:3000/api/1/users/6.json")
+      .with(body: {
+        user: {
+          name: "Foo Bar",
+          email_address: "foo2@bar.com"
+        }
+      })
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 6, name: "Foo Bar", email_address: "foo2@bar.com", another_field: "asdf"}
+        ]
+      }.to_json)
+
+    user = User.new(id: 6, name: "Foo", email_address: "foo@bar.com")
+    user.update_attributes(name: "Foo Bar", email_address: "foo2@bar.com")
+    assert_equal("Foo Bar", user.name)
+    assert_equal("foo2@bar.com", user.email_address)
+    assert_equal("asdf", user.another_field, "updating a record should load new data from server")
+  end
+
 end
