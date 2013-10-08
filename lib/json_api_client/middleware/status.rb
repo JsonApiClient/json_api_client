@@ -17,10 +17,10 @@ module JsonApiClient
 
       def handle_status(code, env)
         case code
-        when 500..599
-          raise Errors::ServerError, env
         when 404
           raise Errors::NotFound, env[:uri]
+        when 500..599
+          raise Errors::ServerError, env
         end
       end
     end

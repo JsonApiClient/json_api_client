@@ -37,7 +37,9 @@ module JsonApiClient
       end
 
       def create(conditions = {})
-        Array(run_request(Query::Create.new(self, conditions))).first
+        result = run_request(Query::Create.new(self, conditions))
+        return nil if result.errors.length > 0
+        result.first
       end
 
       def connection
@@ -81,6 +83,7 @@ module JsonApiClient
     include Associations
     include Links
 
+    attr_accessor :errors
     def initialize(params = {})
       initializers.each do |initializer|
         if initializer.respond_to?(:call)
@@ -92,33 +95,28 @@ module JsonApiClient
     end
 
     def save
-      if persisted?
-        response = run_request(Query::Update.new(self.class, self))
-        if updated = response.first
-          self.attributes = updated.attributes
-          true
-        else
-          # error
-        end
-      else
-        # return list
-        run_request(Query::Create.new(self.class, attributes))
-      end
+      query = persisted? ? 
+        Query::Update.new(self.class, self) :
+        Query::Create.new(self.class, attributes)
+
+      run_request(query)
     end
 
     def destroy
-      response = run_request(Query::Destroy.new(self.class, self))
-      if response.length == 0
-        self.attributes = {}
-        return true
-      end
-      false
+      run_request(Query::Destroy.new(self.class, self))
     end
 
     protected
 
     def run_request(query)
-      self.class.run_request(query)
+      response = self.class.run_request(query)
+      self.errors = response.errors
+      if updated = response.first
+        self.attributes = updated.attributes
+      else
+        self.attributes = {}
+      end
+      return errors.length == 0
     end
 
   end
