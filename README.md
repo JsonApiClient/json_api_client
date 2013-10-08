@@ -1,5 +1,7 @@
 # JsonApiClient
 
+This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
+
 ## Usage
 
 ```
@@ -17,7 +19,7 @@ MyApi::User.where(name: "foo").order("created_at desc").includes(:preferences, :
 u = MyApi::User.new(foo: "bar", bar: "foo")
 u.save
 
-u = MyApi::User.find(1)
+u = MyApi::User.find(1).first
 u.update_attributes(
   a: "b",
   c: "d"
@@ -28,7 +30,7 @@ u = MyApi::User.create(
   c: "d"
 )
 
-u = MyApi::User.find(1)
+u = MyApi::User.find(1).first
 u.accounts
 => MyApi::Account.where(user_id: u.id).all
 ```
