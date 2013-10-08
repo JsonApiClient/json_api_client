@@ -3,12 +3,8 @@ module JsonApiClient
     class Update < Base
       self.request_method = :put
 
-      def params
-        {klass.resource_name => @args.query_params}
-      end
-
-      def path
-        File.join(klass.table_name, @args.to_param)
+      def build_params(args)
+        @params = {klass.primary_key => args.delete(klass.primary_key), klass.resource_name => args}
       end
 
     end

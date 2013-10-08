@@ -12,7 +12,7 @@ class QueryTest < MiniTest::Unit::TestCase
   def test_find_by_id
     query = JsonApiClient::Query::Find.new(User, 1)
     assert_equal :get, query.request_method
-    assert_equal nil, query.params
+    assert_equal({}, query.params)
     assert_equal "users/1", query.path
   end
 
@@ -33,7 +33,7 @@ class QueryTest < MiniTest::Unit::TestCase
 
   def test_update_query
     user = User.new(id: 1, name: "New Name")
-    query = JsonApiClient::Query::Update.new(User, user)
+    query = JsonApiClient::Query::Update.new(User, user.attributes)
     assert_equal :put, query.request_method
     assert_equal({user: {name: "New Name"}}.to_json, query.params.to_json)
     assert_equal "users/1", query.path
@@ -48,7 +48,7 @@ class QueryTest < MiniTest::Unit::TestCase
 
   def test_destroy_query
     user = User.new(id: 1, name: "New Name")
-    query = JsonApiClient::Query::Destroy.new(User, user)
+    query = JsonApiClient::Query::Destroy.new(User, user.attributes)
     assert_equal :delete, query.request_method
     assert_equal nil, query.params
     assert_equal "users/1", query.path

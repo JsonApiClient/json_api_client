@@ -3,31 +3,13 @@ module JsonApiClient
     class Find < Base
       self.request_method = :get
 
-      def initialize(klass, args)
-        super
-
-        case args
-        when Array
-          # find by ids
-          @path = klass.table_name
-          @params = {klass.primary_key => args}
+      def build_params(args)
+        @params = case args
         when Hash
-          # find by params hash
-          @path = klass.table_name
-          @params = args
+          args
         else
-          # find by id
-          @path = File.join(klass.table_name, args.to_s)
-          @params = nil
+          {klass.primary_key => args}
         end
-      end
-
-      def path
-        @path
-      end
-
-      def params
-        @params
       end
 
     end

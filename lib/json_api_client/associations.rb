@@ -28,19 +28,22 @@ module JsonApiClient
       end
 
       def prefix_path
-        File.join("", belongs_to_associations.map(&:to_prefix_path))
+        belongs_to_associations.map(&:to_prefix_path).join("/")
       end
 
       def path(params = nil)
+        parts = [table_name]
         if params
           slurp = params.slice(*prefix_params)
           prefix_params.each do |param|
             params.delete(param)
           end
-          File.join(prefix_path % slurp, table_name)
+          parts.unshift(prefix_path % slurp)
         else
-          File.join(prefix_path, table_name)
+          parts.unshift(prefix_path)
         end
+        parts.reject!{|part| part == "" }
+        File.join(*parts)
       rescue KeyError
         raise ArgumentError, "Not all prefix parameters specified"
       end

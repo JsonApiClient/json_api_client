@@ -3,8 +3,8 @@ module JsonApiClient
     class Create < Base
       self.request_method = :post
 
-      def params
-        {klass.resource_name => @args}
+      def build_params(args)
+        @params = {klass.resource_name => args.except(klass.primary_key)}
       end
 
     end
