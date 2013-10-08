@@ -6,13 +6,13 @@ require 'active_support/core_ext/class/attribute'
 
 module JsonApiClient
   class Resource
-    class_attribute :site, :primary_key, :link_style, :default_headers
-    class_attribute :initializers
+    class_attribute :site, :primary_key, :link_style, :default_headers, :initializers, :parser
 
     self.primary_key = :id
     self.link_style = :id # or :url
     self.default_headers = {}
     self.initializers = []
+    self.parser = Parser
 
     class << self
       # first 'scope' should build a new scope object
@@ -60,10 +60,6 @@ module JsonApiClient
 
       def new_scope
         Scope.new(self)
-      end
-
-      def parser
-        Parser
       end
 
       def parse(data)

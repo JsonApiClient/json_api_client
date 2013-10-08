@@ -35,8 +35,8 @@ u.accounts
 
 ## Connection options
 
-You can configure your connection using Faraday middleware. In general, you'll want to do
-this in a base model that all your resources inherit from:
+You can configure your connection using Faraday middleware. In general, you'll want 
+to do this in a base model that all your resources inherit from:
 
 ```
 MyApi::Base.connection do |connection|
@@ -54,4 +54,43 @@ module MyApi
     # will use the customized connection
   end
 end
+```
+
+## Custom Parser
+
+You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
+
+```
+class MyCustomParser
+  def self.parse(klass, response)
+  	…
+  	# returns some ResultSet object
+  end
+end
+
+class MyApi::Base < JsonApiClient::Resource
+  self.parser = MyCustomParser
+end
+```
+
+## Handling Validation Errors
+
+```
+User.create(name: "Bob", email_address: "invalid email")
+=> false
+
+user = User.new(name: "Bob", email_address: "invalid email")
+user.save
+=> false
+user.errors
+=> ["Email address is invalid"]
+
+user = User.find(1)
+user.update_attributes(email_address: "invalid email")
+=> false
+user.errors
+=> ["Email address is invalid"]
+user.email_address
+=> "invalid email"
+
 ```
