@@ -21,7 +21,7 @@ module JsonApiClient
 
       # base URL for this resource
       def resource
-        File.join(site, table_name)
+        File.join(site, path)
       end
 
       def table_name

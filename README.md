@@ -7,6 +7,11 @@ This gem is meant to help you build an API client for interacting with REST APIs
 ```
 module MyApi
   class User < JsonApiClient::Resource
+    has_many :accounts
+  end
+  
+  class Account < JsonApiClient::Resource
+  	belongs_to :user
   end
 end
 
@@ -94,5 +99,18 @@ user.errors
 => ["Email address is invalid"]
 user.email_address
 => "invalid email"
+```
+
+## Nested Resources
+
+You can force nested resource paths for your models by using a `belongs_to` association.
+
+```
+module MyApi
+  class Account < JsonApiClient::Resource
+  	belongs_to :user
+  end
+end
+
 
 ```

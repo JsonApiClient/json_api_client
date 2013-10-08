@@ -1,18 +1,26 @@
 module JsonApiClient
   module Associations
-    module HasOne
+    module BelongsTo
       extend ActiveSupport::Concern
 
       module ClassMethods
-        def has_one(attr_name, options = {})
+        def belongs_to(attr_name, options = {})
           # self.associations = self.associations + [HasOne::Association.new(attr_name, self, options)]
-          self.associations += [HasOne::Association.new(attr_name, self, options)]
+          self.associations += [BelongsTo::Association.new(attr_name, self, options)]
         end
       end
 
       class Association < BaseAssociation
         def parse(params)
           params ? association_class.new(params) : nil
+        end
+
+        def param
+          :"#{attr_name}_id"
+        end
+
+        def to_prefix_path
+          "#{attr_name.to_s.pluralize}/%{#{param}}"
         end
       end
     end

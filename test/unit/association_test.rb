@@ -111,4 +111,26 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal 1, Namespaced::Property.associations.length
   end
 
+  def test_belongs_to_path
+    assert_equal([:foo_id], Specified.prefix_params)
+    assert_equal("/foos/%{foo_id}", Specified.prefix_path)
+    assert_raises ArgumentError do
+      Specified.path({})
+    end
+    assert_equal("/foos/%{foo_id}/specifieds", Specified.path)
+    assert_equal("/foos/1/specifieds", Specified.path({foo_id: 1}))
+  end
+
+  def test_find_belongs_to
+    stub_request(:get, "http://localhost:3000/api/1/foos/1/specifieds.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        specifieds: [
+          {id: 1, name: "Jeff Ching", bars: [{id: 1, address: "123 Main St."}]}
+        ]
+      }.to_json)
+
+    specifieds = Specified.where(foo_id: 1).all
+    assert_equal(1, specifieds.length)
+  end
+
 end
