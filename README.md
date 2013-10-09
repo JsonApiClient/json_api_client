@@ -1,6 +1,8 @@
-# JsonApiClient
+# JsonApiClient [![Build Status](https://travis-ci.org/chingor13/json_api_client.png)](https://travis-ci.org/chingor13/json_api_client)
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
+
+*Note: This is still a work in progress.*
 
 ## Usage
 
