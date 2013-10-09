@@ -19,7 +19,7 @@ class QueryTest < MiniTest::Unit::TestCase
   def test_find_by_primary_keys
     query = JsonApiClient::Query::Find.new(User, [2,3])
     assert_equal :get, query.request_method
-    assert_equal({id: [2,3]}, query.params)
+    assert_equal({ids: "2,3"}, query.params)
     assert_equal "users", query.path
   end
 
@@ -27,7 +27,7 @@ class QueryTest < MiniTest::Unit::TestCase
     assert_equal :user_id, UserPreference.primary_key
     query = JsonApiClient::Query::Find.new(UserPreference, [2,3])
     assert_equal :get, query.request_method
-    assert_equal({user_id: [2,3]}, query.params)
+    assert_equal({user_ids: "2,3"}, query.params)
     assert_equal "user_preferences", query.path
   end
 

@@ -30,7 +30,7 @@ class ResourceTest < MiniTest::Unit::TestCase
 
   def test_find_by_ids
     stub_request(:get, "http://localhost:3000/api/1/users.json")
-      .with(query: {id: [2,3]})
+      .with(query: {ids: "2,3"})
       .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
