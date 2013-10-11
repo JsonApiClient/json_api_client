@@ -6,19 +6,13 @@ require 'active_support/core_ext/class/attribute'
 
 module JsonApiClient
   class Resource
-    class_attribute :site, :primary_key, :link_style, :default_headers, :initializers, :parser
+    class_attribute :site, :primary_key, :link_style, :default_headers
 
     self.primary_key = :id
     self.link_style = :id # or :url
     self.default_headers = {}
-    self.initializers = []
-    self.parser = Parser
 
     class << self
-      # first 'scope' should build a new scope object
-      extend Forwardable
-      def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
-
       # base URL for this resource
       def resource
         File.join(site, path)
@@ -55,40 +49,14 @@ module JsonApiClient
       def run_request(query)
         parse(connection.execute(query))
       end
-
-      private
-
-      def new_scope
-        Scope.new(self)
-      end
-
-      def parse(data)
-        parser.parse(self, data)
-      end
-
-      def build_connection
-        Connection.new(site)
-      end
-
-      def initialize(method = nil, &block)
-        self.initializers.push(method || block)
-      end
     end
 
-    include Attributes
-    include Associations
-    include Links
-
-    attr_accessor :errors
-    def initialize(params = {})
-      initializers.each do |initializer|
-        if initializer.respond_to?(:call)
-          initializer.call(self, params)
-        else
-          self.send(initializer, params)
-        end
-      end
-    end
+    include Helpers::Initializable
+    include Helpers::Attributable
+    include Helpers::Associable
+    include Helpers::Parsable
+    include Helpers::Queryable
+    include Helpers::Linkable
 
     def save
       query = persisted? ? 
