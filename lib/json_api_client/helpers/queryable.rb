@@ -12,6 +12,16 @@ module JsonApiClient
           Scope.new(self)
         end
 
+        def connection
+          @connection ||= begin
+            super
+          rescue
+            build_connection
+          end
+          yield(@connection) if block_given?
+          @connection
+        end
+
         def build_connection
           Connection.new(site)
         end

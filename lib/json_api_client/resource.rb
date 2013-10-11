@@ -36,16 +36,6 @@ module JsonApiClient
         result.first
       end
 
-      def connection
-        @connection ||= begin
-          super
-        rescue
-          build_connection
-        end
-        yield(@connection) if block_given?
-        @connection
-      end
-
       def run_request(query)
         parse(connection.execute(query))
       end
