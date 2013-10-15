@@ -27,7 +27,7 @@ module JsonApiClient
         elsif has_attribute?(method)
           attributes[method]
         else
-          nil
+          super
         end
       end
 

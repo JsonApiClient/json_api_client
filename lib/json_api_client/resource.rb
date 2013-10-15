@@ -46,6 +46,7 @@ module JsonApiClient
     include Helpers::Associable
     include Helpers::Parsable
     include Helpers::Queryable
+    include Helpers::Serializable
     include Helpers::Linkable
 
     def save
