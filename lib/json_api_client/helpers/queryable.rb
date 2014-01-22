@@ -23,7 +23,11 @@ module JsonApiClient
         end
 
         def build_connection
-          Connection.new(site)
+          connection_class.new(site)
+        end
+
+        def connection_class
+          Connection
         end
       end
 
