@@ -4,7 +4,10 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        self.class.send(:include, ClassExtensions)
+        class << self
+          extend Forwardable
+          def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
+        end
       end
 
       module ClassMethods
@@ -31,14 +34,6 @@ module JsonApiClient
         end
       end
 
-      module ClassExtensions
-        extend ActiveSupport::Concern
-
-        included do
-          extend Forwardable
-          def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
-        end
-      end
     end
   end
 end
