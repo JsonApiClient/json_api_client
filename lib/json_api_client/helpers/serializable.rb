@@ -1,7 +1,7 @@
 module JsonApiClient
   module Helpers
     module Serializable
-      def as_json
+      def as_json(options=nil)
         attributes
       end
 
