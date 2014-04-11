@@ -1,3 +1,5 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
 Bundler.require(:default, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
