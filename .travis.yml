@@ -10,5 +10,4 @@ env:
     - "AS_VERSION=3.2.0"
     - "AS_VERSION=4.0.0"
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install libyaml-dev
+  - gem install psych -- --enable-bundled-libyaml
