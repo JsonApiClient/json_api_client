@@ -9,5 +9,9 @@ module JsonApiClient
         yield(result_set) if block_given?
       end
     end
+
+    def has_errors?
+      errors && errors.length > 0
+    end
   end
 end

@@ -32,7 +32,13 @@ module JsonApiClient
 
       def create(conditions = {})
         result = run_request(Query::Create.new(self, conditions))
-        return nil if result.errors.length > 0
+        if result.has_errors?
+          if block_given?
+            yield result
+          else
+            return nil
+          end
+        end
         result.first
       end
 
