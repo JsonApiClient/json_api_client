@@ -5,6 +5,8 @@ require 'minitest/autorun'
 require 'webmock/minitest'
 require 'pp'
 
+WebMock.disable_net_connect!(:allow => "codeclimate.com")
+
 # test resources
 class TestResource < JsonApiClient::Resource
   self.site = "http://localhost:3000/api/1"
