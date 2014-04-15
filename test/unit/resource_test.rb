@@ -86,6 +86,45 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal 3, user.id
   end
 
+  def test_create_failure
+    stub_request(:post, "http://localhost:3000/api/1/users.json")
+      .with(body: {user: {name: "", email_address: "mickey@mantle.com"}})
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [],
+        meta: {
+          status: 400,
+          errors: ["Name can't be blank"]
+        }
+      }.to_json)
+
+    user = User.create(
+      name: "",
+      email_address: "mickey@mantle.com"
+    )
+    assert_nil user, "expected failure to not return a Resource instance"
+  end
+
+  def test_create_failure_with_custom_handling
+    stub_request(:post, "http://localhost:3000/api/1/users.json")
+      .with(body: {user: {name: "", email_address: "mickey@mantle.com"}})
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [],
+        meta: {
+          status: 400,
+          errors: ["Name can't be blank"]
+        }
+      }.to_json)
+
+    response = nil
+    user = User.create(
+      name: "",
+      email_address: "mickey@mantle.com"
+    ) do |resp|
+      response = resp
+    end
+    assert response, "expected failure block to yield response object"
+  end
+
   def test_each_on_scope
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .with(query: {name: "Jeff Ching"})
