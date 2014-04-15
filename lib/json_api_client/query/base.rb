@@ -19,7 +19,7 @@ module JsonApiClient
       end
 
       def build_params(args)
-        @params = args
+        @params = args.dup
       end
 
     end

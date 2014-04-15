@@ -33,11 +33,8 @@ module JsonApiClient
       def create(conditions = {})
         result = run_request(Query::Create.new(self, conditions))
         if result.has_errors?
-          if block_given?
-            yield result
-          else
-            return nil
-          end
+          yield(result) if block_given?
+          return nil
         end
         result.first
       end
@@ -64,20 +61,30 @@ module JsonApiClient
     end
 
     def destroy
-      run_request(Query::Destroy.new(self.class, attributes))
+      if run_request(Query::Destroy.new(self.class, attributes))
+        self.attributes.clear
+        true
+      else
+        false
+      end
     end
 
     protected
 
     def run_request(query)
-      response = self.class.run_request(query)
-      self.errors = response.errors
-      if updated = response.first
-        self.attributes = updated.attributes
+      # reset errors if a new request is being made
+      self.errors.clear if self.errors
+      
+      result = self.class.run_request(query)
+      self.errors = result.errors
+      if result.has_errors?
+        return false
       else
-        self.attributes = {}
+        if updated = result.first
+          self.attributes = updated.attributes
+        end
+        return true
       end
-      return errors.length == 0
     end
 
   end
