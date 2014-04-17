@@ -49,18 +49,18 @@ class PaginationTest < MiniTest::Unit::TestCase
 
   def test_custom_meta_data
     stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        custom_paginations: [
-          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
-          {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
-          {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
-        ],
-        meta: {
-          per: 3,
-          page: 2,
-          total: 10
-        }
-      }.to_json)
+    .to_return(headers: {content_type: "application/json"}, body: {
+      custom_paginations: [
+        {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
+        {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
+        {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
+      ],
+      meta: {
+        per: 3,
+        page: 2,
+        total: 10
+      }
+    }.to_json)
 
     users = CustomPagination.all
     assert_equal 3, users.length
@@ -69,6 +69,60 @@ class PaginationTest < MiniTest::Unit::TestCase
     assert_equal 3, users.offset
     assert_equal 10, users.total_entries
     assert_equal 4, users.total_pages
+  end
+
+  # will_paginate gem specific parameters check
+  # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/collection.rb
+  def test_will_paginate_params
+    stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
+    .to_return(headers: {content_type: "application/json"}, body: {
+      custom_paginations: [
+        {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
+        {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
+        {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
+      ],
+      meta: {
+        per: 3,
+        page: 2,
+        total: 10
+      }
+    }.to_json)
+
+    users = CustomPagination.all
+    assert_equal 4, users.total_pages
+    assert_equal 3, users.offset
+    assert_equal 1, users.previous_page
+    assert_equal 3, users.next_page
+    assert_equal false, users.out_of_bounds?
+    assert_equal 2, users.current_page
+    assert_equal 10, users.total_entries
+    assert_equal 3, users.per_page
+  end
+
+  # kaminari gem specific parameters check
+  # https://github.com/amatsuda/kaminari/blob/master/lib/kaminari/models/array_extension.rb
+  def test_kaminari_params
+    stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
+    .to_return(headers: {content_type: "application/json"}, body: {
+      custom_paginations: [
+        {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
+        {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
+        {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
+      ],
+      meta: {
+        per: 3,
+        page: 2,
+        total: 10
+      }
+    }.to_json)
+
+    users = CustomPagination.all
+    assert_equal 3, users.limit_value
+    assert_equal 1, users.previous_page
+    assert_equal 3, users.next_page
+    assert_equal 2, users.current_page
+    assert_equal 10, users.total_entries
+    assert_equal 3, users.per_page
   end
 
 end
