@@ -113,6 +113,25 @@ module MyApi
   	belongs_to :user
   end
 end
+```
 
+## Custom Methods
+
+You can create custom methods on both collections (class method) and members (instance methods).
 
 ```
+module MyApi
+  class User < JsonApiClient::Resource
+  
+  	# GET /users/search.json
+  	custom_endpoint :search, on: :collection, request_method: :get
+  	
+  	# PUT /users/:id/verify.json
+  	custom_endpoint :verify, on: :member, request_method: :put
+  end
+end
+```
+
+In the above scenario, you can call the class method `MyApi::User.search`.  The results will be parsed like any other query.  If the response returns users, you will get back a `ResultSet` of `MyApi::User` instances.
+
+You can also call the instance method `verify` on a `MyApi::User` instance.
