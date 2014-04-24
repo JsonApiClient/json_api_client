@@ -20,6 +20,7 @@ class CustomEndpointTest < MiniTest::Unit::TestCase
 
     countries = Country.autocomplete(starts_with: "bel")
     assert_equal 2, countries.length
+    assert(countries.all?{|country| country.is_a?(Country)})
     assert_equal [1,2], countries.map(&:id)
   end
 
