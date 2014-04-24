@@ -51,6 +51,7 @@ module JsonApiClient
     include Helpers::Queryable
     include Helpers::Serializable
     include Helpers::Linkable
+    include Helpers::CustomEndpoints
 
     def save
       query = persisted? ? 

@@ -54,4 +54,34 @@ class QueryTest < MiniTest::Unit::TestCase
     assert_equal "users/1", query.path
   end
 
+  def test_custom_member_query
+    user = User.new(id: 1, name: "New Name")
+    query = JsonApiClient::Query::Custom.new(User, user.attributes.merge({
+      name: "verify",
+      request_method: :post,
+      params: {
+        id: 1,
+        date: 'now'
+      }
+    }))
+
+    assert_equal :post, query.request_method
+    assert_equal({date: 'now'}.to_json, query.params.to_json)
+    assert_equal "users/1/verify", query.path
+  end
+
+  def test_custom_collection_query
+    query = JsonApiClient::Query::Custom.new(User, {
+      name: "verify",
+      request_method: :delete,
+      params: {
+        date: 'now'
+      }
+    })
+
+    assert_equal :delete, query.request_method
+    assert_equal({date: 'now'}.to_json, query.params.to_json)
+    assert_equal "users/verify", query.path
+  end
+
 end
