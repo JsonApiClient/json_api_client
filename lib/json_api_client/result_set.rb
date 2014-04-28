@@ -2,6 +2,7 @@ module JsonApiClient
   class ResultSet < Array
 
     attr_accessor :total_pages, :total_entries, :offset, :per_page, :current_page, :errors
+    alias_attribute :limit_value, :per_page
 
     def self.build(klass, data)
       result_data = data.fetch(klass.table_name, [])
@@ -12,6 +13,18 @@ module JsonApiClient
 
     def has_errors?
       errors && errors.length > 0
+    end
+
+    def out_of_bounds?
+      current_page > total_pages
+    end
+
+    def previous_page
+      current_page > 1 ? (current_page - 1) : nil
+    end
+
+    def next_page
+      current_page < total_pages ? (current_page + 1) : nil
     end
   end
 end
