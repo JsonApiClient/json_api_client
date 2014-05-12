@@ -42,7 +42,7 @@ u.accounts
 => MyApi::Account.where(user_id: u.id).all
 ```
 
-## Connection options
+## Connection Options
 
 You can configure your connection using Faraday middleware. In general, you'll want 
 to do this in a base model that all your resources inherit from:
@@ -63,6 +63,25 @@ module MyApi
     # will use the customized connection
   end
 end
+```
+
+## Custom Connection
+
+You can configure your API client to use a custom connection that implementes the `execute` instance method. It should return data that your parser can handle.
+
+```
+class NullConnection
+  def initialize(*args)
+  end
+
+  def execute(query)
+  end
+end
+
+class CustomConnectionResource < TestResource
+  self.connection_class = NullConnection
+end
+
 ```
 
 ## Custom Parser
