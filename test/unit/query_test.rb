@@ -84,4 +84,9 @@ class QueryTest < MiniTest::Unit::TestCase
     assert_equal "users/verify", query.path
   end
 
+  def test_query_is_inpectable
+    query = JsonApiClient::Query::Create.new(User, {foo: "bar", qwer: "asdf"})
+    assert(query.inspect)
+  end
+
 end

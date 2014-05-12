@@ -22,6 +22,10 @@ module JsonApiClient
         @params = args.dup
       end
 
+      def inspect
+        "method: #{request_method}; path: #{path}; params: #{params}, headers: #{headers}"
+      end
+
     end
   end
 end

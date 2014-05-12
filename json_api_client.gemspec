@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday", '~> 0.8.0'
 
   s.add_development_dependency "webmock"
+  s.add_development_dependency "mocha"
 
   s.license = "MIT"
 

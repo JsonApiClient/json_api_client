@@ -3,6 +3,7 @@ CodeClimate::TestReporter.start
 Bundler.require(:default, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
+require 'mocha/mini_test'
 require 'pp'
 
 WebMock.disable_net_connect!(:allow => "codeclimate.com")
