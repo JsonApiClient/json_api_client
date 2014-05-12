@@ -8,7 +8,7 @@ module JsonApiClient
         builder.request :url_encoded
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status
-        builder.use FaradayMiddleware::ParseJson, content_type: /\bjson$/
+        builder.use Middleware::ParseJson
         builder.adapter Faraday.default_adapter
       end
       yield(self) if block_given?
@@ -17,7 +17,7 @@ module JsonApiClient
     # insert middleware before ParseJson - middleware executed in reverse order - 
     #   inserted middleware will run after json parsed
     def use(middleware, *args, &block)
-      faraday.builder.insert_before(FaradayMiddleware::ParseJson, middleware, *args, &block)
+      faraday.builder.insert_before(Middleware::ParseJson, middleware, *args, &block)
     end
 
     def delete(middleware)
