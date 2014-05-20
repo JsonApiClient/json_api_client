@@ -9,3 +9,4 @@ env:
   matrix:
     - "AS_VERSION=3.2.0"
     - "AS_VERSION=4.0.0"
+    - "AS_VERSION=4.1.0"
