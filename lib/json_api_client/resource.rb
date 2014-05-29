@@ -1,6 +1,7 @@
 require 'forwardable'
 require 'active_support/concern'
 require 'active_support/inflector'
+require 'active_support/deprecation'
 require 'active_support/core_ext/hash'
 require 'active_support/core_ext/class/attribute'
 
@@ -26,8 +27,35 @@ module JsonApiClient
         name.demodulize.underscore
       end
 
-      def find(conditions)
-        run_request(Query::Find.new(self, conditions))
+      def find(*args)
+        conditions = args.extract_options!
+        if args.one? && conditions.blank?
+          find_one(args)
+        elsif args.present? && conditions.blakn?
+          find_with_ids(args)
+        else
+          conditions.merge!({
+            klass.primary_key.to_sym => Array(args)
+          })
+          run_request(Query::Find.new(self, conditions))
+        end
+      end
+
+      # For backwards compatibility
+      def first
+        self
+      end
+      
+      deprecate :first
+      
+      def find_one(keys)
+        response = run_request(Query::Find.new(self, Array(keys))).try(:first)
+        raise Errors::NotFound, "Couldn't find #{self.class.name} with conditions #{conditions}" unless response.present?
+        response
+      end
+
+      def find_with_ids(keys)
+        run_request(Query::Find.new(self, Array(keys)))
       end
 
       def create(conditions = {})
@@ -70,7 +98,10 @@ module JsonApiClient
       end
     end
 
+
+
     protected
+
 
     def run_request(query)
       # reset errors if a new request is being made
