@@ -29,33 +29,23 @@ module JsonApiClient
 
       def find(*args)
         conditions = args.extract_options!
-        if args.one? && conditions.blank?
-          find_one(args)
-        elsif args.present? && conditions.blakn?
-          find_with_ids(args)
+        keys = args.flatten
+        if keys.one? && conditions.blank?
+          find_one(keys.first)
+        elsif keys.present? && conditions.blank?
+          run_request(Query::Find.new(self, Array(keys)))
         else
           conditions.merge!({
-            klass.primary_key.to_sym => Array(args)
+            self.primary_key.to_sym => keys
           })
           run_request(Query::Find.new(self, conditions))
         end
       end
-
-      # For backwards compatibility
-      def first
-        self
-      end
       
-      deprecate :first
-      
-      def find_one(keys)
-        response = run_request(Query::Find.new(self, Array(keys))).try(:first)
-        raise Errors::NotFound, "Couldn't find #{self.class.name} with conditions #{conditions}" unless response.present?
+      def find_one(key)
+        response = run_request(Query::Find.new(self, key)).try(:first)
+        raise Errors::NotFound, "Couldn't find #{self.class.name} with primary key #{key}" unless response.present?
         response
-      end
-
-      def find_with_ids(keys)
-        run_request(Query::Find.new(self, Array(keys)))
       end
 
       def create(conditions = {})
@@ -98,7 +88,10 @@ module JsonApiClient
       end
     end
 
-
+    # For backwards compatibility
+    def first
+      self
+    end
 
     protected
 

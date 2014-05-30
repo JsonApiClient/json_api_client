@@ -18,11 +18,9 @@ class ResourceTest < MiniTest::Unit::TestCase
         ]
       }.to_json)
 
-    users = User.find(1)
+    user = User.find(1)
 
-    assert_equal 1, users.length
-
-    user = users.first
+    assert_instance_of(User, user)
     assert_equal 1, user.id
     assert_equal "ching.jeff@gmail.com", user.email_address
     assert_equal "Jeff Ching", user.name
