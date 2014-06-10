@@ -148,6 +148,23 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal({asdf: "qwer", foo: "bar"}.stringify_keys, user.attributes)
   end
 
+  def test_dynamic_attribute_methods
+    user = User.new(foo: "bar")
+
+    assert user.respond_to? :foo
+    assert user.respond_to? :foo=
+    assert_equal(user.foo, "bar")
+
+    refute user.respond_to? :bar
+    assert user.respond_to? :bar=
+    user.bar = "baz"
+    assert user.respond_to? :bar
+
+    assert_raises NoMethodError do
+      user.quux
+    end
+  end
+
   def test_update
     stub_request(:put, "http://localhost:3000/api/1/users/6.json")
       .with(body: {
