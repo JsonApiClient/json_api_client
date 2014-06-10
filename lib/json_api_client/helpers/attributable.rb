@@ -33,6 +33,15 @@ module JsonApiClient
         attributes.fetch(primary_key, "").to_s
       end
 
+      def respond_to?(method, include_private = false)
+        match = method.to_s.match(/^(.*[^=])=?$/)
+        if has_attribute?(match[1])
+          true
+        else
+          super
+        end
+      end
+
       protected
 
       def method_missing(method, *args, &block)
