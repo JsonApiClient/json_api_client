@@ -21,16 +21,6 @@ module JsonApiClient
         save
       end
 
-      def method_missing(method, *args, &block)
-        if match = method.to_s.match(/^(.*)=$/)
-          set_attribute(match[1], args.first)
-        elsif has_attribute?(method)
-          attributes[method]
-        else
-          super
-        end
-      end
-
       def persisted?
         attributes.has_key?(primary_key)
       end
@@ -44,6 +34,16 @@ module JsonApiClient
       end
 
       protected
+
+      def method_missing(method, *args, &block)
+        if match = method.to_s.match(/^(.*)=$/)
+          set_attribute(match[1], args.first)
+        elsif has_attribute?(method)
+          attributes[method]
+        else
+          super
+        end
+      end
 
       def read_attribute(name)
         attributes.fetch(name, nil)
