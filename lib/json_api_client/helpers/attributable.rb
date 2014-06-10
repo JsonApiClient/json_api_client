@@ -34,8 +34,7 @@ module JsonApiClient
       end
 
       def respond_to?(method, include_private = false)
-        match = method.to_s.match(/^(.*[^=])=?$/)
-        if has_attribute?(match[1])
+        if (method.to_s =~ /^(.*)=$/) || has_attribute?(method)
           true
         else
           super
@@ -45,8 +44,8 @@ module JsonApiClient
       protected
 
       def method_missing(method, *args, &block)
-        if match = method.to_s.match(/^(.*)=$/)
-          set_attribute(match[1], args.first)
+        if method.to_s =~ /^(.*)=$/
+          set_attribute($1, args.first)
         elsif has_attribute?(method)
           attributes[method]
         else
