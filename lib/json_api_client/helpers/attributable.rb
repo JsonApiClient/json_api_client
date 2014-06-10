@@ -41,6 +41,10 @@ module JsonApiClient
         end
       end
 
+      def dup
+        self.class.new(attributes)
+      end
+
       protected
 
       def method_missing(method, *args, &block)
