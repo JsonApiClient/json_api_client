@@ -39,4 +39,9 @@ class ConnectionTest < MiniTest::Unit::TestCase
     CustomConnectionResource.find(1)
   end
 
+  def test_child_inherits_parents_connection
+    assert User.new.kind_of?(TestResource), "sanity"
+    assert_equal TestResource.connection.object_id, User.connection.object_id, "child connection should use it's parent's connection"
+  end
+
 end

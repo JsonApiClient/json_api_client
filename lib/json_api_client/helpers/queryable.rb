@@ -8,8 +8,9 @@ module JsonApiClient
           extend Forwardable
           def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
         end
-        class_attribute :connection_class
+        class_attribute :connection_class, :connection_object, :connection_options
         self.connection_class = Connection
+        self.connection_options = {}
       end
 
       module ClassMethods
@@ -18,17 +19,11 @@ module JsonApiClient
         end
 
         def connection
-          @connection ||= begin
-            super
-          rescue
-            build_connection
+          unless connection_object
+            self.connection_object = connection_class.new(connection_options.merge(site: site))
           end
-          yield(@connection) if block_given?
-          @connection
-        end
-
-        def build_connection
-          connection_class.new(site)
+          yield(connection_object) if block_given?
+          connection_object
         end
       end
 

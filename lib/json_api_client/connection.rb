@@ -3,7 +3,8 @@ module JsonApiClient
 
     attr_reader :faraday
 
-    def initialize(site)
+    def initialize(options = {})
+      site = options.fetch(:site)
       @faraday = Faraday.new(site) do |builder|
         builder.request :url_encoded
         builder.use Middleware::JsonRequest
