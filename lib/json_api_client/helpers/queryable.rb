@@ -18,15 +18,18 @@ module JsonApiClient
           Scope.new(self)
         end
 
-        def connection
-          build_connection
-          yield(connection_object) if block_given?
+        def connection(&block)
+          build_connection(&block)
           connection_object
         end
 
         def build_connection
-          return if connection_object
-          self.connection_object = connection_class.new(connection_options.merge(site: site))
+          puts "1"
+          return connection_object unless connection_object.nil?
+          puts "build_connection: #{self}"
+          self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
+            yield(conn) if block_given?
+          end
         end
       end
 
