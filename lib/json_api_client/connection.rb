@@ -18,6 +18,7 @@ module JsonApiClient
     # insert middleware before ParseJson - middleware executed in reverse order - 
     #   inserted middleware will run after json parsed
     def use(middleware, *args, &block)
+      return if faraday.builder.locked?
       faraday.builder.insert_before(Middleware::ParseJson, middleware, *args, &block)
     end
 
