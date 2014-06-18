@@ -19,11 +19,14 @@ module JsonApiClient
         end
 
         def connection
-          unless connection_object
-            self.connection_object = connection_class.new(connection_options.merge(site: site))
-          end
+          build_connection
           yield(connection_object) if block_given?
           connection_object
+        end
+
+        def build_connection
+          return if connection_object
+          self.connection_object = connection_class.new(connection_options.merge(site: site))
         end
       end
 
