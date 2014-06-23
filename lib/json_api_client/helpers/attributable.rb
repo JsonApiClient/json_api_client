@@ -33,6 +33,14 @@ module JsonApiClient
         attributes.fetch(primary_key, "").to_s
       end
 
+      def [](key)
+        read_attribute(key)
+      end
+
+      def []=(key, value)
+        set_attribute(key, value)
+      end
+
       def respond_to?(method, include_private = false)
         if (method.to_s =~ /^(.*)=$/) || has_attribute?(method)
           true
