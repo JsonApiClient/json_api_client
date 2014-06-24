@@ -13,6 +13,8 @@ module JsonApiClient
 
       def attributes=(attrs = {})
         @attributes ||= {}.with_indifferent_access
+
+        return @attributes unless attrs.present?
         @attributes.merge!(attrs)
       end
 

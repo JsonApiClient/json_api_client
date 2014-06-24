@@ -17,6 +17,12 @@ end
 class User < TestResource
 end
 
+class Post < TestResource
+end
+
+class Address < TestResource
+end
+
 # for testing primary key option
 class UserPreference < TestResource
   self.primary_key = :user_id

@@ -11,7 +11,7 @@ class LinksTest < MiniTest::Unit::TestCase
             address: 4
           }}
         ],
-        links: [
+        links: {
           "user.posts" => {
             href: 'http://localhost:3000/api/1/posts/#{user.posts}',
             type: "posts"
@@ -20,7 +20,7 @@ class LinksTest < MiniTest::Unit::TestCase
             href: 'http://localhost:3000/api/1/addresses/#{user.address}',
             type: "addresses"
           }
-        ]
+        }
       }.to_json)
     stub_request(:get, "http://localhost:3000/api/1/posts/2,3.json")
       .to_return(headers: {content_type: "application/json"}, body: {
@@ -39,10 +39,17 @@ class LinksTest < MiniTest::Unit::TestCase
     user = User.find(1).first
     assert(user)
     assert user.respond_to?(:posts), "should load link for posts"
-    assert_equl 2, user.posts.length
+    
+    posts = user.posts
+    assert_equal 2, posts.length
+    posts.each do |post|
+      assert post.is_a?(Post), "should figure out what type of object for Post"
+    end
 
     assert user.respond_to?(:address), "should load link for address"
-    assert_equal 1, user.address.length
+    address = user.address
+    assert_equal 1, address.length
+    assert address.first.is_a?(Address), "should figure out what type of object for Address"
   end
 
   def test_can_load_linked_data
@@ -54,7 +61,7 @@ class LinksTest < MiniTest::Unit::TestCase
             address: 4
           }}
         ],
-        links: [
+        links: {
           "user.posts" => {
             href: 'http://localhost:3000/api/1/posts/#{user.posts}',
             type: "posts"
@@ -63,10 +70,10 @@ class LinksTest < MiniTest::Unit::TestCase
             href: 'http://localhost:3000/api/1/addresses/#{user.address}',
             type: "addresses"
           }
-        ],
+        },
         linked: {
           addresses: [
-            {id: 5, address: "1st Ave S"}
+            {id: 4, address: "1st Ave S"}
           ],
           posts: [
             {id: 2, title: "Yo", body: "Lo"},
@@ -78,10 +85,18 @@ class LinksTest < MiniTest::Unit::TestCase
     user = User.find(1).first
     assert(user)
     assert user.respond_to?(:posts), "should load link for posts"
-    assert_equl 2, user.posts.length
+
+    posts = user.posts
+    assert_equal 2, posts.length
+    posts.each do |post|
+      assert post.is_a?(Post), "should figure out what type of object for Post"
+    end
 
     assert user.respond_to?(:address), "should load link for address"
-    assert_equal 1, user.address.length
+    address = user.address
+    assert_equal 1, address.length
+    assert address.first.is_a?(Address), "should figure out what type of object for Address"
+
   end
 
 end
