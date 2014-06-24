@@ -35,11 +35,15 @@ module JsonApiClient
       end
 
       def handle_links(result_set, data)
-        link_definition = LinkDefinition.new(data.fetch("links", {}))
-        linked_data = LinkedData.new(data.fetch("linked", {}))
+        return if result_set.empty?
+
+        linked_data = LinkedData.new(
+                        data.fetch("linked", {}),
+                        LinkDefinition.new(data.fetch("links", {})),
+                        result_set.record_class
+                      )
 
         result_set.each do |resource|
-          resource.link_definition = link_definition
           resource.linked_data = linked_data
         end
       end

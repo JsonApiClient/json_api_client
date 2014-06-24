@@ -5,7 +5,6 @@ module JsonApiClient
 
       included do
         attr_accessor :links,
-                      :link_definition, 
                       :linked_data
 
         initializer do |obj, params|
@@ -18,13 +17,7 @@ module JsonApiClient
       def method_missing(method, *args)
         return super unless has_link?(method)
 
-        ids = links[method.to_s]
-        data = linked_data.data_for(method, ids, self)
-        if data.empty?
-          raise "no data found"
-        end
-
-        data
+        linked_data.data_for(method, links[method.to_s])
       end
 
       def respond_to?(symbol, include_all = false)
@@ -37,8 +30,8 @@ module JsonApiClient
       def has_link?(symbol)
         links && 
           links.has_key?(symbol.to_s) &&
-          link_definition && 
-          link_definition.has_link?(symbol.to_s)
+          linked_data && 
+          linked_data.has_link?(symbol.to_s)
       end
     end
   end
