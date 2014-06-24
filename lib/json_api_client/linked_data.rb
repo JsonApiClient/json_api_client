@@ -62,7 +62,7 @@ module JsonApiClient
     end
 
     def klass_for(type)
-      Utils.compute_type(record_class, type.to_s.classify)
+      Utils.compute_type(record_class, type.to_s.pluralize.classify)
     end
 
   end
