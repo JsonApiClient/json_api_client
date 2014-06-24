@@ -14,11 +14,14 @@ module JsonApiClient
       @results_by_type_by_id = {}
 
       data.each do |type, results|
-        @results_by_type_by_id[type] = results.inject({}){|collection, result| collection[result["id"]] = result; collection }
+        klass = klass_for(type)
+        add_data(type, results.map{|result| klass.new(result)})
       end
     end
 
     def data_for(type, ids)
+      ids = Array(ids)
+
       # the name of the linked data is provided by the link definition from the result
       attr_name = link_definition.attribute_name_for(type)
 
@@ -26,14 +29,40 @@ module JsonApiClient
       type_data = @results_by_type_by_id.fetch(attr_name, {})
 
       # find the associated class for the data
-      klass = Utils.compute_type(record_class, type.to_s.classify)
+      klass = klass_for(type)
 
       # return all the found records
-      Array(ids).map do |id|
-        result = type_data[id]
-        result = klass.new(type_data[id]) if result
-        result
+      found, missing = ids.partition { |id| type_data[id].present? }
+
+      # make another api request if there are missing records
+      fetch_data(klass, type, missing) if missing.present?
+
+      # reload data
+      type_data = @results_by_type_by_id.fetch(attr_name, {})
+
+      ids.map do |id|
+        type_data[id]
       end
+    end
+
+    # make an api request to fetch the missing data
+    def fetch_data(klass, type, missing_ids)
+      path = URI(link_definition.url_for(type, missing_ids)).path
+
+      query = Query::Linked.new(path)
+      results = klass.run_request(query)
+
+      key = link_definition.attribute_name_for(type).to_s
+      add_data(key, results)
+    end
+
+    def add_data(key, data)
+      @results_by_type_by_id[key] ||= {}
+      @results_by_type_by_id[key].merge!(data.index_by{|datum| datum["id"]})
+    end
+
+    def klass_for(type)
+      Utils.compute_type(record_class, type.to_s.classify)
     end
 
   end

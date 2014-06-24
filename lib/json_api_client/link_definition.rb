@@ -17,7 +17,10 @@ module JsonApiClient
     end
 
     def url_for(type, ids)
-      @spec.fetch(type).fetch("href").gsub("{#{slurp}}", Array(ids).join(","))
+      definition = @spec.fetch(type)
+      href = definition.fetch("href")
+      slurp = definition.fetch("slurp")
+      href.gsub("{#{slurp}}", Array(ids).join(","))
     end
 
   end

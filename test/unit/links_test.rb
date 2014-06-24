@@ -13,11 +13,11 @@ class LinksTest < MiniTest::Unit::TestCase
         ],
         links: {
           "user.posts" => {
-            href: 'http://localhost:3000/api/1/posts/#{user.posts}',
+            href: 'http://localhost:3000/api/1/posts/{user.posts}',
             type: "posts"
           },
           "user.address" => {
-            href: 'http://localhost:3000/api/1/addresses/#{user.address}',
+            href: 'http://localhost:3000/api/1/addresses/{user.address}',
             type: "addresses"
           }
         }
@@ -32,14 +32,14 @@ class LinksTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://localhost:3000/api/1/addresses/4.json")
       .to_return(headers: {content_type: "application/json"}, body: {
         addresses: [
-          {id: 5, address: "1st Ave S"}
+          {id: 4, address: "1st Ave S"}
         ]
       }.to_json)
 
     user = User.find(1).first
     assert(user)
     assert user.respond_to?(:posts), "should load link for posts"
-    
+
     posts = user.posts
     assert_equal 2, posts.length
     posts.each do |post|
@@ -63,11 +63,11 @@ class LinksTest < MiniTest::Unit::TestCase
         ],
         links: {
           "user.posts" => {
-            href: 'http://localhost:3000/api/1/posts/#{user.posts}',
+            href: 'http://localhost:3000/api/1/posts/{user.posts}',
             type: "posts"
           },
           "user.address" => {
-            href: 'http://localhost:3000/api/1/addresses/#{user.address}',
+            href: 'http://localhost:3000/api/1/addresses/{user.address}',
             type: "addresses"
           }
         },
