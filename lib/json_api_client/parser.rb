@@ -6,6 +6,7 @@ module JsonApiClient
         data = response.body
         ResultSet.build(klass, data) do |result_set|
           handle_pagination(result_set, data)
+          handle_links(result_set, data)
           handle_errors(result_set, data)
         end
       end
@@ -30,6 +31,20 @@ module JsonApiClient
         # can fall back to calculating via per_page and current_page
         result_set.offset = meta.fetch("offset") do
           result_set.per_page * (result_set.current_page - 1)
+        end
+      end
+
+      def handle_links(result_set, data)
+        return if result_set.empty?
+
+        linked_data = LinkedData.new(
+                        data.fetch("linked", {}),
+                        LinkDefinition.new(data.fetch("links", {})),
+                        result_set.record_class
+                      )
+
+        result_set.each do |resource|
+          resource.linked_data = linked_data
         end
       end
 

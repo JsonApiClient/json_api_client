@@ -4,6 +4,7 @@ require 'active_support/inflector'
 require 'active_support/core_ext/hash'
 require 'active_support/core_ext/module'
 require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/enumerable'
 
 module JsonApiClient
   class Resource
