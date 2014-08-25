@@ -6,8 +6,9 @@ module JsonApiClient
       Field = Struct.new(:name, :type, :default) do
         def cast(value)
           return nil if value.nil?
+          return value if type.nil?
 
-          case type
+          case type.to_sym
           when :integer
             value.to_i
           when :string
@@ -16,6 +17,8 @@ module JsonApiClient
             value.to_f
           when :boolean
             !!value
+          else
+            value
           end
         end
       end
