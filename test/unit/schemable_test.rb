@@ -21,8 +21,8 @@ class SchemableTest < MiniTest::Unit::TestCase
     resource = SchemaResource.new
 
     %w(a b c d).each do |method_name|
-      assert resource.respond_to?(method_name)
-      assert resource.respond_to?("#{method_name}=")
+      assert resource.respond_to?(method_name), "should respond_to?(:#{method_name})"
+      assert resource.respond_to?("#{method_name}="), "should respond_to?(:#{method_name}=)"
     end
 
     assert_equal 4, SchemaResource.schema.size
