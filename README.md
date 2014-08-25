@@ -154,3 +154,9 @@ end
 In the above scenario, you can call the class method `MyApi::User.search`.  The results will be parsed like any other query.  If the response returns users, you will get back a `ResultSet` of `MyApi::User` instances.
 
 You can also call the instance method `verify` on a `MyApi::User` instance.
+
+## Links
+
+We also respect the [links specification](http://jsonapi.org/format/#document-structure-resource-relationships). The client can fetch linked resources based on the defined endpoint from the link specification as well as load data from any `linked` data provided in the response. Additionally, it will still fetch missing data if not all linked resources are provided in the `linked` data response.
+
+See the [tests](https://github.com/chingor13/json_api_client/blob/master/test/unit/links_test.rb).
