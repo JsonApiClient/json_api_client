@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PaginationTest < MiniTest::Unit::TestCase
+class PaginationTest < Minitest::Test
 
   def test_no_meta_data
     stub_request(:get, "http://localhost:3000/api/1/users.json")

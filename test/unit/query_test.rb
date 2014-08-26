@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class QueryTest < MiniTest::Unit::TestCase
+class QueryTest < Minitest::Test
 
   def test_find_query_with_params
     query = JsonApiClient::Query::Find.new(User, {foo: "bar", qwer: "asdf"})

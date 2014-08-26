@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ScopeTest < MiniTest::Unit::TestCase
+class ScopeTest < Minitest::Test
 
   def test_chaining
     scope = JsonApiClient::Scope.new(User).where(a: "b", c: "d")
