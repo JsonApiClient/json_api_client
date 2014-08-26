@@ -16,7 +16,11 @@ module JsonApiClient
           when :float
             value.to_f
           when :boolean
-            !!value
+            if value.is_a?(String)
+              value == "false" ? false : true
+            else
+              !!value
+            end
           else
             value
           end

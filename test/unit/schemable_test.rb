@@ -51,6 +51,9 @@ class SchemableTest < MiniTest::Unit::TestCase
   def test_casts_data
     resource = SchemaResource.new
 
+    resource.b = "false"
+    assert_equal false, resource.b, "should cast boolean strings"
+
     resource.d = "1"
     assert_equal 1, resource.d
   end
@@ -68,6 +71,33 @@ class SchemableTest < MiniTest::Unit::TestCase
       assert_equal :string, property.type
       assert_equal nil, property.default
     end
+  end
+
+  def test_casts_values_when_instantiating
+    resource = SchemaResource.new({
+      a: 123,
+      b: 'false',
+      c: :blah,
+      d: "12345"
+    })
+    assert_equal "123", resource.a
+    assert_equal false, resource.b
+    assert_equal :blah, resource.c
+    assert_equal 12345, resource.d
+  end
+
+  def test_casts_values_when_bulk_assigning_attributes
+    resource = SchemaResource.new
+    resource.attributes = {
+      a: 123,
+      b: 'false',
+      c: :blah,
+      d: "12345"
+    }
+    assert_equal "123", resource.a
+    assert_equal false, resource.b
+    assert_equal :blah, resource.c
+    assert_equal 12345, resource.d
   end
 
 end
