@@ -77,6 +77,10 @@ module JsonApiClient
         attributes.has_key?(attr_name)
       end
 
+      def ==(other)
+        self.class == other.class && attributes == other.attributes
+      end
+
     end
   end
 end

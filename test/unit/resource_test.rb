@@ -249,4 +249,9 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal(true, user.persisted?, "user should still be persisted because destroy failed")
   end
 
+  def test_object_equality
+    user1 = User.new(asdf: "qwer")
+    user2 = User.new(asdf: "qwer")
+    assert_equal(user1, user2)
+  end
 end
