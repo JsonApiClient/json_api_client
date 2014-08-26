@@ -76,7 +76,7 @@ module JsonApiClient
       end
 
       def ==(other)
-        attributes == other.attributes
+        self.class == other.class && attributes == other.attributes
       end
 
     end
