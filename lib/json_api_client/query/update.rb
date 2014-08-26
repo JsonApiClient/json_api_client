@@ -4,7 +4,8 @@ module JsonApiClient
       self.request_method = :put
 
       def build_params(args)
-        @params = {klass.primary_key => args.dup.delete(klass.primary_key), klass.resource_name => args}
+        args = args.dup
+        @params = {klass.primary_key => args.delete(klass.primary_key), klass.resource_name => args}
       end
 
     end
