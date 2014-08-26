@@ -160,3 +160,46 @@ You can also call the instance method `verify` on a `MyApi::User` instance.
 We also respect the [links specification](http://jsonapi.org/format/#document-structure-resource-relationships). The client can fetch linked resources based on the defined endpoint from the link specification as well as load data from any `linked` data provided in the response. Additionally, it will still fetch missing data if not all linked resources are provided in the `linked` data response.
 
 See the [tests](https://github.com/chingor13/json_api_client/blob/master/test/unit/links_test.rb).
+
+## Schema
+
+You can define schema within your client model. You can define basic types and set default values if you wish. If you declare a basic type, we will try to cast any input to be that type. 
+
+The added benefit of declaring your schema is that you can access fields before data is set (otherwise, you'll get a `NoMethodError`).
+
+### Example
+
+```
+class User < JsonApiClient::Resource
+  property :name, type: :string
+  property :is_admin, type: :boolean, default: false
+  property :points_accrued, type: :int, default: 0
+  property :averge_points_per_day, type: :float
+end
+
+# default values
+u = User.new
+u.name
+=> nil
+u.is_admin
+=> false
+u.points_accrued
+=> 0
+
+# casting
+u.average_points_per_day = "0.3"
+u.average_points_per_day
+=> 0.3
+
+```
+
+### Types
+
+The basic types that we allow are:
+
+* `:int` or `:integer`
+* `:float`
+* `:string`
+* `:boolean` - *Note: we will cast the string version of "true" and "false" to their respective values*
+
+Also, we consider `nil` to be an acceptable value and will not cast the value.
