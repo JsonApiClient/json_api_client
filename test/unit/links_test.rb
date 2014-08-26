@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class LinksTest < MiniTest::Unit::TestCase
+class LinksTest < Minitest::Test
 
   def test_can_make_requests_for_data_if_linked_data_not_provided
     stub_request(:get, "http://localhost:3000/api/1/users/1.json")

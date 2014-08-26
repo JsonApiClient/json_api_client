@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ResourceTest < MiniTest::Unit::TestCase
+class ResourceTest < Minitest::Test
 
   def test_basic
     assert User.is_a?(Class)
