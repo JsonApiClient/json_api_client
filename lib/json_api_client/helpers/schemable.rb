@@ -17,17 +17,22 @@ module JsonApiClient
           @schema ||= Schema.new
         end
 
-        # Declares a new property field by name
+        # Declares a new property by name
         #
-        # @param name [Symbol] the name of the field
-        # @param options [Hash] field options
-        # @option options [Symbol] :type The field type
-        # @option options [Symbol] :default The default value for the field
+        # @param name [Symbol] the name of the property
+        # @param options [Hash] property options
+        # @option options [Symbol] :type The property type
+        # @option options [Symbol] :default The default value for the property
         def property(name, options = {})
           schema.add(name, options)
         end
 
         # Declare multiple properties with the same optional options
+        #
+        # @param [Array<Symbol>] names
+        # @param options [Hash] property options
+        # @option options [Symbol] :type The property type
+        # @option options [Symbol] :default The default value for the property
         def properties(*names)
           options = names.last.is_a?(Hash) ? names.pop : {}
           names.each do |name|
