@@ -9,7 +9,7 @@ module JsonApiClient
           return value if type.nil?
 
           case type.to_sym
-          when :integer
+          when :int
             value.to_i
           when :string
             value.to_s
