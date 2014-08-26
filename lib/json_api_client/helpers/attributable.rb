@@ -15,7 +15,9 @@ module JsonApiClient
         @attributes ||= {}.with_indifferent_access
 
         return @attributes unless attrs.present?
-        @attributes.merge!(attrs)
+        attrs.each do |key, value|
+          set_attribute(key, value)
+        end
       end
 
       def update_attributes(attrs = {})

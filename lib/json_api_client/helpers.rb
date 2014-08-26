@@ -7,6 +7,7 @@ module JsonApiClient
     autoload :Linkable, 'json_api_client/helpers/linkable'
     autoload :Parsable, 'json_api_client/helpers/parsable'
     autoload :Queryable, 'json_api_client/helpers/queryable'
+    autoload :Schemable, 'json_api_client/helpers/schemable'
     autoload :Serializable, 'json_api_client/helpers/serializable'
   end
 end
