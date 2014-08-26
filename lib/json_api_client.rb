@@ -14,6 +14,7 @@ module JsonApiClient
   autoload :Query, 'json_api_client/query'
   autoload :Resource, 'json_api_client/resource'
   autoload :ResultSet, 'json_api_client/result_set'
+  autoload :Schema, 'json_api_client/schema'
   autoload :Scope, 'json_api_client/scope'
   autoload :Utils, 'json_api_client/utils'
 end
