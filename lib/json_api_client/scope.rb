@@ -44,5 +44,9 @@ module JsonApiClient
       to_a.send(method_name, *args, &block)
     end
 
+    def find_each(&block)
+      Query::FindEach.new(klass, params).call(&block)
+    end
+
   end
 end
