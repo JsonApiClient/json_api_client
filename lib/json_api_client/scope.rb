@@ -40,12 +40,20 @@ module JsonApiClient
     end
     alias all to_a
 
+    def request_made?
+      instance_variable_defined?(:@to_a)
+    end
+
     def method_missing(method_name, *args, &block)
       to_a.send(method_name, *args, &block)
     end
 
     def respond_to?(*args)
-      to_a.respond_to?(*args)
+      super || respond_to_dummy.respond_to?(*args)
+    end
+
+    def respond_to_dummy
+      request_made? ? to_a : ResultSet.new
     end
 
   end
