@@ -44,5 +44,9 @@ module JsonApiClient
       to_a.send(method_name, *args, &block)
     end
 
+    def respond_to?(*args)
+      to_a.respond_to?(*args)
+    end
+
   end
 end
