@@ -64,9 +64,9 @@ module JsonApiClient
     end
 
     def destroy
-      if run_request(Query::Destroy.new(self.class, attributes))
+      if result = run_request(Query::Destroy.new(self.class, attributes))
         self.attributes.clear
-        true
+        result
       else
         false
       end
