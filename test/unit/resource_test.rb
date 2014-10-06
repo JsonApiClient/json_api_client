@@ -254,4 +254,44 @@ class ResourceTest < MiniTest::Unit::TestCase
     user2 = User.new(asdf: "qwer")
     assert_equal(user1, user2)
   end
+
+  def test_meta_on_result_set
+    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
+        ],
+        meta: {
+          ducks: 'quack'
+        }
+      }.to_json)
+
+    users = User.find(1)
+
+    assert_equal({ 'ducks' => 'quack' }, users.meta)
+  end
+
+  def test_meta_on_response
+    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
+        ],
+      }.to_json)
+
+    stub_request(:delete, "http://localhost:3000/api/1/users/1.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
+        ],
+        meta: {
+          ducks: 'quack'
+        }
+      }.to_json)
+
+    user = User.find(1).first
+    user.destroy
+
+    assert_equal({ 'ducks' => 'quack' }, user.last_request_meta)
+  end
 end

@@ -56,6 +56,8 @@ module JsonApiClient
     include Helpers::CustomEndpoints
     include Helpers::Schemable
 
+    attr_reader :last_request_meta
+
     def save
       query = persisted? ? 
         Query::Update.new(self.class, attributes) :
@@ -78,9 +80,10 @@ module JsonApiClient
     def run_request(query)
       # reset errors if a new request is being made
       self.errors.clear if self.errors
-      
+
       result = self.class.run_request(query)
       self.errors = result.errors
+      @last_request_meta = result.meta
       if result.has_errors?
         return false
       else

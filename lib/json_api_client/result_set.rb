@@ -7,7 +7,8 @@ module JsonApiClient
                   :per_page,
                   :current_page,
                   :errors,
-                  :record_class
+                  :record_class,
+                  :meta
     alias_attribute :limit_value, :per_page
 
     def self.build(klass, data)

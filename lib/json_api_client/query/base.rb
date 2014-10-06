@@ -23,7 +23,7 @@ module JsonApiClient
       end
 
       def inspect
-        "method: #{request_method}; path: #{path}; params: #{params}, headers: #{headers}"
+        "#{self.class.name}: method: #{request_method}; path: #{path}; params: #{params}, headers: #{headers}"
       end
 
     end

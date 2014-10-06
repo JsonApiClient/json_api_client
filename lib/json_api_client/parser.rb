@@ -5,6 +5,7 @@ module JsonApiClient
       def parse(klass, response)
         data = response.body
         ResultSet.build(klass, data) do |result_set|
+          handle_meta(result_set, data)
           handle_pagination(result_set, data)
           handle_links(result_set, data)
           handle_errors(result_set, data)
@@ -13,23 +14,26 @@ module JsonApiClient
 
       private
 
+      def handle_meta(result_set, data)
+        result_set.meta = data.fetch("meta", {})
+      end
+
       def handle_pagination(result_set, data)
-        meta = data.fetch("meta", {})
-        result_set.per_page = meta.fetch("per_page") do
+        result_set.per_page = result_set.meta.fetch("per_page") do
           result_set.length
         end
-        result_set.total_entries = meta.fetch("total_entries") do
+        result_set.total_entries = result_set.meta.fetch("total_entries") do
           result_set.length
         end
-        result_set.current_page = meta.fetch("current_page", 1)
+        result_set.current_page = result_set.meta.fetch("current_page", 1)
 
         # can fall back to calculating via total entries and per_page
-        result_set.total_pages = meta.fetch("total_pages") do
+        result_set.total_pages = result_set.meta.fetch("total_pages") do
           (1.0 * result_set.total_entries / result_set.per_page).ceil rescue 1
         end
 
         # can fall back to calculating via per_page and current_page
-        result_set.offset = meta.fetch("offset") do
+        result_set.offset = result_set.meta.fetch("offset") do
           result_set.per_page * (result_set.current_page - 1)
         end
       end
@@ -49,7 +53,7 @@ module JsonApiClient
       end
 
       def handle_errors(result_set, data)
-        result_set.errors = data.fetch("meta", {}).fetch("errors", [])
+        result_set.errors = result_set.meta.fetch("errors", [])
       end
     end
 
