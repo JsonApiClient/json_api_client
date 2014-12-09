@@ -28,6 +28,18 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal "Jeff Ching", user.name
   end
 
+  def test_find_with_individual_resource_representation
+    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: {id: 1}
+      }.to_json)
+
+    users = User.find(1)
+
+    assert_equal 1, users.length
+    assert_equal 1, users.first.id
+  end
+
   def test_find_by_ids
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .with(query: {ids: "2,3"})
