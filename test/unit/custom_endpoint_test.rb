@@ -39,4 +39,8 @@ class CustomEndpointTest < MiniTest::Unit::TestCase
     assert(country.publish)
   end
 
+  def test_collection_methods_should_not_add_methods_to_all_classes
+    assert !Class.respond_to?(:autocomplete), "adding a custom method should not add methods to all classes"
+  end
+
 end
