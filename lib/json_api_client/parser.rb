@@ -25,7 +25,9 @@ module JsonApiClient
         result_set.total_entries = result_set.meta.fetch("total_entries") do
           result_set.length
         end
-        result_set.current_page = result_set.meta.fetch("current_page", 1)
+        result_set.current_page = result_set.meta.fetch("current_page") do
+          result_set.meta.fetch("page", 1)
+        end
 
         # can fall back to calculating via total entries and per_page
         result_set.total_pages = result_set.meta.fetch("total_pages") do
