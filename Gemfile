@@ -15,4 +15,9 @@ end
 
 gem "activesupport", as_version
 
+# 3.2 now requires the minitest gem
+if as_version =~ /3\.2\./
+  gem "minitest"
+end
+
 gem "codeclimate-test-reporter", group: :test, require: nil
