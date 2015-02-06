@@ -13,12 +13,17 @@ module JsonApiClient
         end
 
         def collection_endpoint(name, options = {})
-          self.class.send(:define_method, name) do |*params|
-            input = {
-              name: name,
-              params: request_params = params.first || {}
-            }.merge(options)
-            run_request(Query::Custom.new(self, input))
+          metaclass = class << self
+            self
+          end
+          metaclass.instance_eval do
+            define_method(name) do |*params|
+              input = {
+                name: name,
+                params: request_params = params.first || {}
+              }.merge(options)
+              run_request(Query::Custom.new(self, input))
+            end
           end
         end
 
