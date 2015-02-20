@@ -82,6 +82,48 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_equal 1, users.length
   end
 
+  def test_find_each
+    stub_request(:get, "http://localhost:3000/api/1/users.json?page=1")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
+          {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
+        ],
+        meta: {
+          per_page: 2,
+          current_page: 1,
+          offset: 0,
+          total_entries: 3,
+          total_pages: 2
+        }
+      }.to_json)
+
+    stub_request(:get, "http://localhost:3000/api/1/users.json?page=2")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: [
+          {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
+        ],
+        meta: {
+          per_page: 2,
+          current_page: 2,
+          offset: 2,
+          total_entries: 3,
+          total_pages: 2
+        }
+      }.to_json)
+
+    users = []
+    User.find_each do |user|
+      users << user
+    end
+
+    assert_equal [
+      {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
+      {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
+      {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}
+    ].map(&:with_indifferent_access), users.map(&:to_hash)
+  end
+
   def test_create
     stub_request(:post, "http://localhost:3000/api/1/users.json")
       .with(body: {user: {name: "Mickey Mantle", email_address: "mickey@mantle.com"}})

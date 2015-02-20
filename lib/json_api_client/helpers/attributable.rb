@@ -53,6 +53,10 @@ module JsonApiClient
         end
       end
 
+      def to_hash
+        attributes.dup
+      end
+
       protected
 
       def method_missing(method, *args, &block)

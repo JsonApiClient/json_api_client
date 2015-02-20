@@ -7,5 +7,6 @@ module JsonApiClient
     autoload :Find, 'json_api_client/query/find'
     autoload :Update, 'json_api_client/query/update'
     autoload :Linked, 'json_api_client/query/linked'
+    autoload :FindEach, 'json_api_client/query/find_each'
   end
 end

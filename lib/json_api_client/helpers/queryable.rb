@@ -6,7 +6,7 @@ module JsonApiClient
       included do
         class << self
           extend Forwardable
-          def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
+          def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first, :find_each
         end
         class_attribute :connection_class, :connection_object, :connection_options
         self.connection_class = Connection
