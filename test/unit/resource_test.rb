@@ -165,7 +165,7 @@ class ResourceTest < MiniTest::Unit::TestCase
 
     assert user.respond_to? :foo
     assert user.respond_to? :foo=
-    assert_equal(user.foo, "bar")
+    assert_equal "bar", user.foo
 
     refute user.respond_to? :bar
     assert user.respond_to? :bar=
@@ -175,6 +175,16 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_raises NoMethodError do
       user.quux
     end
+  end
+
+  def test_duplication
+    user = User.new(foo: "bar")
+    user2 = user.dup
+
+    refute_equal user, user2
+
+    user.foo = "baz"
+    refute_equal user.foo, user2.foo
   end
 
   def test_update
