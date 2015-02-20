@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class ResourceTest < MiniTest::Unit::TestCase
-
   def test_basic
     assert User.is_a?(Class)
   end
@@ -306,4 +305,18 @@ class ResourceTest < MiniTest::Unit::TestCase
 
     assert_equal({ 'ducks' => 'quack' }, user.last_request_meta)
   end
+
+  def test_id_with_special_characters
+    user_id = ":  /?#[]@!$&'()*+,;="
+    stub_request(:get, "http://localhost:3000/api/1/users/%3A%20%20%2F%3F%23%5B%5D%40!%24%26%27()*%2B%2C%3B%3D.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        users: {id: user_id}
+      }.to_json)
+
+    users = User.find(user_id)
+
+    assert_equal 1, users.length
+    assert_equal user_id, users.first.id
+  end
+
 end
