@@ -14,7 +14,7 @@ else
 end
 
 gem "activesupport", as_version
-gem 'addressable'
+gem 'addressable', '~> 2.2'
 
 # 3.2 now requires the minitest gem
 if as_version =~ /3\.2\./
