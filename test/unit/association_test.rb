@@ -133,4 +133,19 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal(1, specifieds.length)
   end
 
+  def test_can_handle_non_symbolized_keys
+    stub_request(:post, "http://localhost:3000/api/1/foos/10/specifieds.json")
+      .to_return(headers: {content_type: "application/json"}, body: {
+        specifieds: [
+          {id: 12, name: "Blah", bars: [{id: 1, address: "123 Main St."}]}
+        ]
+      }.to_json)
+
+    specified = Specified.create({
+      "id" => 12,
+      "foo_id" => 10,
+      "name" => "Blah"
+    })
+  end
+
 end
