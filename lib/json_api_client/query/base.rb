@@ -15,7 +15,9 @@ module JsonApiClient
         @path = begin
           p = klass.path(parameters)
           if parameters.has_key?(klass.primary_key) && !parameters[klass.primary_key].is_a?(Array)
-            p = File.join(p, parameters.delete(klass.primary_key).to_s)
+            resource_id = parameters.delete(klass.primary_key).to_s
+            encoded_resource_id = Addressable::URI.encode_component(resource_id, Addressable::URI::CharacterClasses::UNRESERVED)
+            p = File.join(p, encoded_resource_id)
           end
           p
         end
