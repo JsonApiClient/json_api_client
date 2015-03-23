@@ -1,3 +1,5 @@
+require "addressable/uri"
+
 module JsonApiClient
   module Query
     class Base
