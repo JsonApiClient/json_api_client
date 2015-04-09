@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'legacy_test_helper'
 require 'logger'
 
 class NullConnection

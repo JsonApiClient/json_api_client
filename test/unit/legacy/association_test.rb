@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'legacy_test_helper'
 
 class Owner < LegacyTestResource
   has_many :properties

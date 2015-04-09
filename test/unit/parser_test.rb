@@ -1,13 +1,5 @@
 require 'test_helper'
 
-class TestResource < JsonApiClient::Resource
-  self.site = "http://localhost:3000/"
-  self.parser = JsonApiClient::Parsers::Parser
-end
-
-class Article < TestResource
-end
-
 class ParserTest < MiniTest::Unit::TestCase
 
   def test_can_parse_single_record
