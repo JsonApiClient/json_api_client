@@ -3,7 +3,7 @@ require 'test_helper'
 class ParserTest < MiniTest::Unit::TestCase
 
   def test_can_parse_single_record
-    stub_request(:get, "http://localhost:3000/articles/1.json")
+    stub_request(:get, "http://example.com/articles/1.json")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
