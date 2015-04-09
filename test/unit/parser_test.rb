@@ -15,7 +15,7 @@ class ParserTest < MiniTest::Unit::TestCase
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
-          id: 1,
+          id: "1",
           title: "Rails is Omakase",
           links: {
             author: {
@@ -32,7 +32,7 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal 1, articles.length
 
     article = articles.first
-    assert_equal 1, article.id
+    assert_equal "1", article.id
     assert_equal "Rails is Omakase", article.title
   end
 
