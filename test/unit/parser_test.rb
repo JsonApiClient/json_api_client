@@ -28,8 +28,11 @@ class ParserTest < MiniTest::Unit::TestCase
       }.to_json)
     articles = Article.find(1)
 
+    assert articles.is_a?(JsonApiClient::ResultSet)
     assert_equal 1, articles.length
-    article = 1, article.id
+
+    article = articles.first
+    assert_equal 1, article.id
     assert_equal "Rails is Omakase", article.title
   end
 
