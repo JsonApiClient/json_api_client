@@ -9,30 +9,30 @@ require 'pp'
 WebMock.disable_net_connect!(:allow => "codeclimate.com")
 
 # test resources
-class TestResource < JsonApiClient::Resource
+class LegacyTestResource < JsonApiClient::Resource
   self.site = "http://localhost:3000/api/1"
 end
 
 # basic resource
-class User < TestResource
+class User < LegacyTestResource
 end
 
-class Post < TestResource
+class Post < LegacyTestResource
 end
 
-class Address < TestResource
+class Address < LegacyTestResource
 end
 
 # for testing primary key option
-class UserPreference < TestResource
+class UserPreference < LegacyTestResource
   self.primary_key = :user_id
 end
 
-class InheritedEndpoint < TestResource
+class InheritedEndpoint < LegacyTestResource
   self.site = "http://foo.com"
 end
 
-class CustomPagination < TestResource
+class CustomPagination < LegacyTestResource
 end
 
 # remaps meta data

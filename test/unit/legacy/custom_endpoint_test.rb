@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Country < TestResource
+class Country < LegacyTestResource
 
   custom_endpoint :autocomplete, on: :collection, request_method: :get
   custom_endpoint :publish, on: :member, request_method: :post

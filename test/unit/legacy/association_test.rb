@@ -1,24 +1,24 @@
 require 'test_helper'
 
-class Owner < TestResource
+class Owner < LegacyTestResource
   has_many :properties
 end
 
-class Property < TestResource
+class Property < LegacyTestResource
   has_one :owner
 end
 
-class Specified < TestResource
+class Specified < LegacyTestResource
   belongs_to :foo, class_name: "Property"
   has_many :bars, class_name: "Owner"
 end
 
 module Namespaced
-  class Owner < TestResource
+  class Owner < LegacyTestResource
     has_many :properties
   end
 
-  class Property < TestResource
+  class Property < LegacyTestResource
     belongs_to :owner
   end
 end

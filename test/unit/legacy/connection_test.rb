@@ -15,7 +15,7 @@ class NullParser
   end
 end
 
-class CustomConnectionResource < TestResource
+class CustomConnectionResource < LegacyTestResource
   self.connection_class = NullConnection
   self.parser = NullParser
 end

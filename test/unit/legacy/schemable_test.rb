@@ -1,17 +1,17 @@
 require 'test_helper'
 
-class SchemaResource < TestResource
+class SchemaResource < LegacyTestResource
   property :a, type: :string, default: 'foo'
   property :b, type: :boolean, default: false
   property :c
   property :d, type: :integer
 end
 
-class SchemaResource2 < TestResource
+class SchemaResource2 < LegacyTestResource
   property :a, type: :float
 end
 
-class MultipleSchema < TestResource
+class MultipleSchema < LegacyTestResource
   properties :name, :short_name, :long_name, type: :string
 end
 
