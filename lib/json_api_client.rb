@@ -10,7 +10,7 @@ module JsonApiClient
   autoload :LinkDefinition, 'json_api_client/link_definition'
   autoload :LinkedData, 'json_api_client/linked_data'
   autoload :Middleware, 'json_api_client/middleware'
-  autoload :Parser, 'json_api_client/parser'
+  autoload :Parsers, 'json_api_client/parsers'
   autoload :Query, 'json_api_client/query'
   autoload :Resource, 'json_api_client/resource'
   autoload :ResultSet, 'json_api_client/result_set'
