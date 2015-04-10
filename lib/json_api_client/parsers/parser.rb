@@ -6,6 +6,7 @@ module JsonApiClient
           data = response.body
           ResultSet.new.tap do |result_set|
             result_set.record_class = klass
+            result_set.uri = response.env[:url]
             handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)

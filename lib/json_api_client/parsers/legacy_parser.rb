@@ -7,6 +7,7 @@ module JsonApiClient
           data = response.body
           ResultSet.build(klass, data) do |result_set|
             result_set.record_class = klass
+            result_set.uri = response.env[:url]
             handle_meta(result_set, data)
             handle_pagination(result_set, data)
             handle_links(result_set, data)

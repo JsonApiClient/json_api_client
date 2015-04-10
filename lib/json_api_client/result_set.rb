@@ -7,7 +7,8 @@ module JsonApiClient
     attr_accessor :errors,
                   :record_class,
                   :meta,
-                  :pages
+                  :pages,
+                  :uri
 
     def_delegators :pages, :total_pages, :total_entries, :offset, :per_page, :current_page, :limit_value, :next_page, :previous_page, :out_of_bounds?
 
