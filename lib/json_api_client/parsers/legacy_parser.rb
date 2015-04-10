@@ -6,6 +6,7 @@ module JsonApiClient
         def parse(klass, response)
           data = response.body
           ResultSet.build(klass, data) do |result_set|
+            result_set.record_class = klass
             handle_meta(result_set, data)
             handle_pagination(result_set, data)
             handle_links(result_set, data)
@@ -20,25 +21,7 @@ module JsonApiClient
         end
 
         def handle_pagination(result_set, data)
-          result_set.per_page = result_set.meta.fetch("per_page") do
-            result_set.length
-          end
-          result_set.total_entries = result_set.meta.fetch("total_entries") do
-            result_set.length
-          end
-          result_set.current_page = result_set.meta.fetch("current_page") do
-            result_set.meta.fetch("page", 1)
-          end
-
-          # can fall back to calculating via total entries and per_page
-          result_set.total_pages = result_set.meta.fetch("total_pages") do
-            (1.0 * result_set.total_entries / result_set.per_page).ceil rescue 1
-          end
-
-          # can fall back to calculating via per_page and current_page
-          result_set.offset = result_set.meta.fetch("offset") do
-            result_set.per_page * (result_set.current_page - 1)
-          end
+          result_set.pages = result_set.record_class.paginator.new(result_set, result_set.meta)
         end
 
         def handle_links(result_set, data)

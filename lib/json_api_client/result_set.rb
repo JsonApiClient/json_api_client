@@ -1,15 +1,15 @@
+require 'forwardable'
+
 module JsonApiClient
   class ResultSet < Array
+    extend Forwardable
 
-    attr_accessor :total_pages,
-                  :total_entries,
-                  :offset,
-                  :per_page,
-                  :current_page,
-                  :errors,
+    attr_accessor :errors,
                   :record_class,
-                  :meta
-    alias_attribute :limit_value, :per_page
+                  :meta,
+                  :pages
+
+    def_delegators :pages, :total_pages, :total_entries, :offset, :per_page, :current_page, :limit_value, :next_page, :previous_page, :out_of_bounds?
 
     def self.build(klass, data)
       # Objects representing an individual resource are
@@ -25,16 +25,5 @@ module JsonApiClient
       errors && errors.length > 0
     end
 
-    def out_of_bounds?
-      current_page > total_pages
-    end
-
-    def previous_page
-      current_page > 1 ? (current_page - 1) : nil
-    end
-
-    def next_page
-      current_page < total_pages ? (current_page + 1) : nil
-    end
   end
 end

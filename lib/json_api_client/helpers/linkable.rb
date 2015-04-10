@@ -3,21 +3,6 @@ module JsonApiClient
     module Linkable
       extend ActiveSupport::Concern
 
-      class Linker
-        attr_reader :links
-        def initialize(links)
-          @links = links || {}
-        end
-
-        def has_link?(name)
-          links.has_key?(name.to_s)
-        end
-
-        def [](key)
-          links[key.to_s]
-        end
-      end
-
       included do
         # the links for this resource
         attr_accessor :links
@@ -28,7 +13,7 @@ module JsonApiClient
         initializer do |obj, params|
           links = params && params.delete("links")
           links ||= {}
-          obj.links = Linker.new(links)
+          obj.links = Linking::Links.new(links)
         end
       end
 

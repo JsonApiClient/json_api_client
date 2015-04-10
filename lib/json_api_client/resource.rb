@@ -55,6 +55,7 @@ module JsonApiClient
     include Helpers::Linkable
     include Helpers::CustomEndpoints
     include Helpers::Schemable
+    include Helpers::Paginatable
 
     attr_reader :last_request_meta
 

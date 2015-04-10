@@ -9,7 +9,7 @@ module JsonApiClient
             handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)
-            handle_links(result_set, data)
+            handle_pagination(result_set, data)
             handle_included(result_set, data)
           end
         end
@@ -33,8 +33,8 @@ module JsonApiClient
           result_set.meta = data.fetch("meta", {})
         end
 
-        def handle_links(result_set, data)
-
+        def handle_pagination(result_set, data)
+          result_set.pages = result_set.record_class.paginator.new(result_set, data.fetch("links", {}))
         end
 
         def handle_included(result_set, data)
