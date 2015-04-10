@@ -15,10 +15,22 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
           related: "http://example.com/articles/1/related.json"
         }
       }.to_json)
+    stub_request(:get, "http://example.com/articles/1/related.json")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "article-image",
+          id: "14",
+          image: "http://foo.com/cat.png"
+        }
+      }.to_json)
 
     articles = Article.find(1)
-    assert articles.respond_to?(:related), "ResultSet should respond to related"
-    assert articles.related.is_a?(JsonApiClient::ResultSet)
+    links = articles.links
+    assert links
+    assert links.respond_to?(:related), "ResultSet links should respond to related"
+    
+    related = links.related
+    assert related.is_a?(JsonApiClient::ResultSet), "expected related link to return another ResultSet"
   end
 
   def test_can_parse_pagination_links

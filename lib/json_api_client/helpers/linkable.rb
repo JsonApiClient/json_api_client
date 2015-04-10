@@ -22,7 +22,7 @@ module JsonApiClient
         linked_data.data_for(method, links[method])
       end
 
-      def respond_to?(symbol, include_all = false)
+      def respond_to_missing?(symbol, include_all = false)
         return true if links && links.has_link?(symbol)
         super
       end

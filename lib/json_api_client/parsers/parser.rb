@@ -10,6 +10,7 @@ module JsonApiClient
             handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)
+            handle_links(result_set, data)
             handle_pagination(result_set, data)
             handle_included(result_set, data)
           end
@@ -32,6 +33,10 @@ module JsonApiClient
 
         def handle_meta(result_set, data)
           result_set.meta = data.fetch("meta", {})
+        end
+
+        def handle_links(result_set, data)
+          result_set.links = Linking::TopLevelLinks.new(result_set.record_class, data.fetch("links", {}))
         end
 
         def handle_pagination(result_set, data)
