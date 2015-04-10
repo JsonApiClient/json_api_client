@@ -5,7 +5,7 @@ module JsonApiClient
 
       included do
         class_attribute :paginator
-        self.paginator = Paginating::LegacyPaginator
+        self.paginator = Paginating::Paginator
       end
 
     end

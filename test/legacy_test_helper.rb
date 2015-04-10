@@ -3,6 +3,8 @@ require 'test_helper'
 # test resources
 class LegacyTestResource < JsonApiClient::Resource
   self.site = "http://localhost:3000/api/1"
+  self.parser = JsonApiClient::Parsers::LegacyParser
+  self.paginator = JsonApiClient::Paginating::LegacyPaginator
 end
 
 # basic resource
