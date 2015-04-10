@@ -7,6 +7,7 @@ module JsonApiClient
   autoload :Connection, 'json_api_client/connection'
   autoload :Errors, 'json_api_client/errors'
   autoload :Helpers, 'json_api_client/helpers'
+  autoload :IncludedData, 'json_api_client/included_data'
   autoload :LinkDefinition, 'json_api_client/link_definition'
   autoload :LinkedData, 'json_api_client/linked_data'
   autoload :Middleware, 'json_api_client/middleware'

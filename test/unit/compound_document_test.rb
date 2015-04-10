@@ -62,14 +62,14 @@ class CompoundDocumentTest < MiniTest::Unit::TestCase
     assert_equal "JSON API paints my bikeshed!", article.title
 
     author = article.author
-    assert author.is_a?(Person), "expected this has-one relation to return a single resource"
-    assert_equal "Dan", author.first_name
-    assert_equal "Gebhardt", author.last_name
+    assert author.is_a?(Person), "expected this has-one relation to return a single Person resource"
+    assert_equal "Dan", author["first-name"]
+    assert_equal "Gebhardt", author["last-name"]
     assert_equal "dgeb", author.twitter
 
     comments = article.comments
     assert comments.is_a?(Array), "expected this has-many relationship to return an array"
-    assert comments.all?{|comment| comment.is_a?(Comment)}
+    assert comments.all?{|comment| comment.is_a?(Comment)}, "expected this has-many relationship to return an array of Comment resources"
 
     assert_equal ["5", "12"], comments.map(&:id), "expected to return the comments in the order specified by the link"
     comment = comments.first

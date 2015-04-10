@@ -26,11 +26,11 @@ module JsonApiClient
         end
 
         def handle_errors(result_set, data)
-          errors = data.fetch("errors", [])
+          result_set.errors = data.fetch("errors", [])
         end
 
         def handle_meta(result_set, data)
-
+          result_set.meta = data.fetch("meta", {})
         end
 
         def handle_links(result_set, data)
@@ -38,7 +38,10 @@ module JsonApiClient
         end
 
         def handle_included(result_set, data)
-
+          included = IncludedData.new(result_set.record_class, data.fetch("included", []))
+          result_set.each do |res|
+            res.linked_data = included
+          end
         end
       end
     end
