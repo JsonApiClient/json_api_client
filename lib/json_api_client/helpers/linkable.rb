@@ -19,18 +19,21 @@ module JsonApiClient
       end
 
       included do
-        attr_accessor :links,
-                      :linked_data
+        # the links for this resource
+        attr_accessor :links
+
+        # reference to all of the preloaded data
+        attr_accessor :linked_data
 
         initializer do |obj, params|
-          if params && links = params.delete("links")
-            obj.links = Linker.new(links)
-          end
+          links = params && params.delete("links")
+          links ||= {}
+          obj.links = Linker.new(links)
         end
       end
 
       def method_missing(method, *args)
-        return super unless links.has_link?(method)
+        return super unless links && links.has_link?(method)
         linked_data.data_for(method, links[method])
       end
 
