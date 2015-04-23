@@ -5,6 +5,7 @@ class LegacyTestResource < JsonApiClient::Resource
   self.site = "http://localhost:3000/api/1"
   self.parser = JsonApiClient::Parsers::LegacyParser
   self.paginator = JsonApiClient::Paginating::LegacyPaginator
+  self.query_builder= JsonApiClient::Query::LegacyBuilder
 end
 
 # basic resource

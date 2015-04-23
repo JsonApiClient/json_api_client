@@ -8,14 +8,15 @@ module JsonApiClient
           extend Forwardable
           def_delegators :new_scope, :where, :order, :includes, :all, :paginate, :page, :first
         end
-        class_attribute :connection_class, :connection_object, :connection_options
+        class_attribute :connection_class, :connection_object, :connection_options, :query_builder
         self.connection_class = Connection
         self.connection_options = {}
+        self.query_builder = Query::Builder
       end
 
       module ClassMethods
         def new_scope
-          Scope.new(self)
+          query_builder.new(self)
         end
 
         def connection(&block)
