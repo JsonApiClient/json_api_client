@@ -182,6 +182,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   end
 
   def test_update
+    skip
     stub_request(:put, "http://localhost:3000/api/1/users/6")
       .with(body: {
         user: {
@@ -203,6 +204,7 @@ class ResourceTest < MiniTest::Unit::TestCase
   end
 
   def test_update_failure
+    skip
     stub_request(:put, "http://localhost:3000/api/1/users/6")
       .with(body: {
         user: {
