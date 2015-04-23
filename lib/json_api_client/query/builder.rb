@@ -59,7 +59,7 @@ module JsonApiClient
       private
 
       def includes_params
-        {include: @includes.join(",")}
+        @includes.empty? ? {} : {include: @includes.join(",")}
       end
 
       def parse_related_links(*tables)

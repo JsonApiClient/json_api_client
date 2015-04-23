@@ -20,4 +20,13 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
     articles = Article.includes({comments: :author}, :tags).to_a
   end
 
+  def test_can_paginate
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {page: 3, per_page: 6})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.paginate(page: 3, per_page: 6).to_a
+  end
+
 end
