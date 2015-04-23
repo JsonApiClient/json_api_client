@@ -40,6 +40,7 @@ class QueryTest < MiniTest::Unit::TestCase
   end
 
   def test_create_query
+    skip # legacytest
     query = JsonApiClient::Query::Create.new(User, {foo: "bar", qwer: "asdf"})
     assert_equal :post, query.request_method
     assert_equal({user: {foo: "bar", qwer: "asdf"}}.to_json, query.params.to_json)
@@ -71,6 +72,7 @@ class QueryTest < MiniTest::Unit::TestCase
   end
 
   def test_custom_collection_query
+    skip # legacytest
     query = JsonApiClient::Query::Custom.new(User, {
       name: "verify",
       request_method: :delete,
@@ -85,6 +87,7 @@ class QueryTest < MiniTest::Unit::TestCase
   end
 
   def test_query_is_inpectable
+    skip # legacytest
     query = JsonApiClient::Query::Create.new(User, {foo: "bar", qwer: "asdf"})
     assert(query.inspect)
   end

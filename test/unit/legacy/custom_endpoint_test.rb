@@ -10,7 +10,7 @@ end
 class CustomEndpointTest < MiniTest::Unit::TestCase
 
   def test_collection_get
-    stub_request(:get, "http://localhost:3000/api/1/countries/autocomplete.json?starts_with=bel")
+    stub_request(:get, "http://localhost:3000/api/1/countries/autocomplete?starts_with=bel")
       .to_return(headers: {content_type: "application/json"}, body: {
         countries: [
           {id: 1, name: 'Belgium'},
@@ -25,7 +25,7 @@ class CustomEndpointTest < MiniTest::Unit::TestCase
   end
 
   def test_member_post
-    stub_request(:post, "http://localhost:3000/api/1/countries/1/publish.json")
+    stub_request(:post, "http://localhost:3000/api/1/countries/1/publish")
       .to_return(headers: {content_type: "application/json"}, body: {
         countries: [
           {id: 1, name: 'Belgium'}

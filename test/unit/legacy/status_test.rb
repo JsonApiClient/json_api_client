@@ -3,7 +3,7 @@ require 'legacy_test_helper'
 class StatusTest < MiniTest::Unit::TestCase
 
   def test_server_responding_with_status_meta
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {content_type: "application/json"}, body: {
         meta: {
           status: 500,
@@ -17,10 +17,10 @@ class StatusTest < MiniTest::Unit::TestCase
   end
 
   def test_server_responding_with_http_status
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {
         content_type: "text/plain"
-      }, 
+      },
       status: 500,
       body: "something irrelevant")
 
@@ -30,10 +30,10 @@ class StatusTest < MiniTest::Unit::TestCase
   end
 
   def test_server_responding_with_404_status
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {
         content_type: "text/plain"
-      }, 
+      },
       status: 404,
       body: "something irrelevant")
 
@@ -43,7 +43,7 @@ class StatusTest < MiniTest::Unit::TestCase
   end
 
   def test_server_responding_with_404_status_meta
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {content_type: "application/json"}, body: {
         meta: {
           status: 404,
