@@ -1,6 +1,7 @@
 require 'faraday'
 require 'faraday_middleware'
 require 'json'
+require "addressable/uri"
 
 module JsonApiClient
   autoload :Associations, 'json_api_client/associations'
