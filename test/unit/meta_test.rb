@@ -3,7 +3,7 @@ require 'test_helper'
 class MetaTest < MiniTest::Unit::TestCase
 
   def test_can_parse_global_meta_data
-    stub_request(:get, "http://example.com/articles/1.json")
+    stub_request(:get, "http://example.com/articles/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
