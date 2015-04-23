@@ -8,6 +8,5 @@ module JsonApiClient
     autoload :Find, 'json_api_client/query/find'
     autoload :Update, 'json_api_client/query/update'
     autoload :Linked, 'json_api_client/query/linked'
-    autoload :LegacyBuilder, 'json_api_client/query/legacy_builder'
   end
 end
