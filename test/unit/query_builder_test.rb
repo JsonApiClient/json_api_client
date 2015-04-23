@@ -29,4 +29,52 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
     articles = Article.paginate(page: 3, per_page: 6).to_a
   end
 
+  def test_can_sort_asc
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {sort: "+foo"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    articles = Article.order(foo: :asc).to_a
+  end
+
+  def test_sort_defaults_to_asc
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {sort: "+foo"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    articles = Article.order(:foo).to_a
+  end
+
+  def test_can_sort_desc
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {sort: "-foo"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    articles = Article.order(foo: :desc).to_a
+  end
+
+  def test_can_sort_multiple
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {sort: "-foo,+bar"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.order(foo: :desc, bar: :asc).to_a
+  end
+
+  def test_can_sort_mixed
+    stub_request(:get, "http://example.com/articles.json")
+      .with(query: {sort: "-foo,+bar"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.order(foo: :desc).order(:bar).to_a
+  end
+
 end

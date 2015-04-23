@@ -9,6 +9,7 @@ module JsonApiClient
         @pagination_params = {}
         @base_params = {}
         @includes = []
+        @orders = []
       end
 
       def where(conditions = {})
@@ -17,6 +18,7 @@ module JsonApiClient
       end
 
       def order(*args)
+        @orders += parse_orders(*args)
         self
       end
 
@@ -44,7 +46,10 @@ module JsonApiClient
       end
 
       def params
-        @base_params.merge(@pagination_params).merge(includes_params)
+        @base_params
+          .merge(@pagination_params)
+          .merge(includes_params)
+          .merge(order_params)
       end
 
       def to_a
@@ -62,6 +67,10 @@ module JsonApiClient
         @includes.empty? ? {} : {include: @includes.join(",")}
       end
 
+      def order_params
+        @orders.empty? ? {} : {sort: @orders.join(",")}
+      end
+
       def parse_related_links(*tables)
         tables.map do |table|
           case table
@@ -77,6 +86,20 @@ module JsonApiClient
             end
           else
             table
+          end
+        end.flatten
+      end
+
+      def parse_orders(*args)
+        args.map do |arg|
+          case arg
+          when Hash
+            arg.map do |k, v|
+              operator = (v == :desc ? "-" : "+")
+              "#{operator}#{k}"
+            end
+          else
+            "+#{arg}"
           end
         end.flatten
       end
