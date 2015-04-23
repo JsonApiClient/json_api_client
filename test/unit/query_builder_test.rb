@@ -3,7 +3,7 @@ require 'test_helper'
 class QueryBuilderTest < MiniTest::Unit::TestCase
 
   def test_can_specify_nested_includes
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {include: "comments.author"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -12,7 +12,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_specify_multiple_includes
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {include: "comments.author,tags"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -21,7 +21,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_paginate
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {page: 3, per_page: 6})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -30,7 +30,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_sort_asc
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "+foo"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -40,7 +40,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_sort_defaults_to_asc
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "+foo"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -50,7 +50,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_sort_desc
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "-foo"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -60,7 +60,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_sort_multiple
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "-foo,+bar"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
@@ -69,7 +69,7 @@ class QueryBuilderTest < MiniTest::Unit::TestCase
   end
 
   def test_can_sort_mixed
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "-foo,+bar"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []

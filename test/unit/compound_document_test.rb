@@ -3,7 +3,7 @@ require 'test_helper'
 class CompoundDocumentTest < MiniTest::Unit::TestCase
 
   def test_can_handle_included_data
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
           type: "articles",

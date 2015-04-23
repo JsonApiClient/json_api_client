@@ -3,7 +3,7 @@ require 'legacy_test_helper'
 class LinksTest < MiniTest::Unit::TestCase
 
   def test_can_make_requests_for_data_if_linked_data_not_provided
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com", links: {
@@ -22,14 +22,14 @@ class LinksTest < MiniTest::Unit::TestCase
           }
         }
       }.to_json)
-    stub_request(:get, "http://localhost:3000/api/1/posts/2,3.json")
+    stub_request(:get, "http://localhost:3000/api/1/posts/2,3")
       .to_return(headers: {content_type: "application/json"}, body: {
         posts: [
           {id: 2, title: "Yo", body: "Lo"},
           {id: 3, title: "Foo", body: "Bar"}
         ]
       }.to_json)
-    stub_request(:get, "http://localhost:3000/api/1/addresses/4.json")
+    stub_request(:get, "http://localhost:3000/api/1/addresses/4")
       .to_return(headers: {content_type: "application/json"}, body: {
         addresses: [
           {id: 4, address: "1st Ave S"}
@@ -53,7 +53,7 @@ class LinksTest < MiniTest::Unit::TestCase
   end
 
   def test_can_load_linked_data
-    stub_request(:get, "http://localhost:3000/api/1/users/1.json")
+    stub_request(:get, "http://localhost:3000/api/1/users/1")
       .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com", links: {

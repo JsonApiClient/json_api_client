@@ -3,7 +3,7 @@ require 'legacy_test_helper'
 class ServerValidationsTest < MiniTest::Unit::TestCase
 
   def test_update_validation_error
-    stub_request(:put, "http://localhost:3000/api/1/users/6.json")
+    stub_request(:put, "http://localhost:3000/api/1/users/6")
       .with(body: {
         user: {
           name: "Foo Bar",
@@ -27,7 +27,8 @@ class ServerValidationsTest < MiniTest::Unit::TestCase
   end
 
   def test_create_validation_error
-    stub_request(:post, "http://localhost:3000/api/1/users.json")
+    skip # legacytest
+    stub_request(:post, "http://localhost:3000/api/1/users")
       .with(body: {
         user: {
           name: "Foo Bar",
@@ -51,7 +52,8 @@ class ServerValidationsTest < MiniTest::Unit::TestCase
   end
 
   def test_class_create_validation_error
-    stub_request(:post, "http://localhost:3000/api/1/users.json")
+    skip # legacytest
+    stub_request(:post, "http://localhost:3000/api/1/users")
       .with(body: {
         user: {
           name: "Foo Bar",
