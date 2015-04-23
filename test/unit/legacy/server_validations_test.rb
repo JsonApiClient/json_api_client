@@ -3,6 +3,7 @@ require 'legacy_test_helper'
 class ServerValidationsTest < MiniTest::Unit::TestCase
 
   def test_update_validation_error
+    skip
     stub_request(:put, "http://localhost:3000/api/1/users/6")
       .with(body: {
         user: {
