@@ -9,15 +9,19 @@ module JsonApiClient
       end
 
       def next
+        result_set.links.fetch_link("next")
       end
 
       def prev
+        result_set.links.fetch_link("next")
       end
 
       def first
+        result_set.links.fetch_link("first")
       end
 
       def last
+        result_set.links.fetch_link("last")
       end
 
       def total_pages

@@ -54,7 +54,7 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
         data: [{
           type: "articles",
           id: "2",
-          title: "This it tha BOMB"
+          title: "This is tha BOMB"
         }],
         links: {
           self: "http://example.com/articles.json?page=2",
