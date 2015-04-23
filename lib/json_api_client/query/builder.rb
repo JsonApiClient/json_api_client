@@ -81,8 +81,8 @@ module JsonApiClient
               end
             end
           when Array
-            table.map do
-              parse_related_links(*table)
+            table.map do |v|
+              parse_related_links(*v)
             end
           else
             table
