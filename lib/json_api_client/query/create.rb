@@ -9,7 +9,7 @@ module JsonApiClient
 
       # we've nested the parameters, so un-nest them
       def build_path(parameters)
-        super(parameters[klass.resource_name])
+        super(parameters['data'])
       end
 
     end
