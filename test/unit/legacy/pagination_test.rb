@@ -3,7 +3,7 @@ require 'legacy_test_helper'
 class PaginationTest < MiniTest::Unit::TestCase
 
   def test_no_meta_data
-    stub_request(:get, "http://localhost:3000/api/1/users.json")
+    stub_request(:get, "http://localhost:3000/api/1/users")
       .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
@@ -22,7 +22,7 @@ class PaginationTest < MiniTest::Unit::TestCase
   end
 
   def test_meta_data
-    stub_request(:get, "http://localhost:3000/api/1/users.json")
+    stub_request(:get, "http://localhost:3000/api/1/users")
       .to_return(headers: {content_type: "application/json"}, body: {
         users: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
@@ -48,7 +48,7 @@ class PaginationTest < MiniTest::Unit::TestCase
   end
 
   def test_custom_meta_data
-    stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
+    stub_request(:get, "http://localhost:3000/api/1/custom_paginations")
     .to_return(headers: {content_type: "application/json"}, body: {
       custom_paginations: [
         {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
@@ -74,7 +74,7 @@ class PaginationTest < MiniTest::Unit::TestCase
   # will_paginate gem specific parameters check
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/collection.rb
   def test_will_paginate_params
-    stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
+    stub_request(:get, "http://localhost:3000/api/1/custom_paginations")
     .to_return(headers: {content_type: "application/json"}, body: {
       custom_paginations: [
         {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
@@ -102,7 +102,7 @@ class PaginationTest < MiniTest::Unit::TestCase
   # kaminari gem specific parameters check
   # https://github.com/amatsuda/kaminari/blob/master/lib/kaminari/models/array_extension.rb
   def test_kaminari_params
-    stub_request(:get, "http://localhost:3000/api/1/custom_paginations.json")
+    stub_request(:get, "http://localhost:3000/api/1/custom_paginations")
     .to_return(headers: {content_type: "application/json"}, body: {
       custom_paginations: [
         {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
@@ -126,7 +126,7 @@ class PaginationTest < MiniTest::Unit::TestCase
   end
 
   def test_can_handle_page_param
-    stub_request(:get, "http://localhost:3000/api/1/users.json")
+    stub_request(:get, "http://localhost:3000/api/1/users")
     .to_return(headers: {content_type: "application/json"}, body: {
       users: [
         {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
