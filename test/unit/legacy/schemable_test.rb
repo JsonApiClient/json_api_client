@@ -1,10 +1,13 @@
 require 'legacy_test_helper'
 
+TIME_STRING = '2015-04-28 10:45:35 -0700'
+
 class SchemaResource < LegacyTestResource
   property :a, type: :string, default: 'foo'
   property :b, type: :boolean, default: false
   property :c
   property :d, type: :integer
+  property :e, type: :time
 end
 
 class SchemaResource2 < LegacyTestResource
@@ -20,12 +23,12 @@ class SchemableTest < MiniTest::Unit::TestCase
   def test_defines_fields
     resource = SchemaResource.new
 
-    %w(a b c d).each do |method_name|
+    %w(a b c d e).each do |method_name|
       assert resource.respond_to?(method_name), "should respond_to?(:#{method_name})"
       assert resource.respond_to?("#{method_name}="), "should respond_to?(:#{method_name}=)"
     end
 
-    assert_equal 4, SchemaResource.schema.size
+    assert_equal 5, SchemaResource.schema.size
   end
 
   def test_defines_defaults
@@ -37,6 +40,7 @@ class SchemableTest < MiniTest::Unit::TestCase
     assert_equal false, resource['b']
     assert_equal nil, resource.c
     assert_equal nil, resource.d
+    assert_equal nil, resource.e
   end
 
   def test_find_property_definition
@@ -56,11 +60,13 @@ class SchemableTest < MiniTest::Unit::TestCase
 
     resource.d = "1"
     assert_equal 1, resource.d
+
+    # TODO
   end
 
   # sanity to make sure we're not doing anything crazy with inheritance
   def test_schemas_do_not_collide
-    assert_equal 4, SchemaResource.schema.size
+    assert_equal 5, SchemaResource.schema.size
     assert_equal 1, SchemaResource2.schema.size
   end
 
@@ -78,12 +84,14 @@ class SchemableTest < MiniTest::Unit::TestCase
       a: 123,
       b: 'false',
       c: :blah,
-      d: "12345"
+      d: "12345",
+      e: TIME_STRING
     })
     assert_equal "123", resource.a
     assert_equal false, resource.b
     assert_equal :blah, resource.c
     assert_equal 12345, resource.d
+    assert_equal Time.parse(TIME_STRING), resource.e
   end
 
   def test_casts_values_when_bulk_assigning_attributes
@@ -92,12 +100,14 @@ class SchemableTest < MiniTest::Unit::TestCase
       a: 123,
       b: 'false',
       c: :blah,
-      d: "12345"
+      d: "12345",
+      e: TIME_STRING
     }
     assert_equal "123", resource.a
     assert_equal false, resource.b
     assert_equal :blah, resource.c
     assert_equal 12345, resource.d
+    assert_equal Time.parse(TIME_STRING), resource.e
   end
 
 end
