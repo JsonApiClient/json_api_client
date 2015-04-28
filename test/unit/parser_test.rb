@@ -9,6 +9,7 @@ class ParserTest < MiniTest::Unit::TestCase
           type: "articles",
           id: "1",
           title: "Rails is Omakase",
+          created_at: TIME_STRING,
           links: {
             author: {
               self: "/articles/1/links/author",
@@ -26,6 +27,7 @@ class ParserTest < MiniTest::Unit::TestCase
     article = articles.first
     assert_equal "1", article.id
     assert_equal "Rails is Omakase", article.title
+    assert_equal Time.parse(TIME_STRING), article.created_at
   end
 
 end
