@@ -1,9 +1,10 @@
 require 'test_helper'
 
-class ParserTest < MiniTest::Unit::TestCase
+class CreationTest < MiniTest::Unit::TestCase
 
-  def test_can_parse_single_record
-    stub_request(:get, "http://example.com/articles/1")
+  def setup
+    super
+    stub_request(:post, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
@@ -18,14 +19,26 @@ class ParserTest < MiniTest::Unit::TestCase
           }
         }
       }.to_json)
-    articles = Article.find(1)
+  end
 
-    assert articles.is_a?(JsonApiClient::ResultSet)
-    assert_equal 1, articles.length
+  def test_can_create_with_class_method
+    article = Article.create({
+      title: "Rails is Omakase"
+    })
 
-    article = articles.first
+    assert article.persisted?
     assert_equal "1", article.id
     assert_equal "Rails is Omakase", article.title
+  end
+
+  def test_can_create_with_new_record_and_save
+    article = Article.new({
+      title: "Rails is Omakase"
+    })
+
+    assert article.save
+    assert article.persisted?
+    assert_equal "1", article.id
   end
 
 end

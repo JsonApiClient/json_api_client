@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class ParserTest < MiniTest::Unit::TestCase
+class MetaTest < MiniTest::Unit::TestCase
 
-  def test_can_parse_single_record
+  def test_can_parse_global_meta_data
     stub_request(:get, "http://example.com/articles/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
@@ -16,16 +16,25 @@ class ParserTest < MiniTest::Unit::TestCase
               linkage: { type: "people", id: 9 }
             }
           }
-        }
+        },
+        meta: {
+          copyright: "Copyright 2015 Example Corp.",
+          authors: [
+            "Yehuda Katz",
+            "Steve Klabnik",
+            "Dan Gebhardt"
+          ]
+        },
       }.to_json)
     articles = Article.find(1)
 
-    assert articles.is_a?(JsonApiClient::ResultSet)
-    assert_equal 1, articles.length
-
-    article = articles.first
-    assert_equal "1", article.id
-    assert_equal "Rails is Omakase", article.title
+    assert_equal "Copyright 2015 Example Corp.", articles.meta.copyright
+    authors = articles.meta.authors
+    assert_equal [
+      "Yehuda Katz",
+      "Steve Klabnik",
+      "Dan Gebhardt"
+    ], authors
   end
 
 end

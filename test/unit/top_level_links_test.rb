@@ -3,7 +3,7 @@ require 'test_helper'
 class TopLevelLinksTest < Minitest::Unit::TestCase
 
   def test_can_parse_global_links
-    stub_request(:get, "http://example.com/articles/1.json")
+    stub_request(:get, "http://example.com/articles/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
@@ -11,11 +11,11 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
           title: "JSON API paints my bikeshed!"
         },
         links: {
-          self: "http://example.com/articles/1.json",
-          related: "http://example.com/articles/1/related.json"
+          self: "http://example.com/articles/1",
+          related: "http://example.com/articles/1/related"
         }
       }.to_json)
-    stub_request(:get, "http://example.com/articles/1/related.json")
+    stub_request(:get, "http://example.com/articles/1/related")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "article-image",
@@ -28,13 +28,13 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
     links = articles.links
     assert links
     assert links.respond_to?(:related), "ResultSet links should respond to related"
-    
+
     related = links.related
     assert related.is_a?(JsonApiClient::ResultSet), "expected related link to return another ResultSet"
   end
 
   def test_can_parse_pagination_links
-    stub_request(:get, "http://example.com/articles.json")
+    stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
           type: "articles",
@@ -42,14 +42,14 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
           title: "JSON API paints my bikeshed!"
         }],
         links: {
-          self: "http://example.com/articles.json",
-          next: "http://example.com/articles.json?page=2",
+          self: "http://example.com/articles",
+          next: "http://example.com/articles?page=2",
           prev: nil,
-          first: "http://example.com/articles.json",
-          last: "http://example.com/articles.json?page=6"
+          first: "http://example.com/articles",
+          last: "http://example.com/articles?page=6"
         }
       }.to_json)
-    stub_request(:get, "http://example.com/articles.json?page=2")
+    stub_request(:get, "http://example.com/articles?page=2")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
           type: "articles",
@@ -57,11 +57,11 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
           title: "This is tha BOMB"
         }],
         links: {
-          self: "http://example.com/articles.json?page=2",
-          next: "http://example.com/articles.json?page=3",
-          prev: "http://example.com/articles.json",
-          first: "http://example.com/articles.json",
-          last: "http://example.com/articles.json?page=6"
+          self: "http://example.com/articles?page=2",
+          next: "http://example.com/articles?page=3",
+          prev: "http://example.com/articles",
+          first: "http://example.com/articles",
+          last: "http://example.com/articles?page=6"
         }
       }.to_json)
 

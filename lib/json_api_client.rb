@@ -1,5 +1,7 @@
 require 'faraday'
+require 'faraday_middleware'
 require 'json'
+require "addressable/uri"
 
 module JsonApiClient
   autoload :Associations, 'json_api_client/associations'
@@ -11,6 +13,7 @@ module JsonApiClient
   autoload :Linking, 'json_api_client/linking'
   autoload :LinkDefinition, 'json_api_client/link_definition'
   autoload :LinkedData, 'json_api_client/linked_data'
+  autoload :MetaData, 'json_api_client/meta_data'
   autoload :Middleware, 'json_api_client/middleware'
   autoload :Paginating, 'json_api_client/paginating'
   autoload :Parsers, 'json_api_client/parsers'

@@ -11,7 +11,7 @@ module MyApi
   class User < JsonApiClient::Resource
     has_many :accounts
   end
-  
+
   class Account < JsonApiClient::Resource
   	belongs_to :user
   end
@@ -44,7 +44,7 @@ u.accounts
 
 ## Connection Options
 
-You can configure your connection using Faraday middleware. In general, you'll want 
+You can configure your connection using Faraday middleware. In general, you'll want
 to do this in a base model that all your resources inherit from:
 
 ```
@@ -141,11 +141,11 @@ You can create custom methods on both collections (class method) and members (in
 ```
 module MyApi
   class User < JsonApiClient::Resource
-  
-  	# GET /users/search.json
+
+  	# GET /users/search
   	custom_endpoint :search, on: :collection, request_method: :get
-  	
-  	# PUT /users/:id/verify.json
+
+  	# PUT /users/:id/verify
   	custom_endpoint :verify, on: :member, request_method: :put
   end
 end
@@ -163,7 +163,7 @@ See the [tests](https://github.com/chingor13/json_api_client/blob/master/test/un
 
 ## Schema
 
-You can define schema within your client model. You can define basic types and set default values if you wish. If you declare a basic type, we will try to cast any input to be that type. 
+You can define schema within your client model. You can define basic types and set default values if you wish. If you declare a basic type, we will try to cast any input to be that type.
 
 The added benefit of declaring your schema is that you can access fields before data is set (otherwise, you'll get a `NoMethodError`).
 
