@@ -2,6 +2,15 @@ require 'test_helper'
 
 class QueryBuilderTest < MiniTest::Unit::TestCase
 
+  def test_can_filter
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {filter: {author: '5'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.where(author: '5').to_a
+  end
+
   def test_can_specify_nested_includes
     stub_request(:get, "http://example.com/articles")
       .with(query: {include: "comments.author"})
