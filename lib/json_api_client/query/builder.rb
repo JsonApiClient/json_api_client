@@ -7,13 +7,13 @@ module JsonApiClient
       def initialize(klass)
         @klass = klass
         @pagination_params = {}
-        @base_params = {}
+        @filters = {}
         @includes = []
         @orders = []
       end
 
       def where(conditions = {})
-        @base_params.merge!(conditions)
+        @filters.merge!(conditions)
         self
       end
 
@@ -46,8 +46,8 @@ module JsonApiClient
       end
 
       def params
-        @base_params
-          .merge(@pagination_params)
+        filter_params
+          .merge(pagination_params)
           .merge(includes_params)
           .merge(order_params)
       end
@@ -63,8 +63,14 @@ module JsonApiClient
 
       private
 
+      attr_reader :pagination_params
+
       def includes_params
         @includes.empty? ? {} : {include: @includes.join(",")}
+      end
+
+      def filter_params
+        @filters.empty? ? {} : {filter: @filters}
       end
 
       def order_params
