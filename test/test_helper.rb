@@ -20,3 +20,10 @@ end
 
 class Comment < TestResource
 end
+
+class User < TestResource
+end
+
+class UserPreference < TestResource
+  self.primary_key = :user_id
+end
