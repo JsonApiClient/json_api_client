@@ -10,6 +10,7 @@ class CreationTest < MiniTest::Unit::TestCase
           type: "articles",
           id: "1",
           title: "Rails is Omakase",
+          created_at: TIME_STRING,
           links: {
             author: {
               self: "/articles/1/links/author",
@@ -29,6 +30,7 @@ class CreationTest < MiniTest::Unit::TestCase
     assert article.persisted?
     assert_equal "1", article.id
     assert_equal "Rails is Omakase", article.title
+    assert_equal Time.parse(TIME_STRING), article.created_at
   end
 
   def test_can_create_with_new_record_and_save
@@ -39,6 +41,7 @@ class CreationTest < MiniTest::Unit::TestCase
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+    assert_equal Time.parse(TIME_STRING), article.created_at
   end
 
 end

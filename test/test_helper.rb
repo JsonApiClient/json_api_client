@@ -12,7 +12,10 @@ class TestResource < JsonApiClient::Resource
   self.site = "http://example.com/"
 end
 
+TIME_STRING = '2015-04-28 10:45:35 -0700'
+
 class Article < TestResource
+  property :created_at, type: :time
 end
 
 class Person < TestResource
