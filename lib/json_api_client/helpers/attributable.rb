@@ -12,7 +12,7 @@ module JsonApiClient
       end
 
       def attributes=(attrs = {})
-        @attributes ||= {}.with_indifferent_access
+        @attributes ||= {type: self.class.resource_name}.with_indifferent_access
 
         return @attributes unless attrs.present?
         attrs.each do |key, value|
