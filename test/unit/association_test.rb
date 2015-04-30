@@ -27,7 +27,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_one
     stub_request(:get, "http://example.com/properties/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, address: "123 Main St.", owner: {id: 1, name: "Jeff Ching"}}
         ]
@@ -40,7 +40,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_one_nil
     stub_request(:get, "http://example.com/properties/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, address: "123 Main St.", owner: nil}
         ]
@@ -52,7 +52,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_many
     stub_request(:get, "http://example.com/owners")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, name: "Jeff Ching", properties: [
             {id: 1, address: "123 Main St."},
@@ -75,7 +75,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_many_single_entry
     stub_request(:get, "http://example.com/owners/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, name: "Jeff Ching", properties: {id: 1, address: "123 Main St."}}
         ]
@@ -123,7 +123,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_find_belongs_to
     stub_request(:get, "http://example.com/foos/1/specifieds")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, name: "Jeff Ching", bars: [{id: 1, address: "123 Main St."}]}
         ]
@@ -135,7 +135,7 @@ class AssociationTest < MiniTest::Unit::TestCase
 
   def test_can_handle_creating
     stub_request(:post, "http://example.com/foos/10/specifieds")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 12, name: "Blah", bars: [{id: 1, address: "123 Main St."}]}
         ]

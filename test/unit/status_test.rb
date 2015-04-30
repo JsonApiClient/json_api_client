@@ -4,7 +4,7 @@ class StatusTest < MiniTest::Unit::TestCase
 
   def test_server_responding_with_status_meta
     stub_request(:get, "http://example.com/users/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         meta: {
           status: 500,
           message: "An internal server error has occurred."
@@ -44,7 +44,7 @@ class StatusTest < MiniTest::Unit::TestCase
 
   def test_server_responding_with_404_status_meta
     stub_request(:get, "http://example.com/users/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         meta: {
           status: 404,
           message: "Blah blah"
