@@ -133,7 +133,7 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal(1, specifieds.length)
   end
 
-  def test_can_handle_non_symbolized_keys
+  def test_can_handle_creating
     stub_request(:post, "http://example.com/foos/10/specifieds")
       .to_return(headers: {content_type: "application/json"}, body: {
         data: [
@@ -142,9 +142,9 @@ class AssociationTest < MiniTest::Unit::TestCase
       }.to_json)
 
     specified = Specified.create({
-      "id" => 12,
-      "foo_id" => 10,
-      "name" => "Blah"
+      :id => 12,
+      :foo_id => 10,
+      :name => "Blah"
     })
   end
 

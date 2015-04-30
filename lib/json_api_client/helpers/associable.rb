@@ -30,7 +30,7 @@ module JsonApiClient
         def path(params = nil)
           parts = [table_name]
           if params
-            filters = params.fetch(:filter, {})
+            filters = params.fetch(:filter, params)
             slurp = filters.slice(*prefix_params)
             prefix_params.each do |param|
               filters.delete(param)
