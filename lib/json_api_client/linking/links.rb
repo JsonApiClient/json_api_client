@@ -13,6 +13,14 @@ module JsonApiClient
       def [](key)
         links[key.to_s]
       end
+
+      def method_missing(method, *args, &block)
+        if method.to_s =~ /^(.*=)$/
+          links[method] = args.first
+        else
+          super
+        end
+      end
     end
   end
 end
