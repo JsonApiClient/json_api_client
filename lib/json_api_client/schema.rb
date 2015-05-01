@@ -13,7 +13,7 @@ module JsonApiClient
         when :float
           value.to_f
         when :time
-          value.is_a?(String) ? Time.parse(value) : value
+          value.is_a?(Time) || nil ? value : Time.parse(value)
         when :boolean
           if value.is_a?(String)
             value == "false" ? false : true
