@@ -7,6 +7,9 @@ class PersistenceTest < MiniTest::Unit::TestCase
     assert !user.persisted?
 
     user = User.new(id: 1234)
+    assert !user.persisted?
+
+    user = User.load(id: 1234)
     assert user.persisted?
   end
 
@@ -15,6 +18,9 @@ class PersistenceTest < MiniTest::Unit::TestCase
     assert !user_preference.persisted?
 
     user_preference = UserPreference.new(user_id: 1234)
+    assert !user_preference.persisted?
+
+    user_preference = UserPreference.load(user_id: 1234)
     assert user_preference.persisted?
   end
 

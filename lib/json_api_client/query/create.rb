@@ -4,7 +4,7 @@ module JsonApiClient
       self.request_method = :post
 
       def build_params(args)
-        @params = {'data' => args.except(klass.primary_key).merge('type' => klass.table_name)}
+        @params = {'data' => {'type' => klass.table_name}.reverse_merge(args.except(klass.primary_key))}
       end
 
       # we've nested the parameters, so un-nest them

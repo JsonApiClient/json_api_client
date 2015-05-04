@@ -33,12 +33,9 @@ module JsonApiClient
       end
 
       def create(conditions = {})
-        result = run_request(Query::Create.new(self, conditions))
-        if result.has_errors?
-          yield(result) if block_given?
-          return nil
+        new(conditions).tap do |resource|
+          resource.save
         end
-        result.first
       end
 
       def run_request(query)
@@ -87,6 +84,7 @@ module JsonApiClient
       if last_result_set.has_errors?
         return false
       else
+        mark_as_persisted!
         if updated = last_result_set.first
           self.attributes = updated.attributes
         end

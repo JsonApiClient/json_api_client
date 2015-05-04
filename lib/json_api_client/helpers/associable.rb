@@ -35,7 +35,7 @@ module JsonApiClient
             prefix_params.each do |param|
               filters.delete(param)
             end
-            parts.unshift(prefix_path % slurp)
+            parts.unshift(prefix_path % slurp.symbolize_keys)
           else
             parts.unshift(prefix_path)
           end

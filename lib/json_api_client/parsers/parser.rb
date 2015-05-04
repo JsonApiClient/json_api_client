@@ -24,7 +24,7 @@ module JsonApiClient
 
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
-          result_set.concat(results.map{|res| result_set.record_class.new(res)})
+          result_set.concat(results.map{|res| result_set.record_class.load(res)})
         end
 
         def handle_errors(result_set, data)
