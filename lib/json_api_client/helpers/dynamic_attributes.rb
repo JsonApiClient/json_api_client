@@ -24,7 +24,7 @@ module JsonApiClient
         set_attribute(key, value)
       end
 
-      def respond_to?(method, include_private = false)
+      def respond_to_missing?(method, include_private = false)
         if (method.to_s =~ /^(.*)=$/) || has_attribute?(method)
           true
         else

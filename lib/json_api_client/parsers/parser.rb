@@ -44,7 +44,7 @@ module JsonApiClient
         end
 
         def handle_included(result_set, data)
-          included = IncludedData.new(result_set.record_class, data.fetch("included", []))
+          included = Linking::IncludedData.new(result_set.record_class, data.fetch("included", []))
           result_set.each do |res|
             res.linked_data = included
           end
