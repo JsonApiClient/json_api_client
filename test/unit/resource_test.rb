@@ -14,7 +14,7 @@ class ResourceTest < MiniTest::Unit::TestCase
       .with(query: {filter: {author: '5'}})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
-          type: "article",
+          type: "articles",
           id: "1",
           title: "Rails is Omakase"
         }]
@@ -29,14 +29,14 @@ class ResourceTest < MiniTest::Unit::TestCase
 
   def test_should_always_have_type_attribute
     article = Article.new
-    assert_equal "article", article.type
-    assert_equal({type: "article"}.with_indifferent_access, article.attributes)
+    assert_equal "articles", article.type
+    assert_equal({type: "articles"}.with_indifferent_access, article.attributes)
   end
 
   def test_can_set_arbitrary_attributes
     article = Article.new(asdf: "qwer")
     article.foo = "bar"
-    assert_equal({type: "article", asdf: "qwer", foo: "bar"}.with_indifferent_access, article.attributes)
+    assert_equal({type: "articles", asdf: "qwer", foo: "bar"}.with_indifferent_access, article.attributes)
   end
 
   def test_dynamic_attribute_methods
