@@ -3,8 +3,8 @@ module JsonApiClient
     module DynamicAttributes
       extend ActiveSupport::Concern
 
-      included do
-        attr_reader :attributes
+      def attributes
+        @attributes
       end
 
       def attributes=(attrs = {})
