@@ -17,9 +17,16 @@ module JsonApiClient
         end
       end
 
+      def as_link
+        {
+          :type => self.class.table_name,
+          primary_key => self[primary_key]
+        }
+      end
+
       def attributes
         super.tap do |attrs|
-          attrs.merge!(links.links)
+          attrs.merge!(links: links.attributes) if links.present?
         end
       end
 
