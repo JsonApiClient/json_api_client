@@ -17,13 +17,19 @@ module JsonApiClient
         end
       end
 
+      def attributes
+        super.tap do |attrs|
+          attrs.merge!(links.links)
+        end
+      end
+
       def method_missing(method, *args)
-        return super unless links && links.has_link?(method)
+        return super unless links && links.has_attribute?(method)
         linked_data.data_for(method, links[method])
       end
 
       def respond_to_missing?(symbol, include_all = false)
-        return true if links && links.has_link?(symbol)
+        return true if links && links.has_attribute?(symbol)
         super
       end
 

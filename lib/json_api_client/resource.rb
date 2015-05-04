@@ -57,7 +57,7 @@ module JsonApiClient
     include Helpers::Schemable
     include Helpers::Paginatable
 
-    attr_reader :last_request_meta
+    attr_reader :last_result_set
 
     def save
       query = persisted? ? 
@@ -82,13 +82,12 @@ module JsonApiClient
       # reset errors if a new request is being made
       self.errors.clear if self.errors
 
-      result = self.class.run_request(query)
-      self.errors = result.errors
-      @last_request_meta = result.meta
-      if result.has_errors?
+      @last_result_set = self.class.run_request(query)
+      self.errors = last_result_set.errors
+      if last_result_set.has_errors?
         return false
       else
-        if updated = result.first
+        if updated = last_result_set.first
           self.attributes = updated.attributes
         end
         return true
