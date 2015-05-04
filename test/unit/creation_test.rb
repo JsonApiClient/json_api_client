@@ -5,18 +5,17 @@ class CreationTest < MiniTest::Unit::TestCase
   def setup
     super
     stub_request(:post, "http://example.com/articles")
+      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+          data: {
+            title: "Rails is Omakase",
+            type: "articles"
+          }
+        }.to_json)
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase",
-          links: {
-            author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
-              linkage: { type: "people", id: 9 }
-            }
-          }
+          title: "Rails is Omakase"
         }
       }.to_json)
   end
