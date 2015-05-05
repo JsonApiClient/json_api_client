@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CoercionTest < MiniTest::Test
+class CoercionTest < MiniTest::Unit::TestCase
   TIME_STRING = '2015-04-28 10:45:35 -0700'
 
   class CoercionTypes < TestResource
