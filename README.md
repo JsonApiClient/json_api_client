@@ -8,100 +8,55 @@ This gem is meant to help you build an API client for interacting with REST APIs
 
 ## Usage
 
+You will want to create your own resource classes that inherit from `JsonApiClient::Resource` similar to how you would create an `ActiveRecord` class. You may also want to create your own abstract base class to share common behavior. Additionally, you will probably want to namespace your models. Namespacing your model will not affect the url routing to that resource.
+
 ```
 module MyApi
-  class User < JsonApiClient::Resource
-    has_many :accounts
+  # this is an "abstract" base class that 
+  class Base < JsonApiClient::Resource
+    # set the api base url in an abstract base class
+    self.site = "http://example.com/"
   end
 
-  class Account < JsonApiClient::Resource
-  	belongs_to :user
+  class Article < Base
+  end
+
+  class Comment < Base
+  end
+
+  class Person < Base
   end
 end
+```
 
-MyApi::User.all
-MyApi::User.where(account_id: 1).find(1)
-MyApi::User.where(account_id: 1).all
+By convention, we figure guess the resource route from the class name. In the above example, `Article`'s path is "http://example.com/articles" and `Person`'s path would be "http://example.com/people".
 
-MyApi::User.where(name: "foo").order("created_at desc").includes(:preferences, :cars).all
+Some example usage:
 
-u = MyApi::User.new(foo: "bar", bar: "foo")
+```
+MyApi::Article.all
+MyApi::Article.where(author_id: 1).find(2)
+MyApi::Article.where(author_id: 1).all
+
+MyApi::Person.where(name: "foo").order(created_at: :desc).includes(:preferences, :cars).all
+
+u = MyApi::Person.new(first_name: "bar", last_name: "foo")
 u.save
 
-u = MyApi::User.find(1).first
+u = MyApi::Person.find(1).first
 u.update_attributes(
   a: "b",
   c: "d"
 )
 
-u = MyApi::User.create(
+u = MyApi::Person.create(
   a: "b",
   c: "d"
 )
-
-u = MyApi::User.find(1).first
-u.accounts
-=> MyApi::Account.where(user_id: u.id).all
 ```
 
-## Connection Options
+All class level finders/creators should return a `JsonApiClient::ResultSet` which behaves like an Array and contains extra data about the api response.
 
-You can configure your connection using Faraday middleware. In general, you'll want
-to do this in a base model that all your resources inherit from:
-
-```
-MyApi::Base.connection do |connection|
-  # set OAuth2 headers
-  connection.use Faraday::Request::Oauth2, 'MYTOKEN'
-
-  # log responses
-  connection.use Faraday::Response::Logger
-
-  connection.use MyCustomMiddleware
-end
-
-module MyApi
-  class User < Base
-    # will use the customized connection
-  end
-end
-```
-
-## Custom Connection
-
-You can configure your API client to use a custom connection that implementes the `run` instance method. It should return data that your parser can handle.
-
-```
-class NullConnection
-  def initialize(*args)
-  end
-
-  def run(request_method, path, params = {}, headers = {})
-  end
-end
-
-class CustomConnectionResource < TestResource
-  self.connection_class = NullConnection
-end
-
-```
-
-## Custom Parser
-
-You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
-
-```
-class MyCustomParser
-  def self.parse(klass, response)
-  	…
-  	# returns some ResultSet object
-  end
-end
-
-class MyApi::Base < JsonApiClient::Resource
-  self.parser = MyCustomParser
-end
-```
 
 ## Handling Validation Errors
 
@@ -223,6 +178,8 @@ oldest = Person.sort(age: :desc).all
 
 [See specification](http://jsonapi.org/format/#fetching-pagination)
 
+### Requesting
+
 ```
 # makes request to /articles?page=2&per_page=30
 articles = Article.page(2).per(30).to_a
@@ -231,7 +188,21 @@ articles = Article.page(2).per(30).to_a
 articles = Article.paginate(page: 2, per_page: 30).to_a
 ```
 
-*Note: The mapping of pagination parameter is done by the `query_builder` which is [customizable](#fixme).*
+*Note: The mapping of pagination parameters is done by the `query_builder` which is [customizable](#fixme).*
+
+### Browsing
+
+If the response contains additional pagination links, you can also get at those:
+
+```
+articles = Article.paginate(page: 2, per_page: 30).to_a
+articles.pages.next
+articles.pages.last
+```
+
+### Library compatibility
+
+A `JsonApiClient::ResultSet` object should be paginatable with both `kaminari` and `will_paginate`.
 
 ## Filtering
 
@@ -286,3 +257,86 @@ The basic types that we allow are:
 Also, we consider `nil` to be an acceptable value and will not cast the value.
 
 ## Customizing
+
+### Connections
+
+You can configure your API client to use a custom connection that implementes the `run` instance method. It should return data that your parser can handle. The default connection class wraps Faraday and lets you add middleware.
+
+```
+class NullConnection
+  def initialize(*args)
+  end
+
+  def run(request_method, path, params = {}, headers = {})
+  end
+
+  def use(*args); end
+end
+
+class CustomConnectionResource < TestResource
+  self.connection_class = NullConnection
+end
+
+```
+
+#### Connection Options
+
+You can configure your connection using Faraday middleware. In general, you'll want
+to do this in a base model that all your resources inherit from:
+
+```
+MyApi::Base.connection do |connection|
+  # set OAuth2 headers
+  connection.use Faraday::Request::Oauth2, 'MYTOKEN'
+
+  # log responses
+  connection.use Faraday::Response::Logger
+
+  connection.use MyCustomMiddleware
+end
+
+module MyApi
+  class User < Base
+    # will use the customized connection
+  end
+end
+```
+
+## Custom Parser
+
+You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
+
+```
+class MyCustomParser
+  def self.parse(klass, response)
+    …
+    # returns some ResultSet object
+  end
+end
+
+class MyApi::Base < JsonApiClient::Resource
+  self.parser = MyCustomParser
+end
+```
+
+## Custom Query Builder
+
+You can customize how the scope builder methods map to request parameters.
+
+```
+class MyQueryBuilder
+  def def initialize(klass); end
+
+  def where(conditions = {})
+  end
+
+  … add order, includes, paginate, page, first, build
+end
+
+class MyApi::Base < JsonApiClient::Resource
+  self.query_builder = MyQueryBuilder
+end
+```
+
+## Custom Paginator
+
