@@ -5,9 +5,6 @@ class NullConnection
   def initialize(*args)
   end
 
-  def execute(query)
-  end
-
   def run(*args)
   end
 end
