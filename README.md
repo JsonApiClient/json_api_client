@@ -292,6 +292,7 @@ The basic types that we allow are:
 * `:int` or `:integer`
 * `:float`
 * `:string`
+* `:time` - *Note: Include the time zone in the string if it's different than local time.
 * `:boolean` - *Note: we will cast the string version of "true" and "false" to their respective values*
 
 Also, we consider `nil` to be an acceptable value and will not cast the value.
