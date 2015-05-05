@@ -83,6 +83,46 @@ user.email_address
 
 If you want to add client side validation, I suggest creating a form model class that uses ActiveModel's validations.
 
+## Meta information
+
+[See specification](http://jsonapi.org/format/#document-structure-meta)
+
+If the response has a top level meta data section, we can access it via the `meta` accessor on `ResultSet`.
+
+```
+# Example response:
+{
+  "meta": {
+    "copyright": "Copyright 2015 Example Corp.",
+    "authors": [
+      "Yehuda Katz",
+      "Steve Klabnik",
+      "Dan Gebhardt"
+    ]
+  },
+  "data": {
+    // ...
+  }
+}
+articles = Articles.all
+
+articles.meta.copyright
+=> "Copyright 2015 Example Corp."
+articles.meta.authors
+=> ["Yehuda Katz", "Steve Klabnik", "Dan Gebhardt"]
+```
+
+## Top-level Links
+
+[See specification](http://jsonapi.org/format/#document-structure-top-level-links)
+
+If the resource returns top level links, we can access them via the `links` accessor on `ResultSet`.
+
+```
+articles = Articles.find(1)
+articles.links.related
+```
+
 ## Nested Resources
 
 You can force nested resource paths for your models by using a `belongs_to` association.
