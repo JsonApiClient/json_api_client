@@ -4,6 +4,9 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
+        class_attribute :linker
+        self.linker = Linking::Links
+
         # the links for this resource
         attr_accessor :links
 
@@ -13,7 +16,7 @@ module JsonApiClient
         initializer do |obj, params|
           links = params && params.delete("links")
           links ||= {}
-          obj.links = Linking::Links.new(links)
+          obj.links = obj.linker.new(links)
         end
       end
 

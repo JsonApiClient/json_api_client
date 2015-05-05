@@ -7,7 +7,7 @@ module JsonApiClient
         include DynamicAttributes
         attr_accessor :errors
         initializer do |obj, params|
-          obj.attributes = params.merge(type: obj.class.table_name)
+          obj.attributes = params.merge(obj.class.default_attributes)
         end
       end
 
@@ -16,6 +16,10 @@ module JsonApiClient
           new(params).tap do |resource|
             resource.mark_as_persisted!
           end
+        end
+
+        def default_attributes
+          {type: table_name}
         end
       end
 
@@ -29,7 +33,7 @@ module JsonApiClient
       end
 
       def persisted?
-        !!@persisted
+        !!@persisted && has_attribute?(primary_key)
       end
 
       def query_params

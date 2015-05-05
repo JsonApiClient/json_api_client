@@ -4,7 +4,7 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        attr_reader :last_result_set
+        attr_accessor :last_result_set, :errors
         class_attribute :requestor_class
         self.requestor_class = Query::Requestor
       end
@@ -26,26 +26,28 @@ module JsonApiClient
       end
 
       def save
-        if persisted?
+        self.last_result_set = if persisted?
           self.class.requestor.update(self)
         else
           self.class.requestor.create(self)
-        end.tap do |result_set|
-          if result_set.has_errors?
-            self.errors = result_set.errors
-          else
-            self.errors.clear if self.errors
-            mark_as_persisted!
-            if updated = result_set.first
-              self.attributes = updated.attributes
-            end
+        end
+
+        if last_result_set.has_errors?
+          self.errors = last_result_set.errors
+          false
+        else
+          self.errors.clear if self.errors
+          mark_as_persisted!
+          if updated = last_result_set.first
+            self.attributes = updated.attributes
           end
+          true
         end
       end
 
       def destroy
-        result_set = self.class.requestor.destroy(self)
-        if !result_set.has_errors?
+        self.last_result_set = self.class.requestor.destroy(self)
+        if !last_result_set.has_errors?
           self.attributes.clear
           true
         else
