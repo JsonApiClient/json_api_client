@@ -9,7 +9,7 @@ module JsonApiClient
 
       # expects a record
       def create(record)
-        request(:post, collection_path(record.attributes), {
+        request(:post, klass.path(record.attributes), {
           data: record.attributes
         })
       end
@@ -30,13 +30,8 @@ module JsonApiClient
           {klass.primary_key => args}
         end
 
-        path = klass.path(params)
-        if params.has_key?(klass.primary_key) && !params[klass.primary_key].is_a?(Array)
-          resource_id = params.delete(klass.primary_key).to_s
-          encoded_resource_id = Addressable::URI.encode_component(resource_id, Addressable::URI::CharacterClasses::UNRESERVED)
-          path = File.join(path, encoded_resource_id)
-        end
-
+        path = resource_path(params)
+        params.delete(klass.primary_key)
         request(:get, path, params)
       end
 
@@ -49,12 +44,8 @@ module JsonApiClient
       end
 
       def custom(method_name, options, params)
-        path = klass.path(params)
-        if params.has_key?(klass.primary_key) && !params[klass.primary_key].is_a?(Array)
-          resource_id = params.delete(klass.primary_key).to_s
-          encoded_resource_id = Addressable::URI.encode_component(resource_id, Addressable::URI::CharacterClasses::UNRESERVED)
-          path = File.join(path, encoded_resource_id)
-        end
+        path = resource_path(params)
+        params.delete(klass.primary_key)
         path = File.join(path, method_name.to_s)
 
         request(options.fetch(:request_method, :get), path, params)
@@ -65,21 +56,16 @@ module JsonApiClient
       attr_reader :klass
       def_delegators :klass, :connection
 
-      def collection_path(parameters)
-        klass.path(parameters)
-      end
-
       def resource_path(parameters)
         if resource_id = parameters[klass.primary_key]
-          encoded_resource_id = Addressable::URI.encode_component(resource_id, Addressable::URI::CharacterClasses::UNRESERVED)
-          File.join(klass.path(parameters), encoded_resource_id)
+          File.join(klass.path(parameters), encoded(resource_id))
         else
           klass.path(parameters)
         end
       end
 
-      def params_for_resource(resource)
-        {data: resource.attributes}
+      def encoded(part)
+        Addressable::URI.encode_component(part, Addressable::URI::CharacterClasses::UNRESERVED)
       end
 
       def request(type, path, params)
