@@ -28,7 +28,7 @@ module JsonApiClient
         end
 
         def handle_errors(result_set, data)
-          result_set.errors = data.fetch("errors", [])
+          result_set.errors = ErrorCollector.new(data.fetch("errors", []))
         end
 
         def handle_meta(result_set, data)

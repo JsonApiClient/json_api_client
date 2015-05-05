@@ -15,7 +15,7 @@ module JsonApiClient
     def_delegators :pages, :total_pages, :total_entries, :offset, :per_page, :current_page, :limit_value, :next_page, :previous_page, :out_of_bounds?
 
     def has_errors?
-      errors && errors.length > 0
+      errors.present?
     end
 
   end
