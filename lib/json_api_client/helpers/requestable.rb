@@ -44,7 +44,8 @@ module JsonApiClient
       end
 
       def destroy
-        if self.class.requestor.destroy(self)
+        result_set = self.class.requestor.destroy(self)
+        if !result_set.has_errors?
           self.attributes.clear
           true
         else
