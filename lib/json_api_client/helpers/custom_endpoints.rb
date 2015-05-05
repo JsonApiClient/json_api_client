@@ -18,11 +18,8 @@ module JsonApiClient
           end
           metaclass.instance_eval do
             define_method(name) do |*params|
-              input = {
-                name: name,
-                params: request_params = params.first || {}
-              }.merge(options)
-              run_request(Query::Custom.new(self, input))
+              request_params = params.first || {}
+              requestor.custom(name, options, request_params)
             end
           end
         end
@@ -31,11 +28,7 @@ module JsonApiClient
           define_method name do |*params|
             request_params = params.first || {}
             request_params[self.class.primary_key] = attributes.fetch(primary_key)
-            input = {
-              name: name, 
-              params: request_params
-            }.merge(options)
-            run_request(Query::Custom.new(self.class, input))
+            self.class.requestor.custom(name, options, request_params)
           end
         end
       end

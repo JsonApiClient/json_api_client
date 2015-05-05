@@ -48,6 +48,18 @@ module JsonApiClient
         request(:get, path, {})
       end
 
+      def custom(method_name, options, params)
+        path = klass.path(params)
+        if params.has_key?(klass.primary_key) && !params[klass.primary_key].is_a?(Array)
+          resource_id = params.delete(klass.primary_key).to_s
+          encoded_resource_id = Addressable::URI.encode_component(resource_id, Addressable::URI::CharacterClasses::UNRESERVED)
+          path = File.join(path, encoded_resource_id)
+        end
+        path = File.join(path, method_name.to_s)
+
+        request(options.fetch(:request_method, :get), path, params)
+      end
+
       protected
 
       attr_reader :klass
