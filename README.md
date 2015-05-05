@@ -342,7 +342,7 @@ module MyApi
 end
 ```
 
-## Custom Parser
+### Custom Parser
 
 You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
 
@@ -359,7 +359,7 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
-## Custom Query Builder
+### Custom Query Builder
 
 You can customize how the scope builder methods map to request parameters.
 
@@ -378,5 +378,17 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
-## Custom Paginator
+### Custom Paginator
 
+You can customize how your resources find pagination information from the response.
+
+```
+class MyPaginator
+  def initialize(result_set, data); end
+  # implement current_page, total_entries, etc
+end
+
+class MyApi::Base < JsonApiClient::Resource
+  self.paginator = MyPaginator
+end
+```
