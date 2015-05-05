@@ -12,7 +12,8 @@ Gem::Specification.new do |s|
   s.summary = 'Build client libraries compliant with specification defined by jsonapi.org'
 
   s.add_dependency "activesupport"
-  s.add_dependency "faraday", '~> 0.8.0'
+  s.add_dependency "faraday", '>= 0.8.0'
+  s.add_dependency "faraday_middleware", '~> 0.9'
   s.add_dependency "addressable", '~> 2.2'
 
   s.add_development_dependency "webmock"

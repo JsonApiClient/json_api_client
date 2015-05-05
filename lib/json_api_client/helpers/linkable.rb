@@ -4,35 +4,42 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        attr_accessor :links,
-                      :linked_data
+        # the links for this resource
+        attr_accessor :links
+
+        # reference to all of the preloaded data
+        attr_accessor :linked_data
 
         initializer do |obj, params|
-          if params && links = params.delete("links")
-            obj.links = links
-          end
+          links = params && params.delete("links")
+          links ||= {}
+          obj.links = Linking::Links.new(links)
+        end
+      end
+
+      def as_link
+        {
+          :type => self.class.table_name,
+          primary_key => self[primary_key]
+        }
+      end
+
+      def attributes
+        super.tap do |attrs|
+          attrs.merge!(links: links.attributes) if links.present?
         end
       end
 
       def method_missing(method, *args)
-        return super unless has_link?(method)
-
-        linked_data.data_for(method, links[method.to_s])
+        return super unless links && links.has_attribute?(method)
+        linked_data.data_for(method, links[method])
       end
 
-      def respond_to?(symbol, include_all = false)
-        return true if has_link?(symbol)
+      def respond_to_missing?(symbol, include_all = false)
+        return true if links && links.has_attribute?(symbol)
         super
       end
 
-      private
-
-      def has_link?(symbol)
-        links && 
-          links.has_key?(symbol.to_s) &&
-          linked_data && 
-          linked_data.has_link?(symbol.to_s)
-      end
     end
   end
 end

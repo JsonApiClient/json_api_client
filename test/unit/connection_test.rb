@@ -5,7 +5,7 @@ class NullConnection
   def initialize(*args)
   end
 
-  def execute(query)
+  def run(*args)
   end
 end
 
@@ -28,14 +28,14 @@ class ConnectionTest < MiniTest::Unit::TestCase
   def test_basic
     assert_equal(NullConnection, CustomConnectionResource.connection_class)
 
-    NullConnection.any_instance.expects(:execute)
+    NullConnection.any_instance.expects(:run)
     CustomConnectionResource.find(1)
   end
 
   def test_inherited
     assert_equal(NullConnection, InheritedConnectionResource.connection_class)
 
-    NullConnection.any_instance.expects(:execute)
+    NullConnection.any_instance.expects(:run)
     CustomConnectionResource.find(1)
   end
 

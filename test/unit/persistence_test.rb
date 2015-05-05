@@ -7,6 +7,9 @@ class PersistenceTest < MiniTest::Unit::TestCase
     assert !user.persisted?
 
     user = User.new(id: 1234)
+    assert !user.persisted?
+
+    user = User.load(id: 1234)
     assert user.persisted?
   end
 
@@ -15,13 +18,16 @@ class PersistenceTest < MiniTest::Unit::TestCase
     assert !user_preference.persisted?
 
     user_preference = UserPreference.new(user_id: 1234)
+    assert !user_preference.persisted?
+
+    user_preference = UserPreference.load(user_id: 1234)
     assert user_preference.persisted?
   end
 
   def test_finding
-    stub_request(:get, "http://localhost:3000/api/1/users.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        users: [
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"},
           {id: 2, name: "Barry Bonds", email_address: "barry@bonds.com"},
           {id: 3, name: "Hank Aaron", email_address: "hank@aaron.com"}

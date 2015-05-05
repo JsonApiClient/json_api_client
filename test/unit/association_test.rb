@@ -26,9 +26,9 @@ end
 class AssociationTest < MiniTest::Unit::TestCase
 
   def test_load_has_one
-    stub_request(:get, "http://localhost:3000/api/1/properties/1.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        properties: [
+    stub_request(:get, "http://example.com/properties/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, address: "123 Main St.", owner: {id: 1, name: "Jeff Ching"}}
         ]
       }.to_json)
@@ -39,9 +39,9 @@ class AssociationTest < MiniTest::Unit::TestCase
   end
 
   def test_load_has_one_nil
-    stub_request(:get, "http://localhost:3000/api/1/properties/1.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        properties: [
+    stub_request(:get, "http://example.com/properties/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, address: "123 Main St.", owner: nil}
         ]
       }.to_json)
@@ -51,11 +51,11 @@ class AssociationTest < MiniTest::Unit::TestCase
   end
 
   def test_load_has_many
-    stub_request(:get, "http://localhost:3000/api/1/owners.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        owners: [
+    stub_request(:get, "http://example.com/owners")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, name: "Jeff Ching", properties: [
-            {id: 1, address: "123 Main St."}, 
+            {id: 1, address: "123 Main St."},
             {id: 2, address: "223 Elm St."}
           ]},
           {id: 2, name: "Barry Bonds", properties: []},
@@ -74,9 +74,9 @@ class AssociationTest < MiniTest::Unit::TestCase
   end
 
   def test_load_has_many_single_entry
-    stub_request(:get, "http://localhost:3000/api/1/owners/1.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        owners: [
+    stub_request(:get, "http://example.com/owners/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, name: "Jeff Ching", properties: {id: 1, address: "123 Main St."}}
         ]
       }.to_json)
@@ -122,9 +122,9 @@ class AssociationTest < MiniTest::Unit::TestCase
   end
 
   def test_find_belongs_to
-    stub_request(:get, "http://localhost:3000/api/1/foos/1/specifieds.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        specifieds: [
+    stub_request(:get, "http://example.com/foos/1/specifieds")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 1, name: "Jeff Ching", bars: [{id: 1, address: "123 Main St."}]}
         ]
       }.to_json)
@@ -133,18 +133,18 @@ class AssociationTest < MiniTest::Unit::TestCase
     assert_equal(1, specifieds.length)
   end
 
-  def test_can_handle_non_symbolized_keys
-    stub_request(:post, "http://localhost:3000/api/1/foos/10/specifieds.json")
-      .to_return(headers: {content_type: "application/json"}, body: {
-        specifieds: [
+  def test_can_handle_creating
+    stub_request(:post, "http://example.com/foos/10/specifieds")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
           {id: 12, name: "Blah", bars: [{id: 1, address: "123 Main St."}]}
         ]
       }.to_json)
 
     specified = Specified.create({
-      "id" => 12,
-      "foo_id" => 10,
-      "name" => "Blah"
+      :id => 12,
+      :foo_id => 10,
+      :name => "Blah"
     })
   end
 

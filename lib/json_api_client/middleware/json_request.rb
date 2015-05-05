@@ -2,9 +2,8 @@ module JsonApiClient
   module Middleware
     class JsonRequest < Faraday::Middleware
       def call(environment)
-        environment[:request_headers]["Accept"] = "application/json,*/*"
-        uri = environment[:url]
-        uri.path = uri.path + ".json" unless uri.path.match(/\.json$/) 
+        environment[:request_headers]["Content-Type"] = 'application/vnd.api+json'
+        environment[:request_headers]["Accept"] = 'application/vnd.api+json'
         @app.call(environment)
       end
     end

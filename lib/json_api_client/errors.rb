@@ -1,6 +1,6 @@
 module JsonApiClient
   module Errors
-    class ApiError < Exception
+    class ApiError < StandardError
       attr_reader :env
       def initialize(env)
         @env = env

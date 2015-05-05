@@ -6,7 +6,7 @@ module JsonApiClient
     def initialize(options = {})
       site = options.fetch(:site)
       @faraday = Faraday.new(site) do |builder|
-        builder.request :url_encoded
+        builder.request :json
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status
         builder.use Middleware::ParseJson
@@ -15,7 +15,7 @@ module JsonApiClient
       yield(self) if block_given?
     end
 
-    # insert middleware before ParseJson - middleware executed in reverse order - 
+    # insert middleware before ParseJson - middleware executed in reverse order -
     #   inserted middleware will run after json parsed
     def use(middleware, *args, &block)
       return if faraday.builder.locked?
@@ -26,8 +26,8 @@ module JsonApiClient
       faraday.builder.delete(middleware)
     end
 
-    def execute(query)
-      faraday.send(query.request_method, query.path, query.params, query.headers)
+    def run(request_method, path, params = {}, headers = {})
+      faraday.send(request_method, path, params, headers)
     end
 
   end

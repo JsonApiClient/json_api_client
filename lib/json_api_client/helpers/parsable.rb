@@ -5,7 +5,7 @@ module JsonApiClient
 
       included do
         class_attribute :parser
-        self.parser = Parser
+        self.parser = Parsers::Parser
       end
 
       module ClassMethods
