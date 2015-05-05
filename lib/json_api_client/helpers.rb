@@ -9,6 +9,7 @@ module JsonApiClient
     autoload :Paginatable, 'json_api_client/helpers/paginatable'
     autoload :Parsable, 'json_api_client/helpers/parsable'
     autoload :Queryable, 'json_api_client/helpers/queryable'
+    autoload :Requestable, 'json_api_client/helpers/requestable'
     autoload :Schemable, 'json_api_client/helpers/schemable'
     autoload :Serializable, 'json_api_client/helpers/serializable'
   end

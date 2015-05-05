@@ -23,8 +23,7 @@ module JsonApiClient
 
       def fetch_link(link_name)
         link_definition = links.fetch(link_name.to_s)
-        query = Query::Linked.new(link_definition)
-        record_class.run_request(query)
+        record_class.requestor.linked(link_definition)
       end
     end
   end

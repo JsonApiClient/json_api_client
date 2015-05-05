@@ -26,8 +26,8 @@ module JsonApiClient
       faraday.builder.delete(middleware)
     end
 
-    def execute(query)
-      faraday.send(query.request_method, query.path, query.params, query.headers)
+    def run(request_method, path, params = {}, headers = {})
+      faraday.send(request_method, path, params, headers)
     end
 
   end

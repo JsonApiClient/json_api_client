@@ -25,7 +25,7 @@ class CreationTest < MiniTest::Unit::TestCase
       title: "Rails is Omakase"
     })
 
-    assert article.persisted?
+    assert article.persisted?, article.inspect
     assert_equal "1", article.id
     assert_equal "Rails is Omakase", article.title
   end
