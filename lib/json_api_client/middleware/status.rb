@@ -11,16 +11,23 @@ module JsonApiClient
             handle_status(code, env)
           end
         end
+      rescue Faraday::ConnectionFailed, Faraday::TimeoutError
+        raise Errors::ConnectionError, environment
       end
 
       protected
 
       def handle_status(code, env)
         case code
+        when 200..399
+        when 403
+          raise Errors::AccessDenied, env
         when 404
-          raise Errors::NotFound, env[:uri]
+          raise Errors::NotFound, env[:url]
         when 500..599
           raise Errors::ServerError, env
+        else
+          raise Errors::UnexpectedStatus.new(code, env[:url])
         end
       end
     end

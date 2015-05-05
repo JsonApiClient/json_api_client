@@ -10,6 +10,12 @@ module JsonApiClient
     class ClientError < ApiError
     end
 
+    class AccessDenied < ClientError
+    end
+
+    class ConnectionError < ApiError
+    end
+
     class ServerError < ApiError
       def message
         "Internal server error"
