@@ -10,6 +10,7 @@ module JsonApiClient
         @filters = {}
         @includes = []
         @orders = []
+        @fields = []
       end
 
       def where(conditions = {})
@@ -24,6 +25,11 @@ module JsonApiClient
 
       def includes(*tables)
         @includes += parse_related_links(*tables)
+        self
+      end
+
+      def select(fields)
+        @fields += fields.split(",").map(&:strip)
         self
       end
 
@@ -50,6 +56,7 @@ module JsonApiClient
           .merge(pagination_params)
           .merge(includes_params)
           .merge(order_params)
+          .merge(select_params)
       end
 
       def to_a
@@ -75,6 +82,10 @@ module JsonApiClient
 
       def order_params
         @orders.empty? ? {} : {sort: @orders.join(",")}
+      end
+
+      def select_params
+        @fields.empty? ? {} : {fields: {klass.table_name => @fields.join(",")}}
       end
 
       def parse_related_links(*tables)
