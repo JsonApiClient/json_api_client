@@ -40,7 +40,7 @@ module JsonApiClient
         end
 
         def handle_pagination(result_set, data)
-          result_set.pages = result_set.record_class.paginator.new(result_set, data.fetch("links", {}))
+          result_set.pages = result_set.record_class.paginator.new(result_set, data)
         end
 
         def handle_included(result_set, data)

@@ -11,3 +11,4 @@ module JsonApiClient
     end
   end
 end
+
