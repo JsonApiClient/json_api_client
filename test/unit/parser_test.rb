@@ -8,7 +8,9 @@ class ParserTest < MiniTest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase",
+          attributes: {
+            title: "Rails is Omakase"
+          },
           links: {
             author: {
               self: "/articles/1/links/author",

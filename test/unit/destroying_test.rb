@@ -17,7 +17,7 @@ class DestroyingTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/users/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}
+          {id: 1, attributes: {name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}}
         ]
       }.to_json)
 

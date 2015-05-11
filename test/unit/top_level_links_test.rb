@@ -8,7 +8,9 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "JSON API paints my bikeshed!"
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          }
         },
         links: {
           self: "http://example.com/articles/1",
@@ -39,7 +41,9 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
         data: [{
           type: "articles",
           id: "1",
-          title: "JSON API paints my bikeshed!"
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          }
         }],
         links: {
           self: "http://example.com/articles",
@@ -54,7 +58,9 @@ class TopLevelLinksTest < Minitest::Unit::TestCase
         data: [{
           type: "articles",
           id: "2",
-          title: "This is tha BOMB"
+          attributes: {
+            title: "This is tha BOMB"
+          }
         }],
         links: {
           self: "http://example.com/articles?page=2",

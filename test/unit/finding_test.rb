@@ -9,7 +9,9 @@ class FindingTest < MiniTest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase"
+          attributes: {
+            title: "Rails is Omakase"
+          }
         }
       }.to_json)
     articles = Article.find(1)
@@ -30,11 +32,15 @@ class FindingTest < MiniTest::Unit::TestCase
           {
             type: "articles",
             id: "2",
-            title: "Rails is Omakase"
+            attributes: {
+              title: "Rails is Omakase"
+            }
           }, {
             type: "articles",
             id: "3",
-            title: "Foo bar"
+            attributes: {
+              title: "Foo bar"
+            }
           }
         ]
       }.to_json)
@@ -52,11 +58,15 @@ class FindingTest < MiniTest::Unit::TestCase
           {
             type: "articles",
             id: "2",
-            title: "Rails is Omakase"
+            attributes: {
+              title: "Rails is Omakase"
+            }
           }, {
             type: "articles",
             id: "3",
-            title: "Foo bar"
+            attributes: {
+              title: "Foo bar"
+            }
           }
         ]
       }.to_json)

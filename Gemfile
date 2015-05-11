@@ -22,3 +22,7 @@ if as_version =~ /3\.2\./
 end
 
 gem "codeclimate-test-reporter", group: :test, require: nil
+
+group :development do
+  gem 'byebug'
+end
