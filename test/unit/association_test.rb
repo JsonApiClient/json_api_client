@@ -29,10 +29,29 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/properties/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, address: "123 Main St.", owner: {id: 1, name: "Jeff Ching"}}
+          {
+            id: 1,
+            attributes: {
+              address: "123 Main St."
+            },
+            links: {
+              owner: {
+                linkage: {id: 1, type: 'owner'}
+              }
+            }
+          }
+        ],
+        included: [
+          {
+            id: 1,
+            type: 'owner',
+            attributes: {
+              name: 'Jeff Ching'
+            }
+          }
         ]
-      }.to_json)
 
+      }.to_json)
     property = Property.find(1).first
     assert_equal(Owner, property.owner.class)
     assert_equal("Jeff Ching", property.owner.name)
@@ -42,7 +61,18 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/properties/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, address: "123 Main St.", owner: nil}
+          {
+            id: 1,
+            attributes: {
+              address: "123 Main St."
+            },
+            links: {
+              owner: {
+                self: 'http://example.com/properties/1/links/owner',
+                related: 'http://example.com/people/1'
+              }
+            }
+          }
         ]
       }.to_json)
 
@@ -54,17 +84,53 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/owners")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, name: "Jeff Ching", properties: [
-            {id: 1, address: "123 Main St."},
-            {id: 2, address: "223 Elm St."}
-          ]},
-          {id: 2, name: "Barry Bonds", properties: []},
-          {id: 3, name: "Hank Aaron", properties: [
-            {id: 3, address: "314 150th Ave"}
-          ]}
+          {
+            id: 1,
+            attributes: {
+              name: "Jeff Ching",
+            },
+            links: {
+              properties: {
+                linkage: [
+                  {id: 1, type: 'property'},
+                  {id: 2, type: 'property'}
+                ]
+              }
+            }
+          },
+          {id: 2, attributes: {name: "Barry Bonds"}},
+          {
+            id: 3,
+            attributes: {
+              name: "Hank Aaron"
+            },
+            links: {
+              properties: {
+                linkage: [
+                  {id: 3, type: 'property'}
+                ]
+              }
+            }
+          }
+        ],
+        included: [
+          {
+            id: 1,
+            type: 'property',
+            attributes: {address: "123 Main St."}
+          },
+          {
+            id: 2,
+            type: 'property',
+            attributes: {address: "223 Elm St."}
+          },
+          {
+            id: 3,
+            type: 'property',
+            attributes: {address: "314 150th Ave"}
+          }
         ]
       }.to_json)
-
     owners = Owner.all
     jeff = owners[0]
     assert_equal("Jeff Ching", jeff.name)
@@ -77,7 +143,24 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/owners/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, name: "Jeff Ching", properties: {id: 1, address: "123 Main St."}}
+          {
+            id: 1,
+            attributes: {name: "Jeff Ching"},
+            links: {
+              properties: {
+                linkage: [{type: 'property', id: 1}]
+              }
+            }
+          }
+        ],
+        included: [
+          {
+            id: 1,
+            type: 'property',
+            attributes: {
+              address: "123 Main St."
+            }
+          }
         ]
       }.to_json)
 
@@ -125,7 +208,7 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:get, "http://example.com/foos/1/specifieds")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 1, name: "Jeff Ching", bars: [{id: 1, address: "123 Main St."}]}
+          {id: 1, name: "Jeff Ching", bars: [{id: 1, attributes: {address: "123 Main St."}}]}
         ]
       }.to_json)
 
@@ -137,7 +220,7 @@ class AssociationTest < MiniTest::Unit::TestCase
     stub_request(:post, "http://example.com/foos/10/specifieds")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
-          {id: 12, name: "Blah", bars: [{id: 1, address: "123 Main St."}]}
+          {id: 12, attributes: {name: "Blah"}}
         ]
       }.to_json)
 

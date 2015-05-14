@@ -16,6 +16,38 @@ module JsonApiClient
           end
         end
 
+        #
+        # Given a resource hash, returns a Resource.new friendly hash
+        # which flattens the attributes in w/ id and type.
+        #
+        # Example:
+        #
+        # Given:
+        #  {
+        #    id: 1.
+        #    type: 'person',
+        #    attributes: {
+        #      first_name: 'Jeff',
+        #      last_name: 'Ching'
+        #    },
+        #    links: {...}
+        #  }
+        #
+        # Returns:
+        #  {
+        #    id: 1,
+        #    type: 'person',
+        #    first_name: 'Jeff',
+        #    last_name: 'Ching'
+        #    links: {...}
+        #  }
+        #
+        #
+        def parameters_from_resource(params)
+          attrs = params.slice('id', 'links', 'meta', 'type')
+          attrs.merge(params.fetch('attributes', {}))
+        end
+
         private
 
         def handle_data(result_set, data)
@@ -24,7 +56,10 @@ module JsonApiClient
 
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
-          result_set.concat(results.map{|res| result_set.record_class.load(res)})
+          resources = results.map do |res|
+            result_set.record_class.load(parameters_from_resource(res))
+          end
+          result_set.concat(resources)
         end
 
         def handle_errors(result_set, data)
@@ -40,7 +75,7 @@ module JsonApiClient
         end
 
         def handle_pagination(result_set, data)
-          result_set.pages = result_set.record_class.paginator.new(result_set, data.fetch("links", {}))
+          result_set.pages = result_set.record_class.paginator.new(result_set, data)
         end
 
         def handle_included(result_set, data)

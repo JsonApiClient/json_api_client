@@ -2,10 +2,10 @@ module JsonApiClient
   module Paginating
     class Paginator
       attr_reader :params, :result_set, :links
-      def initialize(result_set, links)
+      def initialize(result_set, data)
         @params = params_for_uri(result_set.uri)
         @result_set = result_set
-        @links = links
+        @links = data['links']
       end
 
       def next
@@ -39,6 +39,7 @@ module JsonApiClient
       def total_entries
         per_page * total_pages
       end
+      alias_method :total_count, :total_entries
 
       def offset
         per_page * (current_page - 1)
