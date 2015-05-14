@@ -7,21 +7,29 @@ module JsonApiClient
         grouped_data = data.group_by{|datum| datum["type"]}
         @data = grouped_data.inject({}) do |h, (type, records)|
           klass = Utils.compute_type(record_class, type.singularize.classify)
-          h[type] = records.map{|datum| klass.new(datum)}.index_by(&:id)
+          h[type] = records.map do |datum|
+            params = klass.parser.parameters_from_resource(datum)
+            klass.new(params)
+          end.index_by(&:id)
           h
         end
       end
 
       def data_for(method_name, definition)
-        linkage = definition["linkage"]
-        if linkage.is_a?(Array)
-          # has_many link
-          linkage.map do |link_def|
-            record_for(link_def)
+        # If linkage is defined, pull the record from the included data
+        if linkage = definition["linkage"]
+          if linkage.is_a?(Array)
+            # has_many link
+            linkage.map do |link_def|
+              record_for(link_def)
+            end
+          else
+            # has_one link
+            record_for(linkage)
           end
         else
-          # has_one link
-          record_for(linkage)
+          # TODO: if "related" URI is defined, fetch the delated object and stuff it in data
+          nil
         end
       end
 

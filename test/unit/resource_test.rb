@@ -16,7 +16,9 @@ class ResourceTest < MiniTest::Unit::TestCase
         data: [{
           type: "articles",
           id: "1",
-          title: "Rails is Omakase"
+          attributes: {
+            title: "Rails is Omakase"
+          }
         }]
       }.to_json)
 

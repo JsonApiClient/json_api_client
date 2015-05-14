@@ -1,13 +1,24 @@
 module JsonApiClient
   module Helpers
     module Serializable
-      def as_json(options=nil)
-        attributes
+      RESERVED = ['id', 'type', 'links', 'meta']
+
+      # def as_json(options=nil)
+      #   attributes.slice(*RESERVED).tap do |h|
+      #     h['attributes'] = serialized_attributes
+      #   end
+      # end
+
+      def data
+        attributes.slice(*RESERVED).tap do |h|
+          h['attributes'] = serialized_attributes
+        end
       end
 
-      def read_attribute_for_serialization(name)
-        read_attribute(name)
+      def serialized_attributes
+        attributes.except(*RESERVED)
       end
+
     end
   end
 end

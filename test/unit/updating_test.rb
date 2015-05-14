@@ -9,7 +9,9 @@ class UpdatingTest < MiniTest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase"
+          attributes: {
+            title: "Rails is Omakase"
+          }
         }
       }.to_json)
   end
@@ -21,18 +23,22 @@ class UpdatingTest < MiniTest::Unit::TestCase
     stub_request(:patch, "http://example.com/articles/1")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
           data: {
-            type: "articles",
             id: "1",
-            title: "Modified title",
-            foo: "bar"
+            type: "articles",
+            attributes: {
+              title: "Modified title",
+              foo: "bar"
+            }
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
         data: {
           type: "articles",
           id: "1",
-          title: "Modified title",
-          foo: "bar"
+          attributes: {
+            title: "Modified title",
+            foo: "bar"
+          }
         }
       }.to_json)
 
@@ -48,18 +54,22 @@ class UpdatingTest < MiniTest::Unit::TestCase
     stub_request(:patch, "http://example.com/articles/1")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
           data: {
-            type: "articles",
             id: "1",
-            title: "Modified title",
-            foo: "bar"
+            type: "articles",
+            attributes: {
+              title: "Modified title",
+              foo: "bar"
+            }
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
         data: {
-          type: "articles",
           id: "1",
-          title: "Modified title",
-          foo: "bar"
+          type: "articles",
+          attirbutes: {
+            title: "Modified title",
+            foo: "bar"
+          }
         }
       }.to_json)
 
@@ -76,9 +86,8 @@ class UpdatingTest < MiniTest::Unit::TestCase
     stub_request(:patch, "http://example.com/articles/1")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
           data: {
-            type: "articles",
             id: "1",
-            title: "Rails is Omakase",
+            type: "articles",
             links: {
               author: {
                 linkage: {
@@ -86,6 +95,9 @@ class UpdatingTest < MiniTest::Unit::TestCase
                   id: "1"
                 }
               }
+            },
+            attributes: {
+              title: "Rails is Omakase"
             }
           }
         }.to_json)
@@ -93,7 +105,9 @@ class UpdatingTest < MiniTest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase",
+          attributes: {
+            title: "Rails is Omakase"
+          },
           links: {
             author: {
               self: "/articles/1/links/author",
@@ -115,9 +129,8 @@ class UpdatingTest < MiniTest::Unit::TestCase
     stub_request(:patch, "http://example.com/articles/1")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
           data: {
-            type: "articles",
             id: "1",
-            title: "Rails is Omakase",
+            type: "articles",
             links: {
               comments: {
                 linkage: [{
@@ -128,20 +141,25 @@ class UpdatingTest < MiniTest::Unit::TestCase
                   id: "3"
                 }]
               }
+            },
+            attributes: {
+              title: "Rails is Omakase"
             }
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
         data: {
-          type: "articles",
           id: "1",
-          title: "Rails is Omakase",
+          type: "articles",
           links: {
             author: {
               self: "/articles/1/links/author",
               related: "/articles/1/author",
               linkage: { type: "people", id: "1" }
             }
+          },
+          attributes: {
+            title: "Rails is Omakase"
           }
         }
       }.to_json)
