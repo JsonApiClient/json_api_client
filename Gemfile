@@ -24,5 +24,5 @@ end
 gem "codeclimate-test-reporter", group: :test, require: nil
 
 group :development do
-  gem 'byebug'
+  gem 'byebug', platforms: [:mri_20, :mri_21, :mri_22]
 end
