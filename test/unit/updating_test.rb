@@ -88,9 +88,9 @@ class UpdatingTest < MiniTest::Unit::TestCase
           data: {
             id: "1",
             type: "articles",
-            links: {
+            relationships: {
               author: {
-                linkage: {
+                data: {
                   type: "people",
                   id: "1"
                 }
@@ -108,11 +108,11 @@ class UpdatingTest < MiniTest::Unit::TestCase
           attributes: {
             title: "Rails is Omakase"
           },
-          links: {
+          relationships: {
             author: {
               self: "/articles/1/links/author",
               related: "/articles/1/author",
-              linkage: { type: "people", id: "1" }
+              data: { type: "people", id: "1" }
             }
           }
         }
@@ -131,9 +131,9 @@ class UpdatingTest < MiniTest::Unit::TestCase
           data: {
             id: "1",
             type: "articles",
-            links: {
+            relationships: {
               comments: {
-                linkage: [{
+                data: [{
                   type: "comments",
                   id: "2"
                 },{
@@ -151,11 +151,11 @@ class UpdatingTest < MiniTest::Unit::TestCase
         data: {
           id: "1",
           type: "articles",
-          links: {
+          relationships: {
             author: {
               self: "/articles/1/links/author",
               related: "/articles/1/author",
-              linkage: { type: "people", id: "1" }
+              data: { type: "people", id: "1" }
             }
           },
           attributes: {

@@ -10,13 +10,6 @@ class ParserTest < MiniTest::Unit::TestCase
           id: "1",
           attributes: {
             title: "Rails is Omakase"
-          },
-          links: {
-            author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
-              linkage: { type: "people", id: 9 }
-            }
           }
         }
       }.to_json)

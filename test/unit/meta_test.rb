@@ -8,13 +8,8 @@ class MetaTest < MiniTest::Unit::TestCase
         data: {
           type: "articles",
           id: "1",
-          title: "Rails is Omakase",
-          links: {
-            author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
-              linkage: { type: "people", id: 9 }
-            }
+          attributes: {
+            title: "Rails is Omakase"
           }
         },
         meta: {

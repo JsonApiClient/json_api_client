@@ -34,9 +34,9 @@ class AssociationTest < MiniTest::Unit::TestCase
             attributes: {
               address: "123 Main St."
             },
-            links: {
+            relationships: {
               owner: {
-                linkage: {id: 1, type: 'owner'}
+                data: {id: 1, type: 'owner'}
               }
             }
           }
@@ -66,10 +66,12 @@ class AssociationTest < MiniTest::Unit::TestCase
             attributes: {
               address: "123 Main St."
             },
-            links: {
+            relationships: {
               owner: {
-                self: 'http://example.com/properties/1/links/owner',
-                related: 'http://example.com/people/1'
+                links: {
+                  self: 'http://example.com/properties/1/links/owner',
+                  related: 'http://example.com/people/1'
+                }
               }
             }
           }
@@ -89,9 +91,9 @@ class AssociationTest < MiniTest::Unit::TestCase
             attributes: {
               name: "Jeff Ching",
             },
-            links: {
+            relationships: {
               properties: {
-                linkage: [
+                data: [
                   {id: 1, type: 'property'},
                   {id: 2, type: 'property'}
                 ]
@@ -104,9 +106,9 @@ class AssociationTest < MiniTest::Unit::TestCase
             attributes: {
               name: "Hank Aaron"
             },
-            links: {
+            relationships: {
               properties: {
-                linkage: [
+                data: [
                   {id: 3, type: 'property'}
                 ]
               }
@@ -146,9 +148,9 @@ class AssociationTest < MiniTest::Unit::TestCase
           {
             id: 1,
             attributes: {name: "Jeff Ching"},
-            links: {
+            relationships: {
               properties: {
-                linkage: [{type: 'property', id: 1}]
+                data: [{type: 'property', id: 1}]
               }
             }
           }
