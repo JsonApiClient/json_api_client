@@ -7,6 +7,7 @@ module JsonApiClient
           ResultSet.new.tap do |result_set|
             result_set.record_class = klass
             result_set.uri = response.env[:url]
+            handle_json_api(result_set, data)
             handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)
@@ -49,6 +50,10 @@ module JsonApiClient
         end
 
         private
+
+        def handle_json_api(result_set, data)
+          result_set.implementation = Implementation.new(data.fetch("jsonapi", {}))
+        end
 
         def handle_data(result_set, data)
           # all data lives under the "data" attribute

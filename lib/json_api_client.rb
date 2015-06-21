@@ -10,6 +10,7 @@ module JsonApiClient
   autoload :Errors, 'json_api_client/errors'
   autoload :ErrorCollector, 'json_api_client/error_collector'
   autoload :Helpers, 'json_api_client/helpers'
+  autoload :Implementation, 'json_api_client/implementation'
   autoload :IncludedData, 'json_api_client/included_data'
   autoload :Linking, 'json_api_client/linking'
   autoload :LinkDefinition, 'json_api_client/link_definition'
