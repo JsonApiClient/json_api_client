@@ -26,7 +26,7 @@ module JsonApiClient
       end
 
       def persisted?
-        attributes.has_key?(primary_key) && attributes[primary_key].present?
+        attributes[primary_key].present?
       end
 
       def query_params

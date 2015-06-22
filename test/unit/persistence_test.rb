@@ -18,6 +18,11 @@ class PersistenceTest < MiniTest::Unit::TestCase
     assert user_preference.persisted?
   end
 
+  def test_nil_primary_key
+    user = User.new(id: nil)
+    assert !user.persisted?
+  end
+
   def test_finding
     stub_request(:get, "http://localhost:3000/api/1/users.json")
       .to_return(headers: {content_type: "application/json"}, body: {
