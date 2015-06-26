@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MetaTest < MiniTest::Unit::TestCase
+class MetaTest < MiniTest::Test
 
   def test_can_parse_global_meta_data
     stub_request(:get, "http://example.com/articles/1")

@@ -23,7 +23,7 @@ module Namespaced
   end
 end
 
-class AssociationTest < MiniTest::Unit::TestCase
+class AssociationTest < MiniTest::Test
 
   def test_load_has_one
     stub_request(:get, "http://example.com/properties/1")

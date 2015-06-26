@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CompoundDocumentTest < MiniTest::Unit::TestCase
+class CompoundDocumentTest < MiniTest::Test
 
   def test_can_handle_included_data
     stub_request(:get, "http://example.com/articles")

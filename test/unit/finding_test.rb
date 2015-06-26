@@ -1,7 +1,7 @@
 require 'test_helper'
 
 # This tests this Resource.find method
-class FindingTest < MiniTest::Unit::TestCase
+class FindingTest < MiniTest::Test
 
   def test_find_by_id
     stub_request(:get, "http://example.com/articles/1")
