@@ -16,16 +16,16 @@ module JsonApiClient
       end
 
       def data_for(method_name, definition)
-        # If linkage is defined, pull the record from the included data
-        if linkage = definition["linkage"]
-          if linkage.is_a?(Array)
+        # If data is defined, pull the record from the included data
+        if data = definition["data"]
+          if data.is_a?(Array)
             # has_many link
-            linkage.map do |link_def|
+            data.map do |link_def|
               record_for(link_def)
             end
           else
             # has_one link
-            record_for(linkage)
+            record_for(data)
           end
         else
           # TODO: if "related" URI is defined, fetch the delated object and stuff it in data

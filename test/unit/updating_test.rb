@@ -79,7 +79,7 @@ class UpdatingTest < MiniTest::Unit::TestCase
     })
   end
 
-  def test_can_update_links
+  def test_can_update_single_relationship
     articles = Article.find(1)
     article = articles.first
 
@@ -110,19 +110,21 @@ class UpdatingTest < MiniTest::Unit::TestCase
           },
           relationships: {
             author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
+              links: {
+                self: "/articles/1/links/author",
+                related: "/articles/1/author",
+              },
               data: { type: "people", id: "1" }
             }
           }
         }
       }.to_json)
 
-    article.links.author = Person.new(id: "1")
+    article.relationships.author = Person.new(id: "1")
     assert article.save
   end
 
-  def test_can_update_has_many_links
+  def test_can_update_has_many_relationships
     articles = Article.find(1)
     article = articles.first
 
@@ -153,8 +155,10 @@ class UpdatingTest < MiniTest::Unit::TestCase
           type: "articles",
           relationships: {
             author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
+              links: {
+                self: "/articles/1/links/author",
+                related: "/articles/1/author",
+              },
               data: { type: "people", id: "1" }
             }
           },
@@ -164,7 +168,7 @@ class UpdatingTest < MiniTest::Unit::TestCase
         }
       }.to_json)
 
-    article.links.comments = [
+    article.relationships.comments = [
       Comment.new(id: "2"),
       Comment.new(id: "3")
     ]

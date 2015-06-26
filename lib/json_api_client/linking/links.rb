@@ -16,9 +16,9 @@ module JsonApiClient
       def set_attribute(name, value)
         attributes[name] = case value
         when JsonApiClient::Resource
-          {linkage: value.as_link}
+          {data: value.as_link}
         when Array
-          {linkage: value.map(&:as_link)}
+          {data: value.map(&:as_link)}
         else
           value
         end

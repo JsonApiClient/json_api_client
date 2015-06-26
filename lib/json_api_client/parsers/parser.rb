@@ -12,6 +12,7 @@ module JsonApiClient
             handle_errors(result_set, data)
             handle_meta(result_set, data)
             handle_links(result_set, data)
+            handle_relationships(result_set, data)
             handle_pagination(result_set, data)
             handle_included(result_set, data)
           end
@@ -31,7 +32,8 @@ module JsonApiClient
         #      first_name: 'Jeff',
         #      last_name: 'Ching'
         #    },
-        #    links: {...}
+        #    links: {...},
+        #    relationships: {...}
         #  }
         #
         # Returns:
@@ -40,12 +42,13 @@ module JsonApiClient
         #    type: 'person',
         #    first_name: 'Jeff',
         #    last_name: 'Ching'
-        #    links: {...}
+        #    links: {...},
+        #    relationships: {...}
         #  }
         #
         #
         def parameters_from_resource(params)
-          attrs = params.slice('id', 'links', 'meta', 'type')
+          attrs = params.slice('id', 'links', 'meta', 'type', 'relationships')
           attrs.merge(params.fetch('attributes', {}))
         end
 
@@ -79,6 +82,10 @@ module JsonApiClient
           result_set.links = Linking::TopLevelLinks.new(result_set.record_class, data.fetch("links", {}))
         end
 
+        def handle_relationships(result_set, data)
+          result_set.relationships = Linking::TopLevelLinks.new(result_set.record_class, data.fetch("relationships", {}))
+        end
+
         def handle_pagination(result_set, data)
           result_set.pages = result_set.record_class.paginator.new(result_set, data)
         end
@@ -86,7 +93,7 @@ module JsonApiClient
         def handle_included(result_set, data)
           included = Linking::IncludedData.new(result_set.record_class, data.fetch("included", []))
           result_set.each do |res|
-            res.linked_data = included
+            res.included_data = included
           end
         end
       end

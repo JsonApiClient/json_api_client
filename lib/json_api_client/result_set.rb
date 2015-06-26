@@ -10,7 +10,8 @@ module JsonApiClient
                   :pages,
                   :uri,
                   :links,
-                  :implementation
+                  :implementation,
+                  :relationships
 
     # pagination methods are handled by the paginator
     def_delegators :pages, :total_pages, :total_entries, :total_count, :offset, :per_page, :current_page, :limit_value, :next_page, :previous_page, :out_of_bounds?
