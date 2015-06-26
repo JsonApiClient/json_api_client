@@ -5,59 +5,98 @@ class CompoundDocumentTest < MiniTest::Test
   def test_can_handle_included_data
     stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        data: [{
-          type: "articles",
-          id: "1",
-          attributes: {
-            title: "JSON API paints my bikeshed!"
+        "links": {
+          "self": "http://example.com/posts",
+          "next": "http://example.com/posts?page[offset]=2",
+          "last": "http://example.com/posts?page[offset]=10"
+        },
+        "data": [{
+          "type": "posts",
+          "id": "1",
+          "attributes": {
+            "title": "JSON API paints my bikeshed!"
           },
-          links: {
-            self: "http://example.com/articles/1"
-          },
-          relationships: {
-            author: {
-              self: "http://example.com/articles/1/links/author",
-              related: "http://example.com/articles/1/author",
-              data: { type: "people", id: "9" }
+          "relationships": {
+            "author": {
+              "links": {
+                "self": "http://example.com/posts/1/relationships/author",
+                "related": "http://example.com/posts/1/author"
+              },
+              "data": { "type": "people", "id": "9" }
             },
-            comments: {
-              self: "http://example.com/articles/1/links/comments",
-              related: "http://example.com/articles/1/comments",
-              data: [
-                { type: "comments", id: "5" },
-                { type: "comments", id: "12" }
+            "comments": {
+              "links": {
+                "self": "http://example.com/posts/1/relationships/comments",
+                "related": "http://example.com/posts/1/comments"
+              },
+              "data": [
+                { "type": "comments", "id": "5" },
+                { "type": "comments", "id": "12" }
+              ]
+            }
+          },
+          "links": {
+            "self": "http://example.com/posts/1"
+          }
+        }],
+        "included": [{
+          "type": "people",
+          "id": "9",
+          "attributes": {
+            "first-name": "Dan",
+            "last-name": "Gebhardt",
+            "twitter": "dgeb"
+          },
+          "links": {
+            "self": "http://example.com/people/9"
+          }
+        }, {
+          "type": "comments",
+          "id": "5",
+          "attributes": {
+            "body": "First!"
+          },
+          "links": {
+            "self": "http://example.com/comments/5"
+          }
+        }, {
+          "type": "comments",
+          "id": "12",
+          "attributes": {
+            "body": "I like XML better"
+          },
+          "links": {
+            "self": "http://example.com/comments/12"
+          },
+          "relationships": {
+            "comments": {
+              "links": {
+                "self": "http://example.com/comments/12/relationships/comments",
+                "related": "http://example.com/comments/12/comments"
+              },
+              "data": [
+                { "type": "comments", "id": "17" },
+                { "type": "comments", "id": "18" }
               ]
             }
           }
-        }],
-        included: [{
-          type: "people",
-          id: "9",
-          attributes: {
-            "first-name" => "Dan",
-            "last-name" => "Gebhardt",
-            twitter: "dgeb"
+        }, {
+          "type": "comments",
+          "id": "17",
+          "attributes": {
+            "body": "XML sucks!"
           },
-          links: {
-            self: "http://example.com/people/9"
+          "links": {
+            "self": "http://example.com/comments/17"
           }
         }, {
-          type: "comments",
-          id: "5",
-          attributes: {
-            body: "First!"
+          "type": "comments",
+          "id": "18",
+          "attributes": {
+            "body": "Yep. XML sucks"
           },
-          links: {
-            self: "http://example.com/comments/5"
-          }
-        }, {
-          type: "comments",
-          id: "12",
-          attributes: {
-            body: "I like XML better"
-          },
-          links: {
-            self: "http://example.com/comments/12"
+          "links": {
+            "self": "http://example.com/comments/18"
           }
         }]
       }.to_json)
@@ -82,10 +121,18 @@ class CompoundDocumentTest < MiniTest::Test
     assert comments.all?{|comment| comment.is_a?(Comment)}, "expected this has-many relationship to return an array of Comment resources"
 
     assert_equal ["5", "12"], comments.map(&:id), "expected to return the comments in the order specified by the link"
-    comment = comments.first
+    comment = comments.last
 
-    assert_equal "First!", comment.body
-    assert_equal "5", comment.id
+    assert_equal "I like XML better", comment.body
+    assert_equal "12", comment.id
+
+    nested_comments = comment.comments
+    assert comments.is_a?(Array), "expected this has-many relationship to return an array"
+    assert comments.all?{|comment| comment.is_a?(Comment)}, "expected this has-many relationship to return an array of Comment resources"
+
+    nested_comment = nested_comments.first
+    assert_equal "XML sucks!", comment.body
+    assert_equal "17", comment.id
   end
 
 end
