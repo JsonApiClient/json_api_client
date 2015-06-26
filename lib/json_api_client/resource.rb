@@ -33,6 +33,7 @@ module JsonApiClient
     include Helpers::Queryable
     include Helpers::Serializable
     include Helpers::Linkable
+    include Helpers::Relatable
     include Helpers::CustomEndpoints
     include Helpers::Schemable
     include Helpers::Paginatable

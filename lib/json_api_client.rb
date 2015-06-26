@@ -13,6 +13,7 @@ module JsonApiClient
   autoload :Implementation, 'json_api_client/implementation'
   autoload :IncludedData, 'json_api_client/included_data'
   autoload :Linking, 'json_api_client/linking'
+  autoload :Relationships, 'json_api_client/relationships'
   autoload :LinkDefinition, 'json_api_client/link_definition'
   autoload :MetaData, 'json_api_client/meta_data'
   autoload :Middleware, 'json_api_client/middleware'

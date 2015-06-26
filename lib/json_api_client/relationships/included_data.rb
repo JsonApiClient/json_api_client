@@ -1,5 +1,5 @@
 module JsonApiClient
-  module Linking
+  module Relationships
     class IncludedData
       attr_reader :data
 

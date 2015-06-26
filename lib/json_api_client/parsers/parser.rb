@@ -83,7 +83,7 @@ module JsonApiClient
         end
 
         def handle_relationships(result_set, data)
-          result_set.relationships = Linking::TopLevelLinks.new(result_set.record_class, data.fetch("relationships", {}))
+          result_set.relationships = Relationships::TopLevelRelations.new(result_set.record_class, data.fetch("relationships", {}))
         end
 
         def handle_pagination(result_set, data)
@@ -91,7 +91,7 @@ module JsonApiClient
         end
 
         def handle_included(result_set, data)
-          included = Linking::IncludedData.new(result_set.record_class, data.fetch("included", []))
+          included = Relationships::IncludedData.new(result_set.record_class, data.fetch("included", []))
           result_set.each do |res|
             res.included_data = included
           end
