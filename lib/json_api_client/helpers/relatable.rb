@@ -10,9 +10,6 @@ module JsonApiClient
         # the relationships for this resource
         attr_accessor :relationships
 
-        # reference to all of the preloaded data
-        attr_accessor :included_data
-
         initializer do |obj, params|
           relationships = params && params.delete("relationships")
           relationships ||= {}
@@ -34,8 +31,8 @@ module JsonApiClient
       end
 
       def method_missing(method, *args)
-        return super unless relationships && relationships.has_attribute?(method)
-        included_data.data_for(method, relationships[method])
+        return super unless relationships and relationships.has_attribute?(method) and result_set.included
+        result_set.included.data_for(method, relationships[method])
       end
 
       def respond_to_missing?(symbol, include_all = false)

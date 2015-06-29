@@ -65,7 +65,9 @@ module JsonApiClient
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
           resources = results.map do |res|
-            result_set.record_class.load(parameters_from_resource(res))
+            resource = result_set.record_class.load(parameters_from_resource(res))
+            resource.result_set = result_set
+            resource
           end
           result_set.concat(resources)
         end
@@ -91,10 +93,7 @@ module JsonApiClient
         end
 
         def handle_included(result_set, data)
-          included = Relationships::IncludedData.new(result_set.record_class, data.fetch("included", []))
-          result_set.each do |res|
-            res.included_data = included
-          end
+          result_set.included = IncludedData.new(result_set, data.fetch("included", []))
         end
       end
     end

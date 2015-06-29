@@ -8,6 +8,7 @@ require 'active_support/core_ext/enumerable'
 
 module JsonApiClient
   class Resource
+    attr_accessor :result_set
     class_attribute :site, :primary_key
     self.primary_key = :id
 
