@@ -30,7 +30,9 @@ class DestroyingTest < MiniTest::Test
         data: [],
         errors: [{
           status: 400,
-          errors: ["Some failure message"]
+          errors: [
+            {title: "Some failure message"}
+          ]
         }]
       }.to_json)
 

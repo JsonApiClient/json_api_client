@@ -26,7 +26,7 @@ class ErrorCollectorTest < MiniTest::Test
       title: "Rails is Omakase"
     })
     assert_equal false, article.errors.present?
-    assert_nil article.errors["title"], "expected to be able to inspect errors that are not present and return nil"
+    assert_equal [], article.errors["title"], "expected to be able to inspect errors that are not present and return nil"
   end
 
   def test_can_handle_errors
@@ -82,6 +82,8 @@ class ErrorCollectorTest < MiniTest::Test
     assert_equal "1337", error.code
     assert_equal "Email address is invalid.", error.title
     assert_equal "Email address 'bar' is not a valid email address.", error.detail
+    assert_equal "/data/attributes/email_address", error.source_pointer
+    assert_equal "email_address", error.source_parameter
     assert error.meta.is_a?(JsonApiClient::MetaData)
     assert_equal "asdf", error.meta.qwer
 
@@ -92,6 +94,8 @@ class ErrorCollectorTest < MiniTest::Test
     assert_equal "1338", error.code
     assert_equal "Title already taken", error.title
     assert_nil error.detail
+    assert_nil error.source_pointer
+    assert_nil error.source_parameter
     assert error.meta.is_a?(JsonApiClient::MetaData)
   end
 
