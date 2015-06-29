@@ -115,24 +115,26 @@ class CompoundDocumentTest < MiniTest::Test
     assert_equal "Dan", author["first-name"]
     assert_equal "Gebhardt", author["last-name"]
     assert_equal "dgeb", author.twitter
+    assert_equal "http://example.com/people/9", author.links.self
 
     comments = article.comments
     assert comments.is_a?(Array), "expected this has-many relationship to return an array"
     assert comments.all?{|comment| comment.is_a?(Comment)}, "expected this has-many relationship to return an array of Comment resources"
-
     assert_equal ["5", "12"], comments.map(&:id), "expected to return the comments in the order specified by the link"
-    comment = comments.last
 
+    comment = comments.last
     assert_equal "I like XML better", comment.body
     assert_equal "12", comment.id
+    assert_equal "http://example.com/comments/12", comment.links.self
 
     nested_comments = comment.comments
     assert comments.is_a?(Array), "expected this has-many relationship to return an array"
     assert comments.all?{|comment| comment.is_a?(Comment)}, "expected this has-many relationship to return an array of Comment resources"
 
     nested_comment = nested_comments.first
-    assert_equal "XML sucks!", comment.body
-    assert_equal "17", comment.id
+    assert_equal "XML sucks!", nested_comment.body
+    assert_equal "17", nested_comment.id
+    assert_equal "http://example.com/comments/17", nested_comment.links.self
   end
 
 end
