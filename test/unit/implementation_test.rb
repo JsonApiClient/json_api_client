@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ImplementationTest < MiniTest::Unit::TestCase
+class ImplementationTest < MiniTest::Test
 
   def test_defaults_on_missing_fields
     stub_request(:get, "http://example.com/articles")

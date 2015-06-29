@@ -7,7 +7,7 @@ class Country < TestResource
 
 end
 
-class CustomEndpointTest < MiniTest::Unit::TestCase
+class CustomEndpointTest < MiniTest::Test
 
   def test_collection_get
     stub_request(:get, "http://example.com/countries/autocomplete?starts_with=bel")

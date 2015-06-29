@@ -15,7 +15,7 @@ class MultipleSchema < TestResource
   properties :name, :short_name, :long_name, type: :string
 end
 
-class SchemableTest < MiniTest::Unit::TestCase
+class SchemableTest < MiniTest::Test
 
   def test_defines_fields
     resource = SchemaResource.new

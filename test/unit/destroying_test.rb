@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DestroyingTest < MiniTest::Unit::TestCase
+class DestroyingTest < MiniTest::Test
 
   def test_destroy
     stub_request(:delete, "http://example.com/users/6")

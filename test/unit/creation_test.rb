@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CreationTest < MiniTest::Unit::TestCase
+class CreationTest < MiniTest::Test
 
   def setup
     super
