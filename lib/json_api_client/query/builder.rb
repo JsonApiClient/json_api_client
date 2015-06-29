@@ -34,12 +34,19 @@ module JsonApiClient
       end
 
       def paginate(conditions = {})
-        @pagination_params.merge!(conditions.slice(:page, :per_page))
-        self
+        scope = self
+        scope = scope.page(conditions[:page]) if conditions[:page]
+        scope = scope.per(conditions[:per_page]) if conditions[:per_page]
+        scope
       end
 
       def page(number)
-        @pagination_params[:page] = number
+        @pagination_params[:number] = number
+        self
+      end
+
+      def per(size)
+        @pagination_params[:size] = size
         self
       end
 
@@ -70,7 +77,9 @@ module JsonApiClient
 
       private
 
-      attr_reader :pagination_params
+      def pagination_params
+        @pagination_params.empty? ? {} : {page: @pagination_params}
+      end
 
       def includes_params
         @includes.empty? ? {} : {include: @includes.join(",")}
