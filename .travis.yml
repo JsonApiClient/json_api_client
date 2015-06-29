@@ -12,3 +12,7 @@ env:
     - "AS_VERSION=4.0.0"
     - "AS_VERSION=4.1.0"
     - "AS_VERSION=4.2.0"
+# We need to install latest version of bundler, because one in travis
+# image is too old to recognize platform => :mri_22 in Gemfile. 
+before_install:
+  - gem install bundler
