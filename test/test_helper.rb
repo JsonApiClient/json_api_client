@@ -6,6 +6,11 @@ require 'webmock/minitest'
 require 'mocha/mini_test'
 require 'pp'
 
+# shim for ActiveSupport 4.0.x requiring minitest 4.2
+unless defined?(Minitest::Test)
+  Minitest::Test = Minitest::Unit::TestCase
+end
+
 WebMock.disable_net_connect!(:allow => "codeclimate.com")
 
 class TestResource < JsonApiClient::Resource
