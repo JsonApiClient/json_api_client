@@ -18,7 +18,7 @@ gem 'addressable', '~> 2.2'
 
 # 3.2 now requires the minitest gem
 if as_version =~ /3\.2\./
-  gem "minitest"
+  gem "minitest", '~> 5'
 end
 
 gem "codeclimate-test-reporter", group: :test, require: nil
