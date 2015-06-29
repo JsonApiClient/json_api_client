@@ -2,104 +2,108 @@ require 'test_helper'
 
 class CompoundDocumentTest < MiniTest::Test
 
+  TEST_DATA = %{
+    {
+      "links": {
+        "self": "http://example.com/posts",
+        "next": "http://example.com/posts?page[offset]=2",
+        "last": "http://example.com/posts?page[offset]=10"
+      },
+      "data": [{
+        "type": "posts",
+        "id": "1",
+        "attributes": {
+          "title": "JSON API paints my bikeshed!"
+        },
+        "relationships": {
+          "author": {
+            "links": {
+              "self": "http://example.com/posts/1/relationships/author",
+              "related": "http://example.com/posts/1/author"
+            },
+            "data": { "type": "people", "id": "9" }
+          },
+          "comments": {
+            "links": {
+              "self": "http://example.com/posts/1/relationships/comments",
+              "related": "http://example.com/posts/1/comments"
+            },
+            "data": [
+              { "type": "comments", "id": "5" },
+              { "type": "comments", "id": "12" }
+            ]
+          }
+        },
+        "links": {
+          "self": "http://example.com/posts/1"
+        }
+      }],
+      "included": [{
+        "type": "people",
+        "id": "9",
+        "attributes": {
+          "first-name": "Dan",
+          "last-name": "Gebhardt",
+          "twitter": "dgeb"
+        },
+        "links": {
+          "self": "http://example.com/people/9"
+        }
+      }, {
+        "type": "comments",
+        "id": "5",
+        "attributes": {
+          "body": "First!"
+        },
+        "links": {
+          "self": "http://example.com/comments/5"
+        }
+      }, {
+        "type": "comments",
+        "id": "12",
+        "attributes": {
+          "body": "I like XML better"
+        },
+        "links": {
+          "self": "http://example.com/comments/12"
+        },
+        "relationships": {
+          "comments": {
+            "links": {
+              "self": "http://example.com/comments/12/relationships/comments",
+              "related": "http://example.com/comments/12/comments"
+            },
+            "data": [
+              { "type": "comments", "id": "17" },
+              { "type": "comments", "id": "18" }
+            ]
+          }
+        }
+      }, {
+        "type": "comments",
+        "id": "17",
+        "attributes": {
+          "body": "XML sucks!"
+        },
+        "links": {
+          "self": "http://example.com/comments/17"
+        }
+      }, {
+        "type": "comments",
+        "id": "18",
+        "attributes": {
+          "body": "Yep. XML sucks"
+        },
+        "links": {
+          "self": "http://example.com/comments/18"
+        }
+      }]
+    }
+  }
+
   def test_can_handle_included_data
     stub_request(:get, "http://example.com/articles")
-      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        "links": {
-          "self": "http://example.com/posts",
-          "next": "http://example.com/posts?page[offset]=2",
-          "last": "http://example.com/posts?page[offset]=10"
-        },
-        "data": [{
-          "type": "posts",
-          "id": "1",
-          "attributes": {
-            "title": "JSON API paints my bikeshed!"
-          },
-          "relationships": {
-            "author": {
-              "links": {
-                "self": "http://example.com/posts/1/relationships/author",
-                "related": "http://example.com/posts/1/author"
-              },
-              "data": { "type": "people", "id": "9" }
-            },
-            "comments": {
-              "links": {
-                "self": "http://example.com/posts/1/relationships/comments",
-                "related": "http://example.com/posts/1/comments"
-              },
-              "data": [
-                { "type": "comments", "id": "5" },
-                { "type": "comments", "id": "12" }
-              ]
-            }
-          },
-          "links": {
-            "self": "http://example.com/posts/1"
-          }
-        }],
-        "included": [{
-          "type": "people",
-          "id": "9",
-          "attributes": {
-            "first-name": "Dan",
-            "last-name": "Gebhardt",
-            "twitter": "dgeb"
-          },
-          "links": {
-            "self": "http://example.com/people/9"
-          }
-        }, {
-          "type": "comments",
-          "id": "5",
-          "attributes": {
-            "body": "First!"
-          },
-          "links": {
-            "self": "http://example.com/comments/5"
-          }
-        }, {
-          "type": "comments",
-          "id": "12",
-          "attributes": {
-            "body": "I like XML better"
-          },
-          "links": {
-            "self": "http://example.com/comments/12"
-          },
-          "relationships": {
-            "comments": {
-              "links": {
-                "self": "http://example.com/comments/12/relationships/comments",
-                "related": "http://example.com/comments/12/comments"
-              },
-              "data": [
-                { "type": "comments", "id": "17" },
-                { "type": "comments", "id": "18" }
-              ]
-            }
-          }
-        }, {
-          "type": "comments",
-          "id": "17",
-          "attributes": {
-            "body": "XML sucks!"
-          },
-          "links": {
-            "self": "http://example.com/comments/17"
-          }
-        }, {
-          "type": "comments",
-          "id": "18",
-          "attributes": {
-            "body": "Yep. XML sucks"
-          },
-          "links": {
-            "self": "http://example.com/comments/18"
-          }
-        }]
-      }.to_json)
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: TEST_DATA)
 
     articles = Article.all
 
