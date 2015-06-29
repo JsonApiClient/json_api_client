@@ -58,4 +58,12 @@ class ResourceTest < MiniTest::Test
     end
   end
 
+  def test_dasherized_keys_support
+    article = Article.new("foo-bar" => "baz")
+    assert_equal("baz", article.send("foo-bar"))
+    assert_equal("baz", article.send(:"foo-bar"))
+    assert_equal("baz", article["foo-bar"])
+    assert_equal("baz", article[:"foo-bar"])
+  end
+
 end
