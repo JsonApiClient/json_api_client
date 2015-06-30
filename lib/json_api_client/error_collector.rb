@@ -1,28 +1,79 @@
 module JsonApiClient
-  class ErrorCollector
+  class ErrorCollector < Array
     class Error
-      include Helpers::DynamicAttributes
+      delegate :[], to: :attrs
 
       def initialize(attrs = {})
-        attrs = {
-          title: attrs
-        } if attrs.is_a?(String)
-        self.attributes = attrs
+        @attrs = (attrs || {}).with_indifferent_access
       end
+
+      def id
+        attrs[:id]
+      end
+
+      def about
+        attrs.fetch(:links, {})[:about]
+      end
+
+      def status
+        attrs[:status]
+      end
+
+      def code
+        attrs[:code]
+      end
+
+      def title
+        attrs[:title]
+      end
+
+      def detail
+        attrs[:detail]
+      end
+
+      def source_parameter
+        source.fetch(:parameter) do
+          source[:pointer] ?
+            source[:pointer].split("/").last :
+            nil
+        end
+      end
+
+      def source_pointer
+        source.fetch(:pointer) do
+          source[:parameter] ?
+            "/data/attributes/#{source[:parameter]}" :
+            nil
+        end
+      end
+
+      def source
+        attrs.fetch(:source, {})
+      end
+
+      def meta
+        MetaData.new(attrs.fetch(:meta, {}))
+      end
+
+      protected
+
+      attr_reader :attrs
     end
 
-    attr_reader :errors
-    extend Forwardable
-    def_delegators :errors, :length, :present?
-
     def initialize(error_data)
-      @errors = Array(error_data).map do |datum|
-        Error.new(datum)
-      end
+      super(error_data.map do |data|
+        Error.new(data)
+      end)
     end
 
     def full_messages
-      errors.map(&:title)
+      map(&:title)
+    end
+
+    def [](source)
+      map do |error|
+        error.source_parameter == source
+      end
     end
 
   end
