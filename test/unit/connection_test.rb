@@ -23,7 +23,17 @@ end
 class InheritedConnectionResource < CustomConnectionResource
 end
 
-class ConnectionTest < MiniTest::Unit::TestCase
+class CustomAdapterResource < TestResource
+  TEST_STUBS = Faraday::Adapter::Test::Stubs.new do |stub|
+    stub.get('/custom_adapter_resources') { |env| [200, {content_type: "application/vnd.api+json"}, {data: [{id: "1", type: "custom_adapter_resources", attributes: {foo: "bar"}}]}.to_json] }
+  end
+  # The Faraday test adapter takes options when building the adapter
+  self.connection_options = {
+    adapter: [:test, TEST_STUBS]
+  }
+end
+
+class ConnectionTest < MiniTest::Test
 
   def test_basic
     assert_equal(NullConnection, CustomConnectionResource.connection_class)
@@ -42,6 +52,14 @@ class ConnectionTest < MiniTest::Unit::TestCase
   def test_child_inherits_parents_connection
     assert InheritedConnectionResource.new.kind_of?(CustomConnectionResource), "sanity"
     assert_equal CustomConnectionResource.connection.object_id, InheritedConnectionResource.connection.object_id, "child connection should use it's parent's connection"
+  end
+
+  def test_can_specify_connection_adapter_options
+    CustomAdapterResource.build_connection
+    resources = CustomAdapterResource.all
+    assert_equal 1, resources.length
+    resource = resources.first
+    assert_equal "bar", resource.foo
   end
 
 end

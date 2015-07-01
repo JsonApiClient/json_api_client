@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ParserTest < MiniTest::Unit::TestCase
+class ParserTest < MiniTest::Test
 
   def test_can_parse_single_record
     stub_request(:get, "http://example.com/articles/1")
@@ -10,13 +10,6 @@ class ParserTest < MiniTest::Unit::TestCase
           id: "1",
           attributes: {
             title: "Rails is Omakase"
-          },
-          links: {
-            author: {
-              self: "/articles/1/links/author",
-              related: "/articles/1/author",
-              linkage: { type: "people", id: 9 }
-            }
           }
         }
       }.to_json)

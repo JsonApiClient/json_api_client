@@ -1,13 +1,9 @@
 require 'forwardable'
-require 'active_support/concern'
-require 'active_support/inflector'
-require 'active_support/core_ext/hash'
-require 'active_support/core_ext/module'
-require 'active_support/core_ext/class/attribute'
-require 'active_support/core_ext/enumerable'
+require 'active_support/all'
 
 module JsonApiClient
   class Resource
+    attr_accessor :result_set
     class_attribute :site, :primary_key
     self.primary_key = :id
 
@@ -33,6 +29,7 @@ module JsonApiClient
     include Helpers::Queryable
     include Helpers::Serializable
     include Helpers::Linkable
+    include Helpers::Relatable
     include Helpers::CustomEndpoints
     include Helpers::Schemable
     include Helpers::Paginatable

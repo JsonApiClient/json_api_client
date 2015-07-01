@@ -5,12 +5,13 @@ module JsonApiClient
 
     def initialize(options = {})
       site = options.fetch(:site)
+      adapter_options = Array(options.fetch(:adapter, Faraday.default_adapter))
       @faraday = Faraday.new(site) do |builder|
         builder.request :json
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status
         builder.use Middleware::ParseJson
-        builder.adapter Faraday.default_adapter
+        builder.adapter *adapter_options
       end
       yield(self) if block_given?
     end

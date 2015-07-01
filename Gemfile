@@ -18,11 +18,11 @@ gem 'addressable', '~> 2.2'
 
 # 3.2 now requires the minitest gem
 if as_version =~ /3\.2\./
-  gem "minitest"
+  gem "minitest", '~> 5'
 end
 
 gem "codeclimate-test-reporter", group: :test, require: nil
 
-group :development do
+group :development, :test do
   gem 'byebug', platforms: [:mri_20, :mri_21, :mri_22]
 end

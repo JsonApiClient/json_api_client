@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CoercionTest < MiniTest::Unit::TestCase
+class CoercionTest < MiniTest::Test
   TIME_STRING = '2015-04-28 10:45:35 -0700'
 
   class CoercionTypes < TestResource
@@ -15,7 +15,20 @@ class CoercionTest < MiniTest::Unit::TestCase
   def test_create_entity_with_coercion
     stub_request(:post, "http://example.com/coercion_types").
       to_return(headers: {content_type: "application/vnd.api+json"}, 
-                body: {data: {bool_me: "false", float_me: "1.0", int_me: "1", integer_me: "2", string_me: 1.0, time_me: "2015-04-28 10:45:35 -0700", type: "coercion_types"}}.to_json)
+                body: {
+                  data: {
+                    attributes: {
+                      bool_me: "false",
+                      float_me: "1.0",
+                      int_me: "1",
+                      integer_me: "2",
+                      string_me: 1.0,
+                      time_me: "2015-04-28 10:45:35 -0700"
+                    },
+                    type: "coercion_types",
+                    id: 123
+                  }
+                }.to_json)
 
     coerced = CoercionTypes.create({
       bool_me: "false",
@@ -43,7 +56,20 @@ class CoercionTest < MiniTest::Unit::TestCase
   def test_can_parse_and_coerce
     stub_request(:get, "http://example.com/coercion_types/1").
       to_return(headers: {content_type: "application/vnd.api+json"}, 
-                body: {data: {bool_me: "false", float_me: "1.0", int_me: "1", integer_me: "2", string_me: 1.0, time_me: "2015-04-28 10:45:35 -0700", type: "coercion_types"}}.to_json)
+                body: {
+                  data: {
+                    attributes: {
+                      bool_me: "false",
+                      float_me: "1.0",
+                      int_me: "1",
+                      integer_me: "2",
+                      string_me: 1.0,
+                      time_me: "2015-04-28 10:45:35 -0700"
+                    },
+                    type: "coercion_types",
+                    id: 1
+                  }
+                }.to_json)
     res = CoercionTypes.find(1)
     assert res.is_a?(JsonApiClient::ResultSet)
     validate_coercion_targets res.first

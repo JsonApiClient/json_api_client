@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ServerSideErrorTest < MiniTest::Unit::TestCase
+class ServerSideErrorTest < MiniTest::Test
 
   def test_can_handle_validations
     stub_request(:post, "http://example.com/users")
@@ -11,7 +11,7 @@ class ServerSideErrorTest < MiniTest::Unit::TestCase
             status: "400",
             title: "Email address is invalid"
           }
-        ] 
+        ]
       }.to_json)
 
     user = User.create(name: 'Bob', email_address: 'invalid email')
@@ -23,7 +23,7 @@ class ServerSideErrorTest < MiniTest::Unit::TestCase
   def test_can_handle_validation_strings
     stub_request(:post, "http://example.com/users")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        errors: ["Email address is invalid"]
+        errors: [{title: "Email address is invalid"}]
       }.to_json)
 
     user = User.create(name: 'Bob', email_address: 'invalid email')

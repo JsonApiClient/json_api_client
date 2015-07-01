@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ResourceTest < MiniTest::Unit::TestCase
+class ResourceTest < MiniTest::Test
 
   def test_basic
     assert_equal :id, Article.primary_key
@@ -56,6 +56,14 @@ class ResourceTest < MiniTest::Unit::TestCase
     assert_raises NoMethodError do
       article.quux
     end
+  end
+
+  def test_dasherized_keys_support
+    article = Article.new("foo-bar" => "baz")
+    assert_equal("baz", article.send("foo-bar"))
+    assert_equal("baz", article.send(:"foo-bar"))
+    assert_equal("baz", article["foo-bar"])
+    assert_equal("baz", article[:"foo-bar"])
   end
 
 end

@@ -32,8 +32,8 @@ module JsonApiClient
           self.class.requestor.create(self)
         end
 
+        self.errors = last_result_set.errors
         if last_result_set.has_errors?
-          self.errors = last_result_set.errors
           false
         else
           self.errors.clear if self.errors

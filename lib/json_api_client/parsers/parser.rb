@@ -7,10 +7,12 @@ module JsonApiClient
           ResultSet.new.tap do |result_set|
             result_set.record_class = klass
             result_set.uri = response.env[:url]
+            handle_json_api(result_set, data)
             handle_data(result_set, data)
             handle_errors(result_set, data)
             handle_meta(result_set, data)
             handle_links(result_set, data)
+            handle_relationships(result_set, data)
             handle_pagination(result_set, data)
             handle_included(result_set, data)
           end
@@ -30,7 +32,8 @@ module JsonApiClient
         #      first_name: 'Jeff',
         #      last_name: 'Ching'
         #    },
-        #    links: {...}
+        #    links: {...},
+        #    relationships: {...}
         #  }
         #
         # Returns:
@@ -39,16 +42,21 @@ module JsonApiClient
         #    type: 'person',
         #    first_name: 'Jeff',
         #    last_name: 'Ching'
-        #    links: {...}
+        #    links: {...},
+        #    relationships: {...}
         #  }
         #
         #
         def parameters_from_resource(params)
-          attrs = params.slice('id', 'links', 'meta', 'type')
+          attrs = params.slice('id', 'links', 'meta', 'type', 'relationships')
           attrs.merge(params.fetch('attributes', {}))
         end
 
         private
+
+        def handle_json_api(result_set, data)
+          result_set.implementation = Implementation.new(data.fetch("jsonapi", {}))
+        end
 
         def handle_data(result_set, data)
           # all data lives under the "data" attribute
@@ -57,7 +65,9 @@ module JsonApiClient
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
           resources = results.map do |res|
-            result_set.record_class.load(parameters_from_resource(res))
+            resource = result_set.record_class.load(parameters_from_resource(res))
+            resource.result_set = result_set
+            resource
           end
           result_set.concat(resources)
         end
@@ -74,15 +84,16 @@ module JsonApiClient
           result_set.links = Linking::TopLevelLinks.new(result_set.record_class, data.fetch("links", {}))
         end
 
+        def handle_relationships(result_set, data)
+          result_set.relationships = Relationships::TopLevelRelations.new(result_set.record_class, data.fetch("relationships", {}))
+        end
+
         def handle_pagination(result_set, data)
           result_set.pages = result_set.record_class.paginator.new(result_set, data)
         end
 
         def handle_included(result_set, data)
-          included = Linking::IncludedData.new(result_set.record_class, data.fetch("included", []))
-          result_set.each do |res|
-            res.linked_data = included
-          end
+          result_set.included = IncludedData.new(result_set, data.fetch("included", []))
         end
       end
     end

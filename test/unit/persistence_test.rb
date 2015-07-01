@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PersistenceTest < MiniTest::Unit::TestCase
+class PersistenceTest < MiniTest::Test
 
   def test_standard_primary_key
     user = User.new

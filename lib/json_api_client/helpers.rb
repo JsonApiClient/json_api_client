@@ -6,6 +6,7 @@ module JsonApiClient
     autoload :DynamicAttributes, 'json_api_client/helpers/dynamic_attributes'
     autoload :Initializable, 'json_api_client/helpers/initializable'
     autoload :Linkable, 'json_api_client/helpers/linkable'
+    autoload :Relatable, 'json_api_client/helpers/relatable'
     autoload :Paginatable, 'json_api_client/helpers/paginatable'
     autoload :Parsable, 'json_api_client/helpers/parsable'
     autoload :Queryable, 'json_api_client/helpers/queryable'
