@@ -6,6 +6,7 @@ module JsonApiClient
 
       def initialize(klass)
         @klass = klass
+        @primary_key = nil
         @pagination_params = {}
         @filters = {}
         @includes = []
@@ -64,18 +65,38 @@ module JsonApiClient
           .merge(includes_params)
           .merge(order_params)
           .merge(select_params)
+          .merge(primary_key_params)
       end
 
       def to_a
-        @to_a ||= klass.find(params)
+        @to_a ||= find
       end
       alias all to_a
+
+      def find(args = {})
+        case args
+        when Hash
+          where(args)
+        else
+          @primary_key = args
+        end
+
+        klass.requestor.get(params)
+      end
 
       def method_missing(method_name, *args, &block)
         to_a.send(method_name, *args, &block)
       end
 
       private
+
+      def primary_key_params
+        return {} unless @primary_key
+
+        @primary_key.is_a?(Array) ?
+          {klass.primary_key.to_s.pluralize.to_sym => @primary_key.join(",")} :
+          {klass.primary_key => @primary_key}
+      end
 
       def pagination_params
         @pagination_params.empty? ? {} : {page: @pagination_params}

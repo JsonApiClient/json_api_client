@@ -10,10 +10,6 @@ module JsonApiClient
       end
 
       module ClassMethods
-        def find(conditions)
-          requestor.find(conditions)
-        end
-
         def create(conditions = {})
           new(conditions).tap do |resource|
             resource.save
