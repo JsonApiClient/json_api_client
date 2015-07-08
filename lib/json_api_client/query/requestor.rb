@@ -20,16 +20,7 @@ module JsonApiClient
         })
       end
 
-      def find(args)
-        params = case args
-        when Hash
-          args
-        when Array
-          {klass.primary_key.to_s.pluralize.to_sym => args.join(",")}
-        else
-          {klass.primary_key => args}
-        end
-
+      def get(params = {})
         path = resource_path(params)
         params.delete(klass.primary_key)
         request(:get, path, params)

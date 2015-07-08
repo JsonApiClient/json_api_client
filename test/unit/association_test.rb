@@ -57,6 +57,40 @@ class AssociationTest < MiniTest::Test
     assert_equal("Jeff Ching", property.owner.name)
   end
 
+  def test_load_has_one_with_include
+    stub_request(:get, "http://example.com/properties/1?include=owner")
+        .to_return(
+            headers: {
+                content_type: "application/vnd.api+json"
+            }, body: {
+                 data: [
+                     {
+                         id: 1,
+                         attributes: {
+                             address: "123 Main St."
+                         },
+                         relationships: {
+                             owner: {
+                                 data: {id: 1, type: 'owner'}
+                             }
+                         }
+                     }
+                 ],
+                 included: [
+                     {
+                         id: 1,
+                         type: 'owner',
+                         attributes: {
+                             name: 'Jeff Ching'
+                         }
+                     }
+                 ]
+
+             }.to_json)
+    property = Property.includes(:owner).find(1).first
+    assert_equal("Jeff Ching", property.owner.name)
+  end
+
   def test_load_has_one_nil
     stub_request(:get, "http://example.com/properties/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
