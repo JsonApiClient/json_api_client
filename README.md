@@ -242,7 +242,7 @@ articles = Article.page(2).per(30).to_a
 articles = Article.paginate(page: 2, per_page: 30).to_a
 ```
 
-*Note: The mapping of pagination parameters is done by the `query_builder` which is [customizable](#fixme).*
+*Note: The mapping of pagination parameters is done by the `query_builder` which is [customizable](#custom-paginator).*
 
 ### Browsing
 
