@@ -31,7 +31,22 @@ end
 
 By convention, we figure guess the resource route from the class name. In the above example, `Article`'s path is "http://example.com/articles" and `Person`'s path would be "http://example.com/people".
 
-Some example usage:
+You can customize this path by changing your resource's `table_name`:
+
+```
+module MyApi
+  class SomeResource < Base
+    def self.table_name
+      "foobar"
+    end
+  end
+end
+
+# requests http://example.com/foobar
+MyApi::SomeResource.all
+```
+
+Some basic example usage:
 
 ```
 MyApi::Article.all
