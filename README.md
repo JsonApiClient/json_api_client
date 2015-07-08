@@ -31,21 +31,6 @@ end
 
 By convention, we figure guess the resource route from the class name. In the above example, `Article`'s path is "http://example.com/articles" and `Person`'s path would be "http://example.com/people".
 
-You can customize this path by changing your resource's `table_name`:
-
-```
-module MyApi
-  class SomeResource < Base
-    def self.table_name
-      "foobar"
-    end
-  end
-end
-
-# requests http://example.com/foobar
-MyApi::SomeResource.all
-```
-
 Some basic example usage:
 
 ```
@@ -327,6 +312,23 @@ The basic types that we allow are:
 Also, we consider `nil` to be an acceptable value and will not cast the value.
 
 ## Customizing
+
+### Paths
+
+You can customize this path by changing your resource's `table_name`:
+
+```
+module MyApi
+  class SomeResource < Base
+    def self.table_name
+      "foobar"
+    end
+  end
+end
+
+# requests http://example.com/foobar
+MyApi::SomeResource.all
+```
 
 ### Connections
 
