@@ -40,7 +40,7 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_can_sort_asc
     stub_request(:get, "http://example.com/articles")
-      .with(query: {sort: "+foo"})
+      .with(query: {sort: "foo"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
@@ -50,7 +50,7 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_sort_defaults_to_asc
     stub_request(:get, "http://example.com/articles")
-      .with(query: {sort: "+foo"})
+      .with(query: {sort: "foo"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
@@ -70,7 +70,7 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_can_sort_multiple
     stub_request(:get, "http://example.com/articles")
-      .with(query: {sort: "-foo,+bar"})
+      .with(query: {sort: "-foo,bar"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
@@ -79,7 +79,7 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_can_sort_mixed
     stub_request(:get, "http://example.com/articles")
-      .with(query: {sort: "-foo,+bar"})
+      .with(query: {sort: "-foo,bar"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
