@@ -218,10 +218,10 @@ article.created_at
 [See specification](http://jsonapi.org/format/#fetching-sorting)
 
 ```
-# makes request to /people?sort=+age
+# makes request to /people?sort=age
 youngest = Person.sort(:age).all
 
-# also makes request to /people?sort=+age
+# also makes request to /people?sort=age
 youngest = Person.sort(age: :asc).all
 
 # makes request to /people?sort=-age
