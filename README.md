@@ -2,7 +2,7 @@
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
 
-*Note: master is currently tracking the 1.0.0 RC3 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
+*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
 
 *Note: This is still a work in progress.*
 
@@ -60,6 +60,8 @@ All class level finders/creators should return a `JsonApiClient::ResultSet` whic
 
 ## Handling Validation Errors
 
+[See specification](http://jsonapi.org/format/#errors)
+
 Out of the box, `json_api_client` handles server side validation only.
 
 ```
@@ -69,7 +71,17 @@ User.create(name: "Bob", email_address: "invalid email")
 user = User.new(name: "Bob", email_address: "invalid email")
 user.save
 => false
+
+# returns an error collector which is array-like
 user.errors
+=> ["Email address is invalid"]
+
+# get all error titles
+user.errors.full_messages
+=> ["Email address is invalid"]
+
+# get errors for a specific parameter
+user.errors[:email_address]
 => ["Email address is invalid"]
 
 user = User.find(1)
@@ -80,6 +92,8 @@ user.errors
 user.email_address
 => "invalid email"
 ```
+
+For now we are assuming that error sources are all parameters.
 
 If you want to add client side validation, I suggest creating a form model class that uses ActiveModel's validations.
 
