@@ -142,11 +142,11 @@ module JsonApiClient
           case arg
           when Hash
             arg.map do |k, v|
-              operator = (v == :desc ? "-" : "+")
+              operator = (v == :desc ? "-" : "")
               "#{operator}#{k}"
             end
           else
-            "+#{arg}"
+            "#{arg}"
           end
         end.flatten
       end
