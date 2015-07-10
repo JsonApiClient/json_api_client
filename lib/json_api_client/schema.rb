@@ -3,15 +3,15 @@ require 'date'
 module JsonApiClient
   class Schema
     DEFAULT_PROPERTY_TYPES = {
-      int: -> (value) { value.to_i },
-      integer: -> (value) { value.to_i },
-      string: -> (value) { value.to_s },
-      float: -> (value) { value.to_f },
-      boolean: -> (value) { value.is_a?(String) ? (value != "false") : !!value },
-      timestamp: -> (value) { value.is_a?(DateTime) ? value : Time.at(value.to_f).to_datetime },
-      timestamp_ms: -> (value) { value.is_a?(DateTime) ? value : Time.at(value.to_f/1000).to_datetime },
-      datetime: -> (value) { value.is_a?(DateTime) ? value : DateTime.parse(value.to_s) },
-      date: -> (value) { value.is_a?(Date) ? value : Date.parse(value.to_s) }
+      int: lambda {|value| value.to_i },
+      integer: lambda {|value| value.to_i },
+      string: lambda {|value| value.to_s },
+      float: lambda {|value| value.to_f },
+      boolean: lambda {|value| value.is_a?(String) ? (value != "false") : !!value },
+      timestamp: lambda {|value| value.is_a?(DateTime) ? value : Time.at(value.to_f).to_datetime },
+      timestamp_ms: lambda {|value| value.is_a?(DateTime) ? value : Time.at(value.to_f/1000).to_datetime },
+      datetime: lambda {|value| value.is_a?(DateTime) ? value : DateTime.parse(value.to_s) },
+      date: lambda {|value| value.is_a?(Date) ? value : Date.parse(value.to_s) }
     }
 
     class << self
