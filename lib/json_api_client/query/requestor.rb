@@ -10,13 +10,13 @@ module JsonApiClient
       # expects a record
       def create(record)
         request(:post, klass.path(record.attributes), {
-          data: record.data
+          data: record.serializable_hash
         })
       end
 
       def update(record)
         request(:patch, resource_path(record.attributes), {
-          data: record.data
+          data: record.serializable_hash
         })
       end
 
