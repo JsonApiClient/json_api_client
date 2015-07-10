@@ -11,6 +11,7 @@ module JsonApiClient
           params = klass.parser.parameters_from_resource(datum)
           resource = klass.new(params)
           resource.result_set = result_set
+          resource.mark_as_persisted!
           resource
         end.index_by(&:id)
         h
