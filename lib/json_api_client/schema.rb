@@ -1,3 +1,5 @@
+require 'date'
+
 module JsonApiClient
   class Schema
     Property = Struct.new(:name, :type, :default) do
@@ -17,6 +19,30 @@ module JsonApiClient
             value == "false" ? false : true
           else
             !!value
+          end
+        when :timestamp
+          if value.is_a?(DateTime)
+            value
+          else
+            Time.at(value.to_f).to_datetime
+          end
+        when :timestamp_ms
+          if value.is_a?(DateTime)
+            value
+          else
+            Time.at(value.to_f/1000).to_datetime
+          end
+        when :datetime
+          if value.is_a?(DateTime)
+            value
+          else
+            DateTime.parse(value.to_s)
+          end
+        when :date
+          if value.is_a?(Date)
+            value
+          else
+            Date.parse(value.to_s)
           end
         else
           value
