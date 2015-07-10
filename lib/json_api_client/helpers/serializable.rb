@@ -3,21 +3,15 @@ module JsonApiClient
     module Serializable
       RESERVED = ['id', 'type', 'links', 'meta', 'relationships']
 
-      # def as_json(options=nil)
-      #   attributes.slice(*RESERVED).tap do |h|
-      #     h['attributes'] = serialized_attributes
-      #   end
-      # end
-
-      def data
-        attributes.slice(*RESERVED).tap do |h|
-          h['attributes'] = serialized_attributes
+      def serializable_hash
+        attributes.slice('id', 'type').tap do |h|
+          relationships.serializable_hash.tap do |r|
+            h['relationships'] = r unless r.empty?
+          end
+          h['attributes'] = attributes.except(*RESERVED)
         end
       end
-
-      def serialized_attributes
-        attributes.except(*RESERVED)
-      end
+      alias data serializable_hash
 
     end
   end

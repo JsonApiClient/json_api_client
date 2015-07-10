@@ -11,6 +11,12 @@ module JsonApiClient
         attributes.present?
       end
 
+      def serializable_hash
+        Hash[attributes.map do |k, v|
+          [k, v.slice("data")]
+        end]
+      end
+
       protected
 
       def set_attribute(name, value)
