@@ -4,7 +4,7 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :initializers
+        class_attribute :initializers, instance_accessor: false
         self.initializers = []
       end
 
@@ -15,7 +15,7 @@ module JsonApiClient
       end
 
       def initialize(params = {})
-        initializers.each do |initializer|
+        self.class.initializers.each do |initializer|
           if initializer.respond_to?(:call)
             initializer.call(self, params)
           else

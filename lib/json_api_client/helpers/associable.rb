@@ -4,7 +4,7 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :associations
+        class_attribute :associations, instance_accessor: false
         self.associations = []
 
         include Associations::BelongsTo
@@ -45,7 +45,7 @@ module JsonApiClient
       protected
 
       def load_associations(params)
-        associations.each do |association|
+        self.class.associations.each do |association|
           if params.has_key?(association.attr_name.to_s)
             set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
           end

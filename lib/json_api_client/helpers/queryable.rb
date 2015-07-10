@@ -8,7 +8,7 @@ module JsonApiClient
           extend Forwardable
           def_delegators :new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
         end
-        class_attribute :connection_class, :connection_object, :connection_options, :query_builder
+        class_attribute :connection_class, :connection_object, :connection_options, :query_builder, instance_accessor: false
         self.connection_class = Connection
         self.connection_options = {}
         self.query_builder = Query::Builder

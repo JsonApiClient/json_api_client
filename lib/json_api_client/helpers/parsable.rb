@@ -4,7 +4,7 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :parser
+        class_attribute :parser, instance_accessor: false
         self.parser = Parsers::Parser
       end
 

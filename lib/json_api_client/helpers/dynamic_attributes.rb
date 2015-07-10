@@ -1,7 +1,6 @@
 module JsonApiClient
   module Helpers
     module DynamicAttributes
-      extend ActiveSupport::Concern
 
       def attributes
         @attributes
