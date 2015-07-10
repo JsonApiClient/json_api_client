@@ -89,6 +89,7 @@ class AssociationTest < MiniTest::Test
              }.to_json)
     property = Property.includes(:owner).find(1).first
     assert_equal("Jeff Ching", property.owner.name)
+    assert property.owner.persisted?
   end
 
   def test_load_has_one_nil
