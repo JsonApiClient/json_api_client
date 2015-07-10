@@ -15,6 +15,13 @@ class MultipleSchema < TestResource
   properties :name, :short_name, :long_name, type: :string
 end
 
+class DateTypes < TestResource
+  property :ts, type: :timestamp
+  property :ts_in_ms, type: :timestamp_ms
+  property :dt, type: :datetime
+  property :d, type: :date
+end
+
 class SchemableTest < MiniTest::Unit::TestCase
 
   def test_defines_fields
@@ -98,6 +105,26 @@ class SchemableTest < MiniTest::Unit::TestCase
     assert_equal false, resource.b
     assert_equal :blah, resource.c
     assert_equal 12345, resource.d
+  end
+
+  def test_time_fields
+    resource = DateTypes.new({
+      ts: "1436543113",
+      ts_in_ms: "1436543113000",
+      dt: "2015-07-10 08:45:13 -0700",
+      d: "2015-07-10"
+    })
+
+    assert resource.ts.is_a?(DateTime), "expected to cast a timestamp to a DateTime object"
+    assert resource.ts_in_ms.is_a?(DateTime), "expected to cast a timestamp in ms to a DateTime object"
+    assert resource.dt.is_a?(DateTime), "expected to cast a datetime string to a DateTime object"
+    assert resource.d.is_a?(Date), "expected to cast a date string to a Date object"
+
+    expected_date = DateTime.new(2015, 07, 10, 8, 45, 13, "-7")
+    assert_equal expected_date, resource.ts
+    assert_equal expected_date, resource.ts_in_ms
+    assert_equal expected_date, resource.dt
+    assert_equal expected_date.to_date, resource.d
   end
 
 end

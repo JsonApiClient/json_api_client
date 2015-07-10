@@ -1,23 +1,40 @@
+require 'date'
+
 module JsonApiClient
   class Schema
+    DEFAULT_PROPERTY_TYPES = {
+      int: lambda {|value| value.to_i },
+      integer: lambda {|value| value.to_i },
+      string: lambda {|value| value.to_s },
+      float: lambda {|value| value.to_f },
+      boolean: lambda {|value| value.is_a?(String) ? (value != "false") : !!value },
+      timestamp: lambda {|value| value.is_a?(DateTime) ? value : Time.at(value.to_f).to_datetime },
+      timestamp_ms: lambda {|value| value.is_a?(DateTime) ? value : Time.at(value.to_f/1000).to_datetime },
+      datetime: lambda {|value| value.is_a?(DateTime) ? value : DateTime.parse(value.to_s) },
+      date: lambda {|value| value.is_a?(Date) ? value : Date.parse(value.to_s) }
+    }
+
+    class << self
+      def property_types
+        @property_types ||= DEFAULT_PROPERTY_TYPES
+      end
+
+      def register_property_type(name, caster)
+        property_types[name.to_sym] = caster
+      end
+
+      def find_property_type(name)
+        property_types[name.to_sym]
+      end
+    end
+
     Property = Struct.new(:name, :type, :default) do
       def cast(value)
         return nil if value.nil?
         return value if type.nil?
 
-        case type.to_sym
-        when :int, :integer
-          value.to_i
-        when :string
-          value.to_s
-        when :float
-          value.to_f
-        when :boolean
-          if value.is_a?(String)
-            value == "false" ? false : true
-          else
-            !!value
-          end
+        if caster = Schema.find_property_type(type)
+          caster.call(value)
         else
           value
         end
