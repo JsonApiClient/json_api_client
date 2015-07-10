@@ -16,15 +16,9 @@ module JsonApiClient
       end
 
       def where(conditions = {})
-        filters = {}
-        conditions.each do |k, v|
-          if klass.prefix_params.include?(k)
-            @path_params[k] = v
-          else
-            filters[k] = v
-          end
-        end
-        @filters.merge!(filters)
+        # pull out any path params here
+        @path_params.merge!(conditions.slice(*klass.prefix_params))
+        @filters.merge!(conditions.except(*klass.prefix_params))
         self
       end
 
