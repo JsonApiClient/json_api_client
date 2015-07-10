@@ -39,4 +39,46 @@ class PersistenceTest < MiniTest::Test
     end
   end
 
+  def test_included_data_should_also_be_persisted
+    stub_request(:get, "http://example.com/articles")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "1",
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          },
+          relationships: {
+            comments: {
+              data: [
+                {type: "comments", id: "17"},
+                {type: "comments", id: "18"},
+              ]
+            }
+          }
+        }],
+        included: [{
+          type: "comments",
+          id: "17",
+          attributes: {
+            body: "I like this post a lot!"
+          }
+        },{
+          type: "comments",
+          id: "18",
+          attributes: {
+            body: "This article is terrible..."
+          }
+        }]
+      }.to_json)
+
+    articles = Article.all
+    article = articles.first
+    comments = article.comments
+    assert_equal 2, comments.length
+    comments.each do |comment|
+      assert comment.persisted?, "included records should be persisted?"
+    end
+  end
+
 end
