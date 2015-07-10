@@ -267,4 +267,39 @@ class AssociationTest < MiniTest::Test
     })
   end
 
+  def test_find_belongs_to_params_unchanged
+    stub_request(:get, "http://example.com/foos/1/specifieds")
+      .to_return(headers: {
+        content_type: "application/vnd.api+json"
+      }, body: {
+        data: [
+          {
+            id: 1,
+            name: "Jeff Ching",
+            bars: [{id: 1, attributes: {address: "123 Main St."}}]
+          }
+        ]
+      }.to_json)
+
+    specifieds = Specified.where(foo_id: 1)
+    assert_equal({path: {foo_id: 1}}, specifieds.params)
+    specifieds.all
+    assert_equal({path: {foo_id: 1}}, specifieds.params)
+  end
+
+  def test_nested_create
+    stub_request(:post, "http://example.com/foos/1/specifieds")
+      .to_return(headers: {
+        content_type: "application/vnd.api+json"
+      }, body: {
+        data: {
+          id: 1,
+          name: "Jeff Ching",
+          bars: [{id: 1, attributes: {address: "123 Main St."}}]
+        }
+      }.to_json)
+
+    specified = Specified.create(foo_id: 1)
+  end
+
 end
