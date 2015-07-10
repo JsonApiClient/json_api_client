@@ -2,12 +2,13 @@ module JsonApiClient
   module Query
     class Builder
 
-      attr_reader :klass
+      attr_reader :klass, :path_params
 
       def initialize(klass)
         @klass = klass
         @primary_key = nil
         @pagination_params = {}
+        @path_params = {}
         @filters = {}
         @includes = []
         @orders = []
@@ -15,7 +16,15 @@ module JsonApiClient
       end
 
       def where(conditions = {})
-        @filters.merge!(conditions)
+        filters = {}
+        conditions.each do |k, v|
+          if klass.prefix_params.include?(k)
+            @path_params[k] = v
+          else
+            filters[k] = v
+          end
+        end
+        @filters.merge!(filters)
         self
       end
 
@@ -66,6 +75,7 @@ module JsonApiClient
           .merge(order_params)
           .merge(select_params)
           .merge(primary_key_params)
+          .merge(path_params)
       end
 
       def to_a
@@ -89,6 +99,10 @@ module JsonApiClient
       end
 
       private
+
+      def path_params
+        @path_params.empty? ? {} : {path: @path_params}
+      end
 
       def primary_key_params
         return {} unless @primary_key

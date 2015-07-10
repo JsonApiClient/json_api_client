@@ -30,12 +30,8 @@ module JsonApiClient
         def path(params = nil)
           parts = [table_name]
           if params
-            filters = params.fetch(:filter, params)
-            slurp = filters.slice(*prefix_params)
-            prefix_params.each do |param|
-              filters.delete(param)
-            end
-            parts.unshift(prefix_path % slurp.symbolize_keys)
+            path_params = params.delete(:path) || params
+            parts.unshift(prefix_path % path_params.symbolize_keys)
           else
             parts.unshift(prefix_path)
           end
