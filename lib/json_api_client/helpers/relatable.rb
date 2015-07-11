@@ -4,7 +4,7 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :relationship_linker
+        class_attribute :relationship_linker, instance_accessor: false
         self.relationship_linker = Relationships::Relations
 
         # the relationships for this resource
@@ -13,7 +13,7 @@ module JsonApiClient
         initializer do |obj, params|
           relationships = params && params.delete("relationships")
           relationships ||= {}
-          obj.relationships = obj.relationship_linker.new(relationships)
+          obj.relationships = obj.class.relationship_linker.new(relationships)
         end
       end
 

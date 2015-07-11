@@ -5,7 +5,7 @@ module JsonApiClient
 
       included do
         attr_accessor :last_result_set, :errors
-        class_attribute :requestor_class
+        class_attribute :requestor_class, instance_accessor: false
         self.requestor_class = Query::Requestor
       end
 
