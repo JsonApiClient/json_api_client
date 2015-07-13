@@ -3,10 +3,6 @@ require 'test_helper'
 class CustomHeaderTest < MiniTest::Test
 
   class CustomHeaderResource < TestResource
-    include JsonApiClient::Helpers::CustomHeaders
-  end
-  CustomHeaderResource.connection do |conn|
-    conn.use JsonApiClient::Middleware::CustomHeaders, CustomHeaderResource
   end
 
   def test_can_set_custom_headers
@@ -24,6 +20,24 @@ class CustomHeaderTest < MiniTest::Test
 
     CustomHeaderResource.with_headers(x_my_header: "asdf") do
       resources = CustomHeaderResource.find(1)
+    end
+  end
+
+  def test_class_method_headers
+    stub_request(:post, "http://example.com/custom_header_resources")
+      .with(headers: {"X-My-Header" => "asdf"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "1",
+          attributes: {
+            title: "Rails is Omakase"
+          }
+        }
+      }.to_json)
+
+    CustomHeaderResource.with_headers(x_my_header: "asdf") do
+      resources = CustomHeaderResource.create(foo: "bar")
     end
   end
 

@@ -34,6 +34,7 @@ module JsonApiClient
     include Helpers::Schemable
     include Helpers::Paginatable
     include Helpers::Requestable
+    include Helpers::CustomHeaders
 
   end
 end
