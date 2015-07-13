@@ -24,12 +24,6 @@ module JsonApiClient
         }
       end
 
-      def attributes
-        super.tap do |attrs|
-          attrs.merge!(relationships: relationships.attributes) if relationships.present?
-        end
-      end
-
       def method_missing(method, *args)
         return super unless relationships and relationships.has_attribute?(method) and result_set.included
         result_set.included.data_for(method, relationships[method])
