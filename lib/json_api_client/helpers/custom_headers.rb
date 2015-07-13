@@ -12,12 +12,14 @@ module JsonApiClient
         end
 
         def custom_headers
-          self.header_store
+          header_store
         end
 
         def custom_headers=(headers)
-          self.header_store.replace(headers)
+          header_store.replace(headers)
         end
+
+        protected
 
         def header_store
           Thread.current["json_api_client-#{resource_name}"] ||= {}
