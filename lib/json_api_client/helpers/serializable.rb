@@ -13,8 +13,14 @@ module JsonApiClient
           relationships.serializable_hash.tap do |r|
             h['relationships'] = r unless r.empty?
           end
-          h['attributes'] = attributes.except(*self.class.read_only_attributes)
+          h['attributes'] = attributes_for_serialization
         end
+      end
+
+      protected
+
+      def attributes_for_serialization
+        attributes.except(*self.class.read_only_attributes)
       end
 
     end

@@ -6,6 +6,26 @@ class SerializingTest < MiniTest::Test
     self.read_only_attributes += ['foo']
   end
 
+  class CustomSerializerAttributes < TestResource
+
+    protected
+
+    def attributes_for_serialization
+      {
+        foo: "bar"
+      }
+    end
+  end
+
+  class InheritedCustomSerializerAttributes < TestResource
+
+    protected
+
+    def attributes_for_serialization
+      super.except(:foo)
+    end
+  end
+
   def test_update_data_only_includes_relationship_data
     stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -73,6 +93,34 @@ class SerializingTest < MiniTest::Test
       }
     }
     assert_equal(expected, resource.serializable_hash)
+  end
+
+  def test_can_specify_attributes_for_serialization
+    resource = CustomSerializerAttributes.new
+
+    expected = {
+      "type" => "custom_serializer_attributes",
+      "attributes" => {
+        "foo" => "bar"
+      }
+    }
+    assert_equal expected, resource.serializable_hash
+  end
+
+  def test_inherited_attributes_for_serialization
+    resource = InheritedCustomSerializerAttributes.new({
+      foo: "bar",
+      id: 1234,
+      qwer: "asdf"
+    })
+
+    expected = {
+      "type" => "inherited_custom_serializer_attributes",
+      "id" => 1234,
+      "attributes" => {
+        "qwer" => "asdf"
+      }
+    }
   end
 
 end
