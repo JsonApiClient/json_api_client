@@ -29,6 +29,25 @@ class ErrorCollectorTest < MiniTest::Test
     assert_equal [], article.errors["title"], "expected to be able to inspect errors that are not present and return nil"
   end
 
+  def test_can_handle_no_content
+    stub_request(:post, "http://example.com/articles")
+      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+          data: {
+            type: "articles",
+            attributes: {
+              title: "Rails is Omakase"
+            }
+          }
+        }.to_json)
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: nil)
+
+    article = Article.create({
+      title: "Rails is Omakase"
+    })
+    assert_equal false, article.errors.present?
+    assert_equal [], article.errors["title"], "expected to be able to inspect errors that are not present and return nil"
+  end
+
   def test_can_handle_errors
     stub_request(:post, "http://example.com/articles")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
