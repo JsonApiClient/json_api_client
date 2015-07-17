@@ -5,6 +5,7 @@ module JsonApiClient
 
       def initialize(relations)
         self.attributes = relations
+        clear_dirty_attributes
       end
 
       def present?
@@ -12,15 +13,19 @@ module JsonApiClient
       end
 
       def serializable_hash
-        Hash[attributes.map do |k, v|
-          [k, v.slice("data")]
-        end]
+        Hash[attributes_for_serialization.map do |k, v|
+               [k, v.slice("data")]
+             end]
+      end
+
+      def attributes_for_serialization
+        attributes.slice(*changed)
       end
 
       protected
 
       def set_attribute(name, value)
-        attributes[name] = case value
+        value = case value
         when JsonApiClient::Resource
           {data: value.as_relation}
         when Array
@@ -28,6 +33,8 @@ module JsonApiClient
         else
           value
         end
+        attribute_will_change!(name) if value != attributes[name]
+        attributes[name] = value
       end
 
     end

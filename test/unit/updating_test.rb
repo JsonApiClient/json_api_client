@@ -96,9 +96,7 @@ class UpdatingTest < MiniTest::Test
                 }
               }
             },
-            attributes: {
-              title: "Rails is Omakase"
-            }
+            attributes: {}
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
@@ -124,6 +122,58 @@ class UpdatingTest < MiniTest::Test
     assert article.save
   end
 
+  def test_can_update_single_relationship_with_all_attributes_dirty
+    articles = Article.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "articles",
+                       relationships: {
+                           author: {
+                               data: {
+                                   type: "people",
+                                   id: "1"
+                               }
+                           }
+                       },
+                       attributes: {
+                           title: "Rails is Omakase"
+                       }
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"
+                   }, body: {
+                        data: {
+                            type: "articles",
+                            id: "1",
+                            attributes: {
+                                title: "Rails is Omakase"
+                            },
+                            relationships: {
+                                author: {
+                                    links: {
+                                        self: "/articles/1/links/author",
+                                        related: "/articles/1/author",
+                                    },
+                                    data: {type: "people", id: "1"}
+                                }
+                            }
+                        }
+                    }.to_json)
+
+    article.relationships.author = Person.new(id: "1")
+    article.set_all_dirty!
+    assert article.save
+  end
+
   def test_can_update_has_many_relationships
     articles = Article.find(1)
     article = articles.first
@@ -144,9 +194,7 @@ class UpdatingTest < MiniTest::Test
                 }]
               }
             },
-            attributes: {
-              title: "Rails is Omakase"
-            }
+            attributes: {}
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
@@ -172,6 +220,64 @@ class UpdatingTest < MiniTest::Test
       Comment.new(id: "2"),
       Comment.new(id: "3")
     ]
+    assert article.save
+  end
+
+  def test_can_update_has_many_relationships_with_all_attributes_dirty
+    articles = Article.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "articles",
+                       relationships: {
+                           comments: {
+                               data: [{
+                                          type: "comments",
+                                          id: "2"
+                                      }, {
+                                          type: "comments",
+                                          id: "3"
+                                      }]
+                           }
+                       },
+                       attributes: {
+                           title: "Rails is Omakase"
+                       }
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"},
+                   body: {
+                       data: {
+                           id: "1",
+                           type: "articles",
+                           relationships: {
+                               author: {
+                                   links: {
+                                       self: "/articles/1/links/author",
+                                       related: "/articles/1/author",
+                                   },
+                                   data: {type: "people", id: "1"}
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
+
+    article.relationships.comments = [
+        Comment.new(id: "2"),
+        Comment.new(id: "3")
+    ]
+    article.set_all_dirty!
     assert article.save
   end
 

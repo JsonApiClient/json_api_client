@@ -51,6 +51,12 @@ module JsonApiClient
         @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new
       end
 
+      def set_all_attributes_dirty
+        attributes.each do |k, v|
+          set_attribute_was(k, v)
+        end
+      end
+
       def attribute_will_change!(attr)
         return if attribute_changed?(attr)
         set_attribute_was(attr, attributes[attr])
