@@ -3,7 +3,8 @@ module JsonApiClient
     class Parser
       class << self
         def parse(klass, response)
-          data = response.body
+          data = response.body.present? ? response.body : {}
+
           ResultSet.new.tap do |result_set|
             result_set.record_class = klass
             result_set.uri = response.env[:url]

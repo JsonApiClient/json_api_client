@@ -13,6 +13,15 @@ class DestroyingTest < MiniTest::Test
     assert_equal(false, user.persisted?)
   end
 
+  def test_destroy_no_content
+    stub_request(:delete, "http://example.com/users/6")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: nil)
+
+    user = User.new(id: 6)
+    assert(user.destroy, "successful deletion should return truish value")
+    assert_equal(false, user.persisted?)
+  end
+
   def test_destroy_failure
     stub_request(:get, "http://example.com/users/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
