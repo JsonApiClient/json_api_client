@@ -1,12 +1,6 @@
 module JsonApiClient
   module Helpers
     module Serializable
-      extend ActiveSupport::Concern
-
-      included do
-        class_attribute :read_only_attributes, instance_accessor: false
-        self.read_only_attributes = ['id', 'type', 'links', 'meta', 'relationships']
-      end
 
       def serializable_hash
         attributes.slice('id', 'type').tap do |h|
@@ -17,10 +11,14 @@ module JsonApiClient
         end
       end
 
+      def read_only_attributes
+        [:id, :type, :links, :meta, :relationships]
+      end
+
       protected
 
       def attributes_for_serialization
-        attributes.except(*self.class.read_only_attributes)
+        attributes.except(*self.read_only_attributes.map(&:to_s))
       end
 
     end
