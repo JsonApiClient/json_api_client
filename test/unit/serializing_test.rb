@@ -3,7 +3,19 @@ require 'test_helper'
 class SerializingTest < MiniTest::Test
 
   class LimitedField < TestResource
-    self.read_only_attributes += ['foo']
+    def read_only_attributes
+      super + [:foo]
+    end
+  end
+
+  class CustomLimitedField < TestResource
+    def read_only_attributes
+      if self.persisted?
+        super + [:qwer]
+      else
+        super + [:foo]
+      end
+    end
   end
 
   class CustomSerializerAttributes < TestResource
@@ -93,6 +105,32 @@ class SerializingTest < MiniTest::Test
       }
     }
     assert_equal(expected, resource.serializable_hash)
+  end
+
+  def test_skips_custom_read_only_attributes
+    resource = CustomLimitedField.new({
+                                    id: 1,
+                                    foo: "bar",
+                                    qwer: "asdf"
+                                })
+
+    expected_new_record = {
+        'id' => 1,
+        'type' => 'custom_limited_fields',
+        'attributes' => {
+            'qwer' => 'asdf'
+        }
+    }
+    expected_persisted = {
+        'id' => 1,
+        'type' => 'custom_limited_fields',
+        'attributes' => {
+            'foo' => 'bar'
+        }
+    }
+    assert_equal(expected_new_record, resource.serializable_hash)
+    resource.mark_as_persisted!
+    assert_equal(expected_persisted, resource.serializable_hash)
   end
 
   def test_can_specify_attributes_for_serialization
