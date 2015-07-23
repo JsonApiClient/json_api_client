@@ -3,7 +3,7 @@ module JsonApiClient
     module Inspectable
 
       def inspect
-        "#<Gnomon::Client::Location:@attributes=#{attributes.inspect}>"
+        "#<#{self.class.name}:@attributes=#{attributes.inspect}>"
       end
 
     end
