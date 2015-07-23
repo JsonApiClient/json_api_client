@@ -15,7 +15,7 @@ module JsonApiClient
         def load(params)
           new(params).tap do |resource|
             resource.mark_as_persisted!
-            resource.clear_dirty_attributes
+            resource.clear_changes_information
           end
         end
 

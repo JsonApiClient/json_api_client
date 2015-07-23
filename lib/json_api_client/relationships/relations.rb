@@ -5,7 +5,7 @@ module JsonApiClient
 
       def initialize(relations)
         self.attributes = relations
-        clear_dirty_attributes
+        clear_changes_information
       end
 
       def present?
