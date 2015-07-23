@@ -17,10 +17,15 @@ module JsonApiClient
         end
       end
 
+      def set_all_dirty!
+        set_all_attributes_dirty
+        relationships.set_all_attributes_dirty if relationships
+      end
+
       protected
 
       def attributes_for_serialization
-        attributes.except(*self.class.read_only_attributes)
+        attributes.except(*self.class.read_only_attributes).slice(*changed)
       end
 
     end
