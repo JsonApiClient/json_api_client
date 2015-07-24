@@ -10,7 +10,7 @@ module JsonApiClient
 
       def serializable_hash
         attributes.slice('id', 'type').tap do |h|
-          relationships.serializable_hash.tap do |r|
+          relationships_for_serialization.tap do |r|
             h['relationships'] = r unless r.empty?
           end
           h['attributes'] = attributes_for_serialization
@@ -26,6 +26,10 @@ module JsonApiClient
 
       def attributes_for_serialization
         attributes.except(*self.class.read_only_attributes).slice(*changed)
+      end
+
+      def relationships_for_serialization
+        relationships.serializable_hash
       end
 
     end
