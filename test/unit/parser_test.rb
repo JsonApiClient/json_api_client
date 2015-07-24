@@ -22,12 +22,12 @@ class ParserTest < MiniTest::Unit::TestCase
 
   def mock_response
     {
-        "meta": {
-            "per-page": 10,
-            "page": 1,
-            "status": 200,
-            "total_pages": 9999,
-            "errors": nil
+        "meta" => {
+            "per-page" => 10,
+            "page" => 1,
+            "status" => 200,
+            "total_pages" => 9999,
+            "errors" => nil
         }
     }.stringify_keys!
   end
