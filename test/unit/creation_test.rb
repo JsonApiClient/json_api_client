@@ -2,6 +2,18 @@ require 'test_helper'
 
 class CreationTest < MiniTest::Test
 
+  class CallbackTest < TestResource
+    include JsonApiClient::Helpers::Callbacks
+    before_save do
+      self.foo = 10
+    end
+
+    after_create :after_create_method
+    def after_create_method
+      self.bar = 100
+    end
+  end
+
   def setup
     super
     stub_request(:post, "http://example.com/articles")
@@ -42,6 +54,39 @@ class CreationTest < MiniTest::Test
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+  end
+
+  def test_callbacks_on_update
+    stub_request(:post, "http://example.com/callback_tests")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              },
+              body: {
+                  data: {
+                      type: "callback_tests",
+                      attributes: {
+                          foo: 10,
+                          bar: 1
+                      }
+                  }
+              }.to_json)
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "callback_tests",
+                           id: "1",
+                           attributes: {
+                               foo: 10,
+                               bar: 1
+                           }
+                       }
+                   }.to_json)
+
+    callback_test = CallbackTest.create({foo: 1, bar: 1})
+    assert_equal 100, callback_test.bar
   end
 
 end
