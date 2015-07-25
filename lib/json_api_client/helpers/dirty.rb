@@ -16,11 +16,11 @@ module JsonApiClient
         end
 
         def changed_attributes
-          @changed_attributes ||= ActiveSupport::HashWithIndifferentAccess.new
+          @changed_attributes ||= {}.with_indifferent_access
         end
 
         def clear_changes_information
-          @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new
+          @changed_attributes = {}.with_indifferent_access
         end
 
         def set_all_attributes_dirty
