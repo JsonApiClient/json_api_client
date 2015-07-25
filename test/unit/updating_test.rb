@@ -8,6 +8,18 @@ class UpdatingTest < MiniTest::Test
     end
   end
 
+  class CallbackTest < TestResource
+    include JsonApiClient::Helpers::Callbacks
+    before_update do
+      self.foo = 10
+    end
+
+    after_save :after_save_method
+    def after_save_method
+      self.bar = 100
+    end
+  end
+
   def setup
     super
     stub_request(:get, "http://example.com/articles/1")
@@ -528,5 +540,54 @@ class UpdatingTest < MiniTest::Test
     author.relationships.articles = []
     assert author.save
   end
+
+  def test_callbacks_on_update
+    stub_request(:get, "http://example.com/callback_tests/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   }, body: {
+                        data: {
+                            type: "callback_tests",
+                            id: "1",
+                            attributes: {
+                                foo: 1,
+                                bar: 1
+                            }
+                        }
+                    }.to_json)
+
+    callback_test = CallbackTest.find(1).first
+
+    stub_request(:patch, "http://example.com/callback_tests/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "callback_tests",
+                       attributes: {
+                           foo: 10
+                       }
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"
+                   }, body: {
+                        data: {
+                            type: "callback_tests",
+                            id: "1",
+                            attributes: {
+                                foo: 10,
+                                bar: 1
+                            }
+                        }
+                    }.to_json)
+
+    assert callback_test.save
+    assert_equal 100, callback_test.bar
+  end
+
 
 end
