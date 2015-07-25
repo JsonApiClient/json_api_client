@@ -1,7 +1,6 @@
 module JsonApiClient
   class ErrorCollector < Array
     class Error
-      delegate :[], to: :attrs
 
       def initialize(attrs = {})
         @attrs = (attrs || {}).with_indifferent_access
@@ -53,6 +52,14 @@ module JsonApiClient
 
       def meta
         MetaData.new(attrs.fetch(:meta, {}))
+      end
+
+      def empty?
+        false
+      end
+
+      def to_s
+        title
       end
 
       protected

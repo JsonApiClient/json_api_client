@@ -17,7 +17,7 @@ class ServerSideErrorTest < MiniTest::Test
     user = User.create(name: 'Bob', email_address: 'invalid email')
     assert !user.persisted?
     assert user.errors.present?
-    assert_equal ["Email address is invalid"], user.errors.full_messages
+    assert_equal ["Email address is invalid"], user.errors.full_messages.map(&:to_s)
   end
 
   def test_can_handle_validation_strings
@@ -29,7 +29,7 @@ class ServerSideErrorTest < MiniTest::Test
     user = User.create(name: 'Bob', email_address: 'invalid email')
     assert !user.persisted?
     assert user.errors.present?
-    assert_equal ["Email address is invalid"], user.errors.full_messages
+    assert_equal ["Email address is invalid"], user.errors.full_messages.map(&:to_s)
   end
 
 end
