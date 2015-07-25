@@ -15,5 +15,6 @@ module JsonApiClient
     autoload :Requestable, 'json_api_client/helpers/requestable'
     autoload :Schemable, 'json_api_client/helpers/schemable'
     autoload :Serializable, 'json_api_client/helpers/serializable'
+    autoload :Callbacks, 'json_api_client/helpers/callbacks'
   end
 end
