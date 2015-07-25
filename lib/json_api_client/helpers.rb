@@ -4,6 +4,7 @@ module JsonApiClient
     autoload :Attributable, 'json_api_client/helpers/attributable'
     autoload :CustomEndpoints, 'json_api_client/helpers/custom_endpoints'
     autoload :CustomHeaders, 'json_api_client/helpers/custom_headers'
+    autoload :Dirty, 'json_api_client/helpers/dirty'
     autoload :DynamicAttributes, 'json_api_client/helpers/dynamic_attributes'
     autoload :Inspectable, 'json_api_client/helpers/inspectable'
     autoload :Linkable, 'json_api_client/helpers/linkable'

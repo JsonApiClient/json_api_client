@@ -20,6 +20,10 @@ module JsonApiClient
       def resource_name
         name.demodulize.underscore
       end
+
+      def default_attributes
+        {type: table_name}
+      end
     end
 
     extend ActiveModel::Naming
@@ -27,8 +31,12 @@ module JsonApiClient
     include ActiveModel::Validations
     include ActiveModel::Conversion
 
-    def initialize(*params); end
+    include Helpers::DynamicAttributes
+    def initialize(params = {})
+      self.attributes = params.merge(self.class.default_attributes)
+    end
 
+    include Helpers::Dirty
     include Helpers::Attributable
     include Helpers::Associable
     include Helpers::Parsable

@@ -3,28 +3,12 @@ module JsonApiClient
     module Attributable
       extend ActiveSupport::Concern
 
-      included do
-        include DynamicAttributes
-        prepend Initializer
-      end
-
       module ClassMethods
         def load(params)
           new(params).tap do |resource|
             resource.mark_as_persisted!
             resource.clear_changes_information
           end
-        end
-
-        def default_attributes
-          {type: table_name}
-        end
-      end
-
-      module Initializer
-        def initialize(params = {})
-          super
-          self.attributes = params.merge(self.class.default_attributes)
         end
       end
 
@@ -39,10 +23,6 @@ module JsonApiClient
 
       def persisted?
         !!@persisted && has_attribute?(primary_key)
-      end
-
-      def query_params
-        attributes.except(primary_key)
       end
 
       def to_param

@@ -176,7 +176,7 @@ class UpdatingTest < MiniTest::Test
                     }.to_json)
 
     article.relationships.author = Person.new(id: "1")
-    article.set_all_dirty!
+    article.set_all_attributes_dirty
     assert article.save
   end
 
@@ -283,7 +283,7 @@ class UpdatingTest < MiniTest::Test
         Comment.new(id: "2"),
         Comment.new(id: "3")
     ]
-    article.set_all_dirty!
+    article.set_all_attributes_dirty
     assert article.save
   end
 

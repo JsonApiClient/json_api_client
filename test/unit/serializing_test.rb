@@ -103,7 +103,8 @@ class SerializingTest < MiniTest::Test
 
     articles = Article.all
     article = articles.first
-    article.set_all_dirty!
+    article.set_all_attributes_dirty
+    article.relationships.set_all_attributes_dirty
 
     expected = {
         "type" => "articles",
