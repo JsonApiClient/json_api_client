@@ -2,6 +2,14 @@ require 'test_helper'
 
 class DestroyingTest < MiniTest::Test
 
+  class CallbackTest < TestResource
+    include JsonApiClient::Helpers::Callbacks
+    attr_accessor :foo
+    after_destroy do
+      self.foo = 10
+    end
+  end
+
   def test_destroy
     stub_request(:delete, "http://example.com/users/6")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -47,6 +55,17 @@ class DestroyingTest < MiniTest::Test
 
     assert_equal(false, user.destroy, "failed deletion should return falsy value")
     assert_equal(true, user.persisted?, "user should still be persisted because destroy failed")
+  end
+
+  def test_callbacks
+    stub_request(:delete, "http://example.com/callback_tests/6")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+                                                                          data: []
+                                                                      }.to_json)
+
+    callback_test = CallbackTest.new(id: 6)
+    callback_test.destroy
+    assert_equal(10, callback_test.foo)
   end
 
 end
