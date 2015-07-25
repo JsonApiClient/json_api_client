@@ -3,10 +3,10 @@ module JsonApiClient
     module Dirty
       extend ActiveSupport::Concern
       included do
-        prepend InstanceMethods
+        prepend InstanceMethodsOverride
       end
 
-      module InstanceMethods
+      module InstanceMethodsOverride
         def changed?
           changed_attributes.present?
         end
