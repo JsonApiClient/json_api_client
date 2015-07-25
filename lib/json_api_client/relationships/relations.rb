@@ -14,8 +14,8 @@ module JsonApiClient
 
       def serializable_hash
         Hash[attributes_for_serialization.map do |k, v|
-               [k, v.slice("data")]
-             end]
+               [k, v.slice("data")]  if v.has_key?("data")
+             end.compact]
       end
 
       def attributes_for_serialization
@@ -30,6 +30,8 @@ module JsonApiClient
           {data: value.as_relation}
         when Array
           {data: value.map(&:as_relation)}
+        when NilClass
+          {data: nil}
         else
           value
         end
