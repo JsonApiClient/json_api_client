@@ -2,11 +2,8 @@ module JsonApiClient
   module Helpers
     module Schemable
       extend ActiveSupport::Concern
-
       included do
-        initializer do |obj, params|
-          obj.send(:set_default_values)
-        end
+        prepend Initializer
       end
 
       module ClassMethods
@@ -38,6 +35,13 @@ module JsonApiClient
           names.each do |name|
             property name, options
           end
+        end
+      end
+
+      module Initializer
+        def initialize(params = {})
+          super
+          set_default_values
         end
       end
 

@@ -4,16 +4,19 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
+        prepend Initializer
         class_attribute :relationship_linker, instance_accessor: false
         self.relationship_linker = Relationships::Relations
 
         # the relationships for this resource
         attr_accessor :relationships
+      end
 
-        initializer do |obj, params|
-          relationships = params && params.delete("relationships")
-          relationships ||= {}
-          obj.relationships = obj.class.relationship_linker.new(relationships)
+      module Initializer
+        def initialize(params = {})
+          relationship_params = params ? params.delete("relationships") : {}
+          self.relationships = self.class.relationship_linker.new(relationship_params)
+          super
         end
       end
 

@@ -5,10 +5,7 @@ module JsonApiClient
 
       included do
         include DynamicAttributes
-        attr_accessor :errors
-        initializer do |obj, params|
-          obj.attributes = params.merge(obj.class.default_attributes)
-        end
+        prepend Initializer
       end
 
       module ClassMethods
@@ -21,6 +18,13 @@ module JsonApiClient
 
         def default_attributes
           {type: table_name}
+        end
+      end
+
+      module Initializer
+        def initialize(params = {})
+          super
+          self.attributes = params.merge(self.class.default_attributes)
         end
       end
 

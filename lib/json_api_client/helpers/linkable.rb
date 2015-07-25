@@ -4,16 +4,19 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
+        prepend Initializer
         class_attribute :linker, instance_accessor: false
         self.linker = Linking::Links
 
         # the links for this resource
         attr_accessor :links
+      end
 
-        initializer do |obj, params|
-          links = params && params.delete("links")
-          links ||= {}
-          obj.links = obj.class.linker.new(links)
+      module Initializer
+        def initialize(params = {})
+          links = params ? params.delete("links") : {}
+          self.links = self.class.linker.new(links)
+          super
         end
       end
 

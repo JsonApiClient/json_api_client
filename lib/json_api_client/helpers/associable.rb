@@ -4,14 +4,13 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
+        prepend Initializer
         class_attribute :associations, instance_accessor: false
         self.associations = []
 
         include Associations::BelongsTo
         include Associations::HasMany
         include Associations::HasOne
-
-        initializer :load_associations
       end
 
       module ClassMethods
@@ -42,13 +41,14 @@ module JsonApiClient
         end
       end
 
-      protected
-
-      def load_associations(params)
-        self.class.associations.each do |association|
-          if params.has_key?(association.attr_name.to_s)
-            set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
+      module Initializer
+        def initialize(params = {})
+          self.class.associations.each do |association|
+            if params.has_key?(association.attr_name.to_s)
+              set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
+            end
           end
+          super
         end
       end
 

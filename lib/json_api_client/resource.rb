@@ -22,7 +22,13 @@ module JsonApiClient
       end
     end
 
-    include Helpers::Initializable
+    extend ActiveModel::Naming
+    extend ActiveModel::Translation
+    include ActiveModel::Validations
+    include ActiveModel::Conversion
+
+    def initialize(*params); end
+
     include Helpers::Attributable
     include Helpers::Associable
     include Helpers::Parsable
