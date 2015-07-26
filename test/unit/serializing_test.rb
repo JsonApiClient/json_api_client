@@ -28,48 +28,6 @@ class SerializingTest < MiniTest::Test
 
   def test_update_data_only_includes_relationship_data
     stub_request(:get, "http://example.com/articles")
-      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        data: [{
-          type: "articles",
-          id: "1",
-          attributes: {
-            title: "JSON API paints my bikeshed!"
-          },
-          relationships: {
-            author: {
-              links: {
-                self: "http://example.com/posts/1/relationships/author",
-                related: "http://example.com/posts/1/author"
-              },
-              data: {
-                type: "people",
-                id: "9"
-              }
-            }
-          }
-        }],
-        included: [{
-          type: "people",
-          id: "9",
-          attributes: {
-            name: "Jeff"
-          }
-        }]
-      }.to_json)
-
-    articles = Article.all
-    article = articles.first
-
-    expected = {
-      "type" => "articles",
-      "id" => "1",
-      "attributes" => {}
-    }
-    assert_equal expected, article.serializable_hash
-  end
-
-  def test_update_data_only_includes_relationship_data_with_all_attributes_dirty
-    stub_request(:get, "http://example.com/articles")
         .to_return(headers: {
                        content_type: "application/vnd.api+json"},
                    body: {
@@ -103,7 +61,6 @@ class SerializingTest < MiniTest::Test
 
     articles = Article.all
     article = articles.first
-    article.set_all_dirty!
 
     expected = {
         "type" => "articles",
