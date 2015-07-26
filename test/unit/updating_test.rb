@@ -8,6 +8,11 @@ class UpdatingTest < MiniTest::Test
     end
   end
 
+  class DirtyArticle < Article
+    include JsonApiClient::Helpers::DirtyAttributes
+    self.relationship_linker = JsonApiClient::Relationships::RelationsWithDirty
+  end
+
   class CallbackTest < TestResource
     include JsonApiClient::Helpers::Callbacks
     before_update do
@@ -114,7 +119,9 @@ class UpdatingTest < MiniTest::Test
                 }
               }
             },
-            attributes: {}
+            attributes: {
+                title: "Rails is Omakase"
+            }
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
@@ -140,29 +147,41 @@ class UpdatingTest < MiniTest::Test
     assert article.save
   end
 
-  def test_can_update_single_relationship_with_all_attributes_dirty
-    articles = Article.find(1)
+  def test_can_not_update_unchanged_single_relationship_with_dirty
+    stub_request(:get, "http://example.com/dirty_articles/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "dirty_articles",
+                           id: "1",
+                           relationships: {
+                               author: {
+                                   data: {
+                                       type: "people",
+                                       id: "1"
+                                   }
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
+
+    articles = DirtyArticle.find(1)
     article = articles.first
 
-    stub_request(:patch, "http://example.com/articles/1")
+    stub_request(:patch, "http://example.com/dirty_articles/1")
         .with(headers: {
                   content_type: "application/vnd.api+json",
                   accept: "application/vnd.api+json"
               }, body: {
                    data: {
                        id: "1",
-                       type: "articles",
-                       relationships: {
-                           author: {
-                               data: {
-                                   type: "people",
-                                   id: "1"
-                               }
-                           }
-                       },
-                       attributes: {
-                           title: "Rails is Omakase"
-                       }
+                       type: "dirty_articles",
+                       attributes: {}
                    }
                }.to_json)
         .to_return(headers: {
@@ -170,7 +189,7 @@ class UpdatingTest < MiniTest::Test
                        content_type: "application/vnd.api+json"
                    }, body: {
                         data: {
-                            type: "articles",
+                            type: "dirty_articles",
                             id: "1",
                             attributes: {
                                 title: "Rails is Omakase"
@@ -178,17 +197,85 @@ class UpdatingTest < MiniTest::Test
                             relationships: {
                                 author: {
                                     links: {
-                                        self: "/articles/1/links/author",
-                                        related: "/articles/1/author",
-                                    },
-                                    data: {type: "people", id: "1"}
+                                        self: "/dirty_articles/1/links/author",
+                                        related: "/dirty_articles/1/author",
+                                    }
                                 }
                             }
                         }
                     }.to_json)
 
-    article.relationships.author = Person.new(id: "1")
-    article.set_all_dirty!
+    # article.relationships.author = Person.new(id: "1")
+    assert article.save
+  end
+
+  def test_can_update_changed_single_relationship_with_dirty
+    stub_request(:get, "http://example.com/dirty_articles/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "dirty_articles",
+                           id: "1",
+                           relationships: {
+                               author: {
+                                   data: {
+                                       type: "people",
+                                       id: "1"
+                                   }
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
+
+    articles = DirtyArticle.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/dirty_articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "dirty_articles",
+                       relationships: {
+                           author: {
+                               data: {
+                                   type: "people",
+                                   id: "2"
+                               }
+                           }
+                       },
+                       attributes: {}
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"
+                   }, body: {
+                        data: {
+                            type: "dirty_articles",
+                            id: "1",
+                            attributes: {
+                                title: "Rails is Omakase"
+                            },
+                            relationships: {
+                                author: {
+                                    links: {
+                                        self: "/dirty_articles/1/links/author",
+                                        related: "/dirty_articles/1/author",
+                                    }
+                                }
+                            }
+                        }
+                    }.to_json)
+
+    article.relationships.author = Person.new(id: "2")
     assert article.save
   end
 
@@ -212,7 +299,9 @@ class UpdatingTest < MiniTest::Test
                 }]
               }
             },
-            attributes: {}
+            attributes: {
+                title: "Rails is Omakase"
+            }
           }
         }.to_json)
       .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
@@ -241,48 +330,24 @@ class UpdatingTest < MiniTest::Test
     assert article.save
   end
 
-  def test_can_update_has_many_relationships_with_all_attributes_dirty
-    articles = Article.find(1)
-    article = articles.first
-
-    stub_request(:patch, "http://example.com/articles/1")
-        .with(headers: {
-                  content_type: "application/vnd.api+json",
-                  accept: "application/vnd.api+json"
-              }, body: {
-                   data: {
-                       id: "1",
-                       type: "articles",
-                       relationships: {
-                           comments: {
-                               data: [{
-                                          type: "comments",
-                                          id: "2"
-                                      }, {
-                                          type: "comments",
-                                          id: "3"
-                                      }]
-                           }
-                       },
-                       attributes: {
-                           title: "Rails is Omakase"
-                       }
-                   }
-               }.to_json)
+  def test_can_not_update_unchanged_has_many_relationships_with_dirty
+    stub_request(:get, "http://example.com/dirty_articles/1")
         .to_return(headers: {
-                       status: 200,
-                       content_type: "application/vnd.api+json"},
+                       content_type: "application/vnd.api+json"
+                   },
                    body: {
                        data: {
+                           type: "dirty_articles",
                            id: "1",
-                           type: "articles",
                            relationships: {
-                               author: {
-                                   links: {
-                                       self: "/articles/1/links/author",
-                                       related: "/articles/1/author",
-                                   },
-                                   data: {type: "people", id: "1"}
+                               comments: {
+                                   data: [{
+                                              type: "comments",
+                                              id: "2"
+                                          }, {
+                                              type: "comments",
+                                              id: "3"
+                                          }]
                                }
                            },
                            attributes: {
@@ -291,11 +356,116 @@ class UpdatingTest < MiniTest::Test
                        }
                    }.to_json)
 
+    articles = DirtyArticle.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/dirty_articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "dirty_articles",
+                       attributes: {}
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"},
+                   body: {
+                       data: {
+                           id: "1",
+                           type: "dirty_articles",
+                           relationships: {
+                               comments: {
+                                   links: {
+                                       self: "/dirty_articles/1/links/comments",
+                                       related: "/dirty_articles/1/comments",
+                                   }
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
+
+    assert article.save
+  end
+
+  def test_can_update_changed_has_many_relationships_with_dirty
+    stub_request(:get, "http://example.com/dirty_articles/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "dirty_articles",
+                           id: "1",
+                           relationships: {
+                               comments: {
+                                   data: [{
+                                              type: "comments",
+                                              id: "2"
+                                          }, {
+                                              type: "comments",
+                                              id: "3"
+                                          }]
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
+
+    articles = DirtyArticle.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/dirty_articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              }, body: {
+                   data: {
+                       id: "1",
+                       type: "dirty_articles",
+                       relationships: {
+                           comments: {
+                               data: [{
+                                          type: "comments",
+                                          id: "5"
+                                      }]
+                           }
+                       },
+                       attributes: {}
+                   }
+               }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"},
+                   body: {
+                       data: {
+                           id: "1",
+                           type: "dirty_articles",
+                           relationships: {
+                               comments: {
+                                   links: {
+                                       self: "/dirty_articles/1/links/comments",
+                                       related: "/dirty_articles/1/comments",
+                                   }
+                               }
+                           },
+                           attributes: {
+                               title: "Rails is Omakase"
+                           }
+                       }
+                   }.to_json)
     article.relationships.comments = [
-        Comment.new(id: "2"),
-        Comment.new(id: "3")
+        Comment.new(id: "5")
     ]
-    article.set_all_dirty!
+
     assert article.save
   end
 
@@ -324,7 +494,9 @@ class UpdatingTest < MiniTest::Test
                    data: {
                        id: "1",
                        type: "authors",
-                       attributes: {}
+                       attributes: {
+                           name: "John Doe"
+                       }
                    }
                }.to_json)
         .to_return(headers: {
@@ -377,7 +549,9 @@ class UpdatingTest < MiniTest::Test
                    data: {
                        id: "1",
                        type: "authors",
-                       attributes: {}
+                       attributes: {
+                           name: "John Doe"
+                       }
                    }
                }.to_json)
         .to_return(headers: {
@@ -443,7 +617,9 @@ class UpdatingTest < MiniTest::Test
                                data: nil
                            }
                        },
-                       attributes: {}
+                       attributes: {
+                           name: "John Doe"
+                       }
                    }
                }.to_json)
         .to_return(headers: {
@@ -513,7 +689,9 @@ class UpdatingTest < MiniTest::Test
                                data: []
                            }
                        },
-                       attributes: {}
+                       attributes: {
+                           name: "John Doe"
+                       }
                    }
                }.to_json)
         .to_return(headers: {
@@ -567,7 +745,8 @@ class UpdatingTest < MiniTest::Test
                        id: "1",
                        type: "callback_tests",
                        attributes: {
-                           foo: 10
+                           foo: 10,
+                           bar: 1
                        }
                    }
                }.to_json)

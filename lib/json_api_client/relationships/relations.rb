@@ -5,7 +5,6 @@ module JsonApiClient
 
       def initialize(relations)
         self.attributes = relations
-        clear_changes_information
       end
 
       def present?
@@ -18,14 +17,14 @@ module JsonApiClient
              end.compact]
       end
 
-      def attributes_for_serialization
-        attributes.slice(*changed)
-      end
-
       protected
 
+      def attributes_for_serialization
+        attributes
+      end
+
       def set_attribute(name, value)
-        value = case value
+        attributes[name] = case value
         when JsonApiClient::Resource
           {data: value.as_relation}
         when Array
@@ -35,8 +34,6 @@ module JsonApiClient
         else
           value
         end
-        attribute_will_change!(name) if value != attributes[name]
-        attributes[name] = value
       end
 
     end

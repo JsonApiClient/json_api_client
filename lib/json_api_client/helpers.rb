@@ -16,5 +16,6 @@ module JsonApiClient
     autoload :Schemable, 'json_api_client/helpers/schemable'
     autoload :Serializable, 'json_api_client/helpers/serializable'
     autoload :Callbacks, 'json_api_client/helpers/callbacks'
+    autoload :DirtyAttributes, 'json_api_client/helpers/dirty_attributes'
   end
 end

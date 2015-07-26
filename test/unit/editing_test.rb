@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class Author < TestResource
+  include JsonApiClient::Helpers::DirtyAttributes
+  self.relationship_linker = JsonApiClient::Relationships::RelationsWithDirty
 end
 
 class EditingTest < MiniTest::Test
