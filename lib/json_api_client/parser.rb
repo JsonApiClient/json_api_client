@@ -15,7 +15,7 @@ module JsonApiClient
       private
 
       def handle_meta(result_set, data)
-        result_set.meta = data.fetch("meta", {})
+        result_set.meta = HashWithIndifferentAccess.new(data.fetch("meta", nil))
       end
 
       def handle_pagination(result_set, data)
