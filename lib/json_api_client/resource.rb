@@ -67,10 +67,6 @@ module JsonApiClient
         end
       end
 
-      def parse(data)
-        parser.parse(self, data)
-      end
-
       def connection(&block)
         build_connection(&block)
         connection_object

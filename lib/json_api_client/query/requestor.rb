@@ -60,7 +60,7 @@ module JsonApiClient
       end
 
       def request(type, path, params)
-        klass.parse(connection.run(type, path, params, klass.custom_headers))
+        klass.parser.parse(klass, connection.run(type, path, params, klass.custom_headers))
       end
 
     end
