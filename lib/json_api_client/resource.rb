@@ -35,7 +35,7 @@ module JsonApiClient
     self.query_builder        = Query::Builder
     self.linker               = Linking::Links
     self.relationship_linker  = Relationships::Relations
-    self.read_only_attributes = ['id', 'type', 'links', 'meta', 'relationships']
+    self.read_only_attributes = [:id, :type, :links, :meta, :relationships]
     self.requestor_class      = Query::Requestor
     self.associations         = []
 
@@ -177,10 +177,6 @@ module JsonApiClient
         header_store
       end
 
-      def custom_headers=(headers)
-        header_store.replace(headers)
-      end
-
       def requestor
         @requestor ||= requestor_class.new(self)
       end
@@ -202,6 +198,9 @@ module JsonApiClient
         query_builder.new(self)
       end
 
+      def custom_headers=(headers)
+        header_store.replace(headers)
+      end
 
       def header_store
         Thread.current["json_api_client-#{resource_name}"] ||= {}
@@ -235,10 +234,6 @@ module JsonApiClient
       !!@persisted && has_attribute?(self.class.primary_key)
     end
 
-    def query_params
-      attributes.except(self.class.primary_key)
-    end
-
     def to_param
       attributes.fetch(self.class.primary_key, "").to_s
     end
@@ -265,6 +260,8 @@ module JsonApiClient
     end
 
     def save
+      return false unless valid?
+
       self.last_result_set = if persisted?
         self.class.requestor.update(self)
       else
