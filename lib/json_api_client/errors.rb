@@ -11,8 +11,12 @@ module JsonApiClient
     end
 
     class ServerError < ApiError
+      attr_reader :uri
+      def initialize(uri)
+        @uri = uri
+      end
       def message
-        "Internal server error"
+        "Internal server error at: #{uri.to_s}"
       end
     end
 
