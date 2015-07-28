@@ -49,19 +49,23 @@ module JsonApiClient
       extend Forwardable
       def_delegators :new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
 
-      # base URL for this resource
-      def resource
-        File.join(site, path)
-      end
-
+      # The table name for this resource. i.e. Article -> articles, Person -> people
+      #
+      # @return [String] The table name for this resource
       def table_name
         resource_name.pluralize
       end
 
+      # The name of a single resource. i.e. Article -> article, Person -> person
+      #
+      # @return [String]
       def resource_name
         name.demodulize.underscore
       end
 
+      # Load a resource object from attributes and consider it persisted
+      #
+      # @return [Resource] Persisted resource object
       def load(params)
         new(params).tap do |resource|
           resource.mark_as_persisted!
@@ -69,26 +73,30 @@ module JsonApiClient
         end
       end
 
+      # Return/build a connection object
+      #
+      # @return [Connection] The connection to the json api server
       def connection(rebuild = false, &block)
         build_connection(&block)
         connection_object
       end
 
+      # Param names that will be considered path params. They will be used
+      # to build the resource path rather than treated as attributes
+      #
+      # @return [Array] Param name symbols of parameters that will be treated as path parameters
       def prefix_params
         _belongs_to_associations.map(&:param)
       end
 
-      def prefix_path
-        _belongs_to_associations.map(&:to_prefix_path).join("/")
-      end
-
+      # Return the path or path pattern for this resource
       def path(params = nil)
         parts = [table_name]
         if params
           path_params = params.delete(:path) || params
-          parts.unshift(prefix_path % path_params.symbolize_keys)
+          parts.unshift(_prefix_path % path_params.symbolize_keys)
         else
-          parts.unshift(prefix_path)
+          parts.unshift(_prefix_path)
         end
         parts.reject!{|part| part == "" }
         File.join(*parts)
@@ -96,12 +104,21 @@ module JsonApiClient
         raise ArgumentError, "Not all prefix parameters specified"
       end
 
-      def create(conditions = {})
-        new(conditions).tap do |resource|
+      # Create a new instance of this resource class
+      #
+      # @param attributes [Hash] The attributes to create this resource with
+      # @return [Resource] The instance you tried to create. You will have to check the persisted state or errors on this object to see success/failure.
+      def create(attributes = {})
+        new(attributes).tap do |resource|
           resource.save
         end
       end
 
+      # Within the given block, add these headers to all requests made by
+      # the resource class
+      #
+      # @param headers [Hash] The headers to send along
+      # @param block [Block] The block where headers will be set for
       def with_headers(headers)
         self.custom_headers = headers
         yield
@@ -109,21 +126,32 @@ module JsonApiClient
         self.custom_headers = {}
       end
 
+      # The current custom headers to send with any request made by this
+      # resource class
+      #
+      # @return [Hash] Headers
       def custom_headers
         header_store
       end
 
+      # Returns the requestor for this resource class
+      #
+      # @return [Requestor] The requestor for this resource class
       def requestor
         @requestor ||= requestor_class.new(self)
       end
 
+      # Default attributes that every instance of this resource should be
+      # intialized with. Optionally, override this method in a subclass.
+      #
+      # @return [Hash] Default attributes
       def default_attributes
         {type: table_name}
       end
 
       # Returns the schema for this resource class
       #
-      # @return [Schema] the schema for this resource class
+      # @return [Schema] The schema for this resource class
       def schema
         @schema ||= Schema.new
       end
@@ -199,6 +227,10 @@ module JsonApiClient
 
       def _belongs_to_associations
         associations.select{|association| association.is_a?(Associations::BelongsTo::Association) }
+      end
+
+      def _prefix_path
+        _belongs_to_associations.map(&:to_prefix_path).join("/")
       end
 
       def new_scope
