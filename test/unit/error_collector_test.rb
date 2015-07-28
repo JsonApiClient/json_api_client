@@ -92,9 +92,9 @@ class ErrorCollectorTest < MiniTest::Test
     })
     assert !article.persisted?
     assert article.errors.present?
-    assert_equal 2, article.errors.length
+    assert_equal 2, article.errors.size
 
-    error = article.errors.first
+    error = article.last_result_set.errors.first
     assert_equal "1234-abcd", error.id
     assert_equal "http://example.com/help/errors/1337", error.about
     assert_equal "400", error.status
@@ -106,7 +106,7 @@ class ErrorCollectorTest < MiniTest::Test
     assert error.meta.is_a?(JsonApiClient::MetaData)
     assert_equal "asdf", error.meta.qwer
 
-    error = article.errors.last
+    error = article.last_result_set.errors.last
     assert_equal "33333", error.id
     assert_nil error.about
     assert_equal "400", error.status
