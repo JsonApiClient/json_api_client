@@ -47,7 +47,7 @@ module JsonApiClient
 
     class << self
       extend Forwardable
-      def_delegators :new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
+      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
 
       # The table name for this resource. i.e. Article -> articles, Person -> people
       #
@@ -77,7 +77,7 @@ module JsonApiClient
       #
       # @return [Connection] The connection to the json api server
       def connection(rebuild = false, &block)
-        build_connection(&block)
+        _build_connection(&block)
         connection_object
       end
 
@@ -120,10 +120,10 @@ module JsonApiClient
       # @param headers [Hash] The headers to send along
       # @param block [Block] The block where headers will be set for
       def with_headers(headers)
-        self.custom_headers = headers
+        self._custom_headers = headers
         yield
       ensure
-        self.custom_headers = {}
+        self._custom_headers = {}
       end
 
       # The current custom headers to send with any request made by this
@@ -131,7 +131,7 @@ module JsonApiClient
       #
       # @return [Hash] Headers
       def custom_headers
-        header_store
+        _header_store.to_h
       end
 
       # Returns the requestor for this resource class
@@ -233,19 +233,19 @@ module JsonApiClient
         _belongs_to_associations.map(&:to_prefix_path).join("/")
       end
 
-      def new_scope
+      def _new_scope
         query_builder.new(self)
       end
 
-      def custom_headers=(headers)
-        header_store.replace(headers)
+      def _custom_headers=(headers)
+        _header_store.replace(headers)
       end
 
-      def header_store
+      def _header_store
         Thread.current["json_api_client-#{resource_name}"] ||= {}
       end
 
-      def build_connection(rebuild = false)
+      def _build_connection(rebuild = false)
         return connection_object unless connection_object.nil? || rebuild
         self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
           yield(conn) if block_given?
@@ -272,25 +272,36 @@ module JsonApiClient
       save
     end
 
+    # Mark the record as persisted
     def mark_as_persisted!
       @persisted = true
     end
 
+    # Whether or not this record has been persisted to the database previously
+    #
+    # @return [Boolean]
     def persisted?
       !!@persisted && has_attribute?(self.class.primary_key)
     end
 
-    def to_param
-      attributes.fetch(self.class.primary_key, "").to_s
+    # Returns true if this is a new record (never persisted to the database)
+    #
+    # @return [Boolean]
+    def new_record?
+      !persisted?
     end
 
+    # When we represent this resource as a relationship, we do so with id & type
+    #
+    # @return [Hash] Representation of this object as a relation
     def as_relation
-      {
-        :type => self.class.table_name,
-        self.class.primary_key => self[self.class.primary_key]
-      }
+      attributes.slice(:type, self.class.primary_key)
     end
 
+    # When we represent this resource for serialization (create/update), we do so
+    # with this implementation
+    #
+    # @return [Hash] Representation of this object as JSONAPI object
     def serializable_hash
       attributes.slice('id', 'type').tap do |h|
         relationships_for_serialization.tap do |r|
@@ -300,11 +311,18 @@ module JsonApiClient
       end
     end
 
+    # Mark all attributes for this record as dirty
     def set_all_dirty!
       set_all_attributes_dirty
       relationships.set_all_attributes_dirty if relationships
     end
 
+    # Commit the current changes to the resource to the remote server.
+    # If the resource was previously loaded from the server, we will
+    # try to update the record. Otherwise if it's a new record, then
+    # we will try to create it
+    #
+    # @return [Boolean] Whether or not the save succeeded
     def save
       return false unless valid?
 
@@ -333,6 +351,9 @@ module JsonApiClient
       end
     end
 
+    # Try to destroy this resource
+    #
+    # @return [Boolean] Whether or not the destroy succeeded
     def destroy
       self.last_result_set = self.class.requestor.destroy(self)
       if !last_result_set.has_errors?
