@@ -11,39 +11,32 @@ module JsonApiClient
 
     include Helpers::DynamicAttributes
 
-    attr_accessor :result_set
-    class_attribute :site, :primary_key
-    self.primary_key = :id
-
-    class_attribute :parser, instance_accessor: false
-    self.parser = Parsers::Parser
-
-    class_attribute :paginator, instance_accessor: false
-    self.paginator = Paginating::Paginator
-
-    class_attribute :connection_class, :connection_object, :connection_options, :query_builder, instance_accessor: false
-    self.connection_class = Connection
-    self.connection_options = {}
-    self.query_builder = Query::Builder
-
-    class_attribute :linker, instance_accessor: false
-    self.linker = Linking::Links
-    # the links for this resource
-    attr_accessor :links
-
-    class_attribute :relationship_linker, instance_accessor: false
-    self.relationship_linker = Relationships::Relations
-    attr_accessor :relationships
-
-    class_attribute :read_only_attributes, instance_accessor: false
+    attr_accessor :last_result_set, :links, :relationships
+    class_attribute :site,
+                    :primary_key,
+                    :parser,
+                    :paginator,
+                    :connection_class,
+                    :connection_object,
+                    :connection_options,
+                    :query_builder,
+                    :linker,
+                    :relationship_linker,
+                    :read_only_attributes,
+                    :requestor_class,
+                    :associations,
+                    instance_accessor: false
+    self.primary_key          = :id
+    self.parser               = Parsers::Parser
+    self.paginator            = Paginating::Paginator
+    self.connection_class     = Connection
+    self.connection_options   = {}
+    self.query_builder        = Query::Builder
+    self.linker               = Linking::Links
+    self.relationship_linker  = Relationships::Relations
     self.read_only_attributes = ['id', 'type', 'links', 'meta', 'relationships']
-
-    attr_accessor :last_result_set
-    class_attribute :requestor_class, instance_accessor: false
-    self.requestor_class = Query::Requestor
-
-    class_attribute :associations, instance_accessor: false
-    self.associations = []
+    self.requestor_class      = Query::Requestor
+    self.associations         = []
 
     include Associations::BelongsTo
     include Associations::HasMany
@@ -131,7 +124,7 @@ module JsonApiClient
       def member_endpoint(name, options = {})
         define_method name do |*params|
           request_params = params.first || {}
-          request_params[self.class.primary_key] = attributes.fetch(primary_key)
+          request_params[self.class.primary_key] = attributes.fetch(self.class.primary_key)
           self.class.requestor.custom(name, options, request_params)
         end
       end
@@ -238,21 +231,21 @@ module JsonApiClient
     end
 
     def persisted?
-      !!@persisted && has_attribute?(primary_key)
+      !!@persisted && has_attribute?(self.class.primary_key)
     end
 
     def query_params
-      attributes.except(primary_key)
+      attributes.except(self.class.primary_key)
     end
 
     def to_param
-      attributes.fetch(primary_key, "").to_s
+      attributes.fetch(self.class.primary_key, "").to_s
     end
 
     def as_relation
       {
         :type => self.class.table_name,
-        primary_key => self[primary_key]
+        self.class.primary_key => self[self.class.primary_key]
       }
     end
 
@@ -313,8 +306,8 @@ module JsonApiClient
     protected
 
     def method_missing(method, *args)
-      return super unless relationships and relationships.has_attribute?(method) and result_set.included
-      result_set.included.data_for(method, relationships[method])
+      return super unless relationships && relationships.has_attribute?(method) && last_result_set.included
+      last_result_set.included.data_for(method, relationships[method])
     end
 
     def respond_to_missing?(symbol, include_all = false)

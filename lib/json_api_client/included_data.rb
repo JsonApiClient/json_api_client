@@ -10,7 +10,7 @@ module JsonApiClient
         h[type] = records.map do |datum|
           params = klass.parser.parameters_from_resource(datum)
           resource = klass.load(params)
-          resource.result_set = result_set
+          resource.last_result_set = result_set
           resource
         end.index_by(&:id)
         h

@@ -67,7 +67,7 @@ module JsonApiClient
           results = [results] unless results.is_a?(Array)
           resources = results.map do |res|
             resource = result_set.record_class.load(parameters_from_resource(res))
-            resource.result_set = result_set
+            resource.last_result_set = result_set
             resource
           end
           result_set.concat(resources)
