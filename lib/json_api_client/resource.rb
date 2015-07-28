@@ -253,6 +253,9 @@ module JsonApiClient
       end
     end
 
+    # Instantiate a new resource object
+    #
+    # @param params [Hash] Attributes, links, and relationships
     def initialize(params = {})
       self.links = self.class.linker.new(params.delete("links") || {})
       self.relationships = self.class.relationship_linker.new(params.delete("relationships") || {})
@@ -267,6 +270,10 @@ module JsonApiClient
       end
     end
 
+    # Set the current attributes and try to save them
+    #
+    # @param attrs [Hash] Attributes to update
+    # @return [Boolean] Whether the update succeeded or not
     def update_attributes(attrs = {})
       self.attributes = attrs
       save
