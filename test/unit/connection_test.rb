@@ -55,7 +55,7 @@ class ConnectionTest < MiniTest::Test
   end
 
   def test_can_specify_connection_adapter_options
-    CustomAdapterResource.build_connection
+    CustomAdapterResource.connection(true)
     resources = CustomAdapterResource.all
     assert_equal 1, resources.length
     resource = resources.first

@@ -12,7 +12,9 @@ module JsonApiClient
     include Helpers::DynamicAttributes
     include Helpers::Dirty
 
-    attr_accessor :last_result_set, :links, :relationships
+    attr_accessor :last_result_set,
+                  :links,
+                  :relationships
     class_attribute :site,
                     :primary_key,
                     :parser,
@@ -67,21 +69,17 @@ module JsonApiClient
         end
       end
 
-      def connection(&block)
+      def connection(rebuild = false, &block)
         build_connection(&block)
         connection_object
       end
 
-      def belongs_to_associations
-        associations.select{|association| association.is_a?(Associations::BelongsTo::Association) }
-      end
-
       def prefix_params
-        belongs_to_associations.map(&:param)
+        _belongs_to_associations.map(&:param)
       end
 
       def prefix_path
-        belongs_to_associations.map(&:to_prefix_path).join("/")
+        _belongs_to_associations.map(&:to_prefix_path).join("/")
       end
 
       def path(params = nil)
@@ -97,6 +95,40 @@ module JsonApiClient
       rescue KeyError
         raise ArgumentError, "Not all prefix parameters specified"
       end
+
+      def create(conditions = {})
+        new(conditions).tap do |resource|
+          resource.save
+        end
+      end
+
+      def with_headers(headers)
+        self.custom_headers = headers
+        yield
+      ensure
+        self.custom_headers = {}
+      end
+
+      def custom_headers
+        header_store
+      end
+
+      def requestor
+        @requestor ||= requestor_class.new(self)
+      end
+
+      def default_attributes
+        {type: table_name}
+      end
+
+      # Returns the schema for this resource class
+      #
+      # @return [Schema] the schema for this resource class
+      def schema
+        @schema ||= Schema.new
+      end
+
+      protected
 
       def custom_endpoint(name, options = {})
         if :collection == options.delete(:on)
@@ -126,13 +158,6 @@ module JsonApiClient
         end
       end
 
-      # Returns the schema for this resource class
-      #
-      # @return [Schema] the schema for this resource class
-      def schema
-        @schema ||= Schema.new
-      end
-
       # Declares a new property by name
       #
       # @param name [Symbol] the name of the property
@@ -156,39 +181,9 @@ module JsonApiClient
         end
       end
 
-      def create(conditions = {})
-        new(conditions).tap do |resource|
-          resource.save
-        end
+      def _belongs_to_associations
+        associations.select{|association| association.is_a?(Associations::BelongsTo::Association) }
       end
-
-      def with_headers(headers)
-        self.custom_headers = headers
-        yield
-      ensure
-        self.custom_headers = {}
-      end
-
-      def custom_headers
-        header_store
-      end
-
-      def requestor
-        @requestor ||= requestor_class.new(self)
-      end
-
-      def default_attributes
-        {type: table_name}
-      end
-
-      def build_connection
-        return connection_object unless connection_object.nil?
-        self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
-          yield(conn) if block_given?
-        end
-      end
-
-      protected
 
       def new_scope
         query_builder.new(self)
@@ -200,6 +195,13 @@ module JsonApiClient
 
       def header_store
         Thread.current["json_api_client-#{resource_name}"] ||= {}
+      end
+
+      def build_connection(rebuild = false)
+        return connection_object unless connection_object.nil? || rebuild
+        self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
+          yield(conn) if block_given?
+        end
       end
     end
 
