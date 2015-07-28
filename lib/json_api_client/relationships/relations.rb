@@ -2,6 +2,7 @@ module JsonApiClient
   module Relationships
     class Relations
       include Helpers::DynamicAttributes
+      include Helpers::Dirty
 
       def initialize(relations)
         self.attributes = relations

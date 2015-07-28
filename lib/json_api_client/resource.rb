@@ -10,6 +10,7 @@ module JsonApiClient
     include ActiveModel::Conversion
 
     include Helpers::DynamicAttributes
+    include Helpers::Dirty
 
     attr_accessor :last_result_set, :links, :relationships
     class_attribute :site,
