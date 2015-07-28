@@ -130,6 +130,12 @@ module JsonApiClient
 
       protected
 
+      # Declares a new class/instance method that acts on the collection/member
+      #
+      # @param name [Symbol] the name of the endpoint
+      # @param options [Hash] endpoint options
+      # @option [Symbol] :on One of [:collection or :member] to decide whether it's a collect or member method
+      # @option [Symbol] :request_method The request method (:get, :post, etc)
       def custom_endpoint(name, options = {})
         if :collection == options.delete(:on)
           collection_endpoint(name, options)
@@ -138,6 +144,11 @@ module JsonApiClient
         end
       end
 
+      # Declares a new class method that acts on the collection
+      #
+      # @param name [Symbol] the name of the endpoint and the method name
+      # @param options [Hash] endpoint options
+      # @option options [Symbol] :request_method The request method (:get, :post, etc)
       def collection_endpoint(name, options = {})
         metaclass = class << self
           self
@@ -150,6 +161,11 @@ module JsonApiClient
         end
       end
 
+      # Declares a new instance method that acts on the member object
+      #
+      # @param name [Symbol] the name of the endpoint and the method name
+      # @param options [Hash] endpoint options
+      # @option options [Symbol] :request_method The request method (:get, :post, etc)
       def member_endpoint(name, options = {})
         define_method name do |*params|
           request_params = params.first || {}
