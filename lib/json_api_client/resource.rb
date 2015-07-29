@@ -8,6 +8,7 @@ module JsonApiClient
     extend ActiveModel::Translation
     include ActiveModel::Validations
     include ActiveModel::Conversion
+    include ActiveModel::Serialization
 
     include Helpers::DynamicAttributes
     include Helpers::Dirty
@@ -309,12 +310,12 @@ module JsonApiClient
     # with this implementation
     #
     # @return [Hash] Representation of this object as JSONAPI object
-    def serializable_hash
-      attributes.slice('id', 'type').tap do |h|
+    def as_json_api(*)
+      attributes.slice(:id, :type).tap do |h|
         relationships_for_serialization.tap do |r|
-          h['relationships'] = r unless r.empty?
+          h[:relationships] = r unless r.empty?
         end
-        h['attributes'] = attributes_for_serialization
+        h[:attributes] = attributes_for_serialization
       end
     end
 
@@ -406,7 +407,7 @@ module JsonApiClient
     end
 
     def relationships_for_serialization
-      relationships.serializable_hash
+      relationships.as_json_api
     end
   end
 end

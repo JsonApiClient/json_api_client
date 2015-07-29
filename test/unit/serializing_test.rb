@@ -26,6 +26,42 @@ class SerializingTest < MiniTest::Test
     end
   end
 
+  def test_as_json_api
+    expected = {
+      'type' => 'articles',
+      'attributes' => {
+        'foo' => 'bar',
+        'qwer' => 'asdf'
+      }
+    }
+
+    article = Article.new(foo: 'bar', qwer: 'asdf')
+    assert_equal expected, article.as_json_api
+  end
+
+  def test_as_json_api_with_relationships
+    expected = {
+      'type' => 'articles',
+      'attributes' => {
+        'foo' => 'bar',
+        'qwer' => 'asdf'
+      },
+      'relationships' => {
+        'author' => {
+          'data' => {
+            'type' => 'people',
+            'id' => 123
+          }
+        }
+      }
+    }
+
+    article = Article.new(foo: 'bar', qwer: 'asdf')
+    article.relationships.author = Person.new(id: 123, name: 'Bob')
+
+    assert_equal expected, article.as_json_api
+  end
+
   def test_update_data_only_includes_relationship_data
     stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -65,7 +101,7 @@ class SerializingTest < MiniTest::Test
       "id" => "1",
       "attributes" => {}
     }
-    assert_equal expected, article.serializable_hash
+    assert_equal expected, article.as_json_api
   end
 
   def test_update_data_only_includes_relationship_data_with_all_attributes_dirty
@@ -120,7 +156,7 @@ class SerializingTest < MiniTest::Test
             }
         }
     }
-    assert_equal expected, article.serializable_hash
+    assert_equal expected, article.as_json_api
   end
 
   def test_skips_read_only_attributes
@@ -137,7 +173,7 @@ class SerializingTest < MiniTest::Test
         'qwer' => 'asdf'
       }
     }
-    assert_equal(expected, resource.serializable_hash)
+    assert_equal(expected, resource.as_json_api)
   end
 
   def test_can_specify_attributes_for_serialization
@@ -149,7 +185,7 @@ class SerializingTest < MiniTest::Test
         "foo" => "bar"
       }
     }
-    assert_equal expected, resource.serializable_hash
+    assert_equal expected, resource.as_json_api
   end
 
   def test_inherited_attributes_for_serialization
@@ -166,6 +202,8 @@ class SerializingTest < MiniTest::Test
         "qwer" => "asdf"
       }
     }
+
+    assert_equal expected, resource.as_json_api
   end
 
 end
