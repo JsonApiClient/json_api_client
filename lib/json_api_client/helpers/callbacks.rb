@@ -4,26 +4,8 @@ module JsonApiClient
       extend ActiveSupport::Concern
 
       included do
-        include ActiveSupport::Callbacks
-        define_callbacks :save, :destroy, :create, :update
-      end
-
-      module ClassMethods
-
-        [:save, :destroy, :create, :update].each do |operation|
-          [:before, :after, :around].each do |type|
-            define_method "#{type}_#{operation}" do |*methods, &block|
-
-              if block
-                set_callback operation, type, *methods, block
-              else
-                set_callback operation, type, *methods
-              end
-
-            end
-          end
-        end
-
+        extend ActiveModel::Callbacks
+        define_model_callbacks :save, :destroy, :create, :update
       end
 
       def save
@@ -39,7 +21,6 @@ module JsonApiClient
           super
         end
       end
-
 
     end
   end
