@@ -6,7 +6,6 @@ class ResourceTest < MiniTest::Test
     assert_equal :id, Article.primary_key
     assert_equal "articles", Article.table_name
     assert_equal "article", Article.resource_name
-    assert_equal "http://example.com/articles", Article.resource
   end
 
   def test_each_on_scope

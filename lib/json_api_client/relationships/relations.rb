@@ -2,6 +2,8 @@ module JsonApiClient
   module Relationships
     class Relations
       include Helpers::DynamicAttributes
+      include Helpers::Dirty
+      include ActiveModel::Serialization
 
       def initialize(relations)
         self.attributes = relations
@@ -12,7 +14,7 @@ module JsonApiClient
         attributes.present?
       end
 
-      def serializable_hash
+      def as_json_api
         Hash[attributes_for_serialization.map do |k, v|
                [k, v.slice("data")]  if v.has_key?("data")
              end.compact]
