@@ -65,6 +65,46 @@ class UpdatingTest < MiniTest::Test
     assert article.save
   end
 
+  def test_changed_attributes_blank_after_update
+    articles = Article.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/articles/1")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              },
+              body: {
+                  data: {
+                      id: "1",
+                      type: "articles",
+                      attributes: {
+                          title: "Modified title",
+                          foo: "bar"
+                      }
+                  }
+              }.to_json)
+        .to_return(headers: {
+                       status: 200,
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "articles",
+                           id: "1",
+                           attributes: {
+                               title: "Modified title",
+                               foo: "bar"
+                           }
+                       }
+                   }.to_json)
+
+    article.title = "Modified title"
+    article.foo = "bar"
+    article.save
+    assert_empty article.changed_attributes
+  end
+
   def test_can_update_found_record_in_bulk
     articles = Article.find(1)
     article = articles.first

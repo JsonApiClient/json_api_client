@@ -46,6 +46,14 @@ class CreationTest < MiniTest::Test
     assert_equal "Rails is Omakase", article.title
   end
 
+  def test_changed_attributes_empty_after_create_with_class_method
+    article = Article.create({
+                                 title: "Rails is Omakase"
+                             })
+
+    assert_empty article.changed_attributes
+  end
+
   def test_can_create_with_new_record_and_save
     article = Article.new({
       title: "Rails is Omakase"
@@ -54,6 +62,15 @@ class CreationTest < MiniTest::Test
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+  end
+
+  def test_changed_attributes_empty_after_create_with_new_record_and_save
+    article = Article.new({
+                              title: "Rails is Omakase"
+                          })
+
+    article.save
+    assert_empty article.changed_attributes
   end
 
   def test_callbacks_on_update
