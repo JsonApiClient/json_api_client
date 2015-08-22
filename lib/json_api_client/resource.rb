@@ -354,6 +354,7 @@ module JsonApiClient
         mark_as_persisted!
         if updated = last_result_set.first
           self.attributes = updated.attributes
+          clear_changes_information
         end
         true
       end
