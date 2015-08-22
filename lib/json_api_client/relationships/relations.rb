@@ -20,6 +20,12 @@ module JsonApiClient
              end.compact]
       end
 
+      def as_json
+        Hash[attributes.map do |k, v|
+               [k, v.slice("data")]  if v.has_key?("data")
+             end.compact]
+      end
+
       def attributes_for_serialization
         attributes.slice(*changed)
       end
