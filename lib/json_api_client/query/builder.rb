@@ -115,7 +115,7 @@ module JsonApiClient
       end
 
       def filter_params
-        @filters.empty? ? {} : {filter: @filters}
+        @filters.empty? ? {} : { filter: @filters.inject({}) { |m, (k, v)| m[k] = v.respond_to?(:each) ? v.join(',') : v; m } }
       end
 
       def order_params
