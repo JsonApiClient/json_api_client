@@ -319,6 +319,15 @@ module JsonApiClient
       end
     end
 
+    def as_json(*)
+      attributes.slice(:id, :type).tap do |h|
+        relationships.as_json.tap do |r|
+          h[:relationships] = r unless r.empty?
+        end
+        h[:attributes] = attributes.except(:id, :type).as_json
+      end
+    end
+
     # Mark all attributes for this record as dirty
     def set_all_dirty!
       set_all_attributes_dirty
@@ -354,6 +363,7 @@ module JsonApiClient
         mark_as_persisted!
         if updated = last_result_set.first
           self.attributes = updated.attributes
+          clear_changes_information
         end
         true
       end

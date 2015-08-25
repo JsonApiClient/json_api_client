@@ -311,6 +311,8 @@ The basic types that we allow are:
 
 Also, we consider `nil` to be an acceptable value and will not cast the value.
 
+Note : Do not map the primary key as int.
+
 ## Customizing
 
 ### Paths
