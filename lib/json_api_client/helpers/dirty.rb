@@ -62,7 +62,7 @@ module JsonApiClient
       end
 
       def set_attribute(name, value)
-        attribute_will_change!(name) if value != attributes[name]
+        attribute_will_change!(name) if value != attributes[name] || !attributes.has_key?(name)
         super
       end
 

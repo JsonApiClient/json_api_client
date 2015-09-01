@@ -14,6 +14,9 @@ class CreationTest < MiniTest::Test
     end
   end
 
+  class Author < TestResource
+  end
+
   def setup
     super
     stub_request(:post, "http://example.com/articles")
@@ -62,6 +65,43 @@ class CreationTest < MiniTest::Test
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+  end
+
+  def test_correct_create_with_nil_attirbute_value
+    stub_request(:post, "http://example.com/authors")
+        .with(headers: {
+                  content_type: "application/vnd.api+json",
+                  accept: "application/vnd.api+json"
+              },
+              body: {
+                  data: {
+                      type: "authors",
+                      attributes: {
+                          name: "John Doe",
+                          description: nil
+                      }
+                  }
+              }.to_json)
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                           type: "authors",
+                           id: "1",
+                           attributes: {
+                               name: "John Doe",
+                               description: nil
+                           }
+                       }
+                   }.to_json)
+
+    author = Author.new({
+                             name: "John Doe",
+                             description: nil
+                         })
+
+    assert author.save
   end
 
   def test_changed_attributes_empty_after_create_with_new_record_and_save
