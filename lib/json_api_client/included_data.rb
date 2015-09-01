@@ -3,7 +3,7 @@ module JsonApiClient
     attr_reader :data
 
     def initialize(result_set, data)
-      @record_class = result_set.record_class
+      record_class = result_set.record_class
       grouped_data = data.group_by{|datum| datum["type"]}
       @data = grouped_data.inject({}) do |h, (type, records)|
         klass = Utils.compute_type(record_class, type.singularize.classify)
@@ -37,8 +37,6 @@ module JsonApiClient
     end
 
     private
-
-    attr_reader :record_class
 
     # should return a resource record of some type for this linked document
     def record_for(link_def)
