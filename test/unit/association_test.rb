@@ -123,14 +123,14 @@ class AssociationTest < MiniTest::Test
               owner: {
                 links: {
                   self: 'http://example.com/properties/1/links/owner',
-                  related: 'http://example.com/people/1'
+                  related: 'http://example.com/owners/1'
                 }
               }
             }
           }
         ]
       }.to_json)
-    stub_request(:get, "http://example.com/people/1")
+    stub_request(:get, "http://example.com/owners/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {
@@ -147,6 +147,52 @@ class AssociationTest < MiniTest::Test
     owner = property.owner
     assert owner, "expected to be able to fetch relationship if defined"
     assert_equal Owner, owner.class
+  end
+
+  def test_has_many_fetches_relationship
+    stub_request(:get, "http://example.com/owners/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            attributes: {
+              name: "Jeff Ching",
+            },
+            relationships: {
+              properties: {
+                links: {
+                  self: 'http://example.com/owners/1/links/properties',
+                  related: 'http://example.com/owners/1/properties'
+                }
+              }
+            }
+          }
+        ]
+      }.to_json)
+    stub_request(:get, "http://example.com/owners/1/properties")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: 'property',
+            attributes: {address: "123 Main St."}
+          },
+          {
+            id: 2,
+            type: 'property',
+            attributes: {address: "223 Elm St."}
+          },
+          {
+            id: 3,
+            type: 'property',
+            attributes: {address: "314 150th Ave"}
+          }
+        ]
+      }.to_json)
+    owner = Owner.find(1).first
+    properties = owner.properties
+    assert_equal(Array, properties.class)
+    assert_equal("314 150th Ave", properties.last.address)
   end
 
   def test_load_has_many
