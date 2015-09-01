@@ -11,10 +11,6 @@ module JsonApiClient
       end
 
       class Association < BaseAssociation
-        def parse(params)
-          params ? association_class.new(params) : nil
-        end
-
         def param
           :"#{attr_name}_id"
         end

@@ -5,14 +5,13 @@ module JsonApiClient
 
       module ClassMethods
         def has_one(attr_name, options = {})
-          # self.associations = self.associations + [HasOne::Association.new(attr_name, self, options)]
           self.associations += [HasOne::Association.new(attr_name, self, options)]
         end
       end
 
       class Association < BaseAssociation
-        def parse(params)
-          params ? association_class.new(params) : nil
+        def from_result_set(result_set)
+          result_set.first
         end
       end
     end

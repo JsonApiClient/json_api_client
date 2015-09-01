@@ -10,9 +10,6 @@ module JsonApiClient
       end
 
       class Association < BaseAssociation
-        def parse(param)
-          [param].flatten.map{|data| association_class.new(data) }
-        end
       end
     end
   end

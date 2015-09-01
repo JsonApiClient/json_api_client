@@ -389,12 +389,28 @@ module JsonApiClient
     protected
 
     def method_missing(method, *args)
-      return super unless relationships && relationships.has_attribute?(method) && last_result_set.included
-      last_result_set.included.data_for(method, relationships[method])
+      association = association_for(method)
+
+      return super unless association || (relationships && relationships.has_attribute?(method))
+
+      return nil unless relationship_definitions = relationships[method]
+
+      # look in included data
+      data = last_result_set.included.data_for(method, relationship_definitions)
+      return data if data
+
+      if association = association_for(method)
+        # look for a defined relationship url
+        if relationship_definitions["links"] && url = relationship_definitions["links"]["related"]
+          return association.data(url)
+        end
+      end
+      nil
     end
 
     def respond_to_missing?(symbol, include_all = false)
       return true if relationships && relationships.has_attribute?(symbol)
+      return true if association_for(symbol)
       super
     end
 
@@ -410,6 +426,10 @@ module JsonApiClient
 
     def property_for(name)
       self.class.schema.find(name)
+    end
+
+    def association_for(name)
+      self.class.associations.detect{|association| association.attr_name == name}
     end
 
     def attributes_for_serialization
