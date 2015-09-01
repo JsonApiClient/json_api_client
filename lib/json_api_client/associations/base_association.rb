@@ -13,6 +13,14 @@ module JsonApiClient
           attr_name.to_s.classify
         end)
       end
+
+      def data(url)
+        from_result_set(association_class.requestor.linked(url))
+      end
+
+      def from_result_set(result_set)
+        result_set.to_a
+      end
     end
   end
 end

@@ -19,24 +19,21 @@ module JsonApiClient
 
     def data_for(method_name, definition)
       # If data is defined, pull the record from the included data
-      if data = definition["data"]
-        if data.is_a?(Array)
-          # has_many link
-          data.map do |link_def|
-            record_for(link_def)
-          end
-        else
-          # has_one link
-          record_for(data)
+      return nil unless data = definition["data"]
+
+      if data.is_a?(Array)
+        # has_many link
+        data.map do |link_def|
+          record_for(link_def)
         end
       else
-        # TODO: if "related" URI is defined, fetch the delated object and stuff it in data
-        nil
+        # has_one link
+        record_for(data)
       end
     end
 
     def has_link?(name)
-      data.has_key?(name)
+      data.has_key?(name.to_s)
     end
 
     private
