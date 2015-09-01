@@ -91,12 +91,31 @@ class AssociationTest < MiniTest::Test
     assert_equal("Jeff Ching", property.owner.name)
   end
 
-  def test_load_has_one_nil
+  def test_has_one_loads_nil
     stub_request(:get, "http://example.com/properties/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {
             id: 1,
+            type: "addresses",
+            attributes: {
+              address: "123 Main St."
+            }
+          }
+        ]
+      }.to_json)
+
+    property = Property.find(1).first
+    assert_nil property.owner, "expected to be able to ask for explicitly declared association even if it's not present"
+  end
+
+  def test_has_one_fetches_relationship
+    stub_request(:get, "http://example.com/properties/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "addresses",
             attributes: {
               address: "123 Main St."
             },
@@ -111,9 +130,21 @@ class AssociationTest < MiniTest::Test
           }
         ]
       }.to_json)
+    stub_request(:get, "http://example.com/people/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "people",
+            attributes: {
+              name: "Jeff Ching"
+            }
+          }
+        ]
+      }.to_json)
 
     property = Property.find(1).first
-    assert_equal(nil, property.owner)
+    assert property.owner, "expected to be able to fetch relationship if defined"
   end
 
   def test_load_has_many
