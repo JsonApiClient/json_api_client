@@ -135,7 +135,7 @@ class AssociationTest < MiniTest::Test
         data: [
           {
             id: 1,
-            type: "people",
+            type: "owner",
             attributes: {
               name: "Jeff Ching"
             }
@@ -144,7 +144,9 @@ class AssociationTest < MiniTest::Test
       }.to_json)
 
     property = Property.find(1).first
-    assert property.owner, "expected to be able to fetch relationship if defined"
+    owner = property.owner
+    assert owner, "expected to be able to fetch relationship if defined"
+    assert_equal Owner, owner.class
   end
 
   def test_load_has_many
