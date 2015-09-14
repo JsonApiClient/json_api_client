@@ -4,8 +4,6 @@ This gem is meant to help you build an API client for interacting with REST APIs
 
 *Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
 
-*Note: This is still a work in progress.*
-
 ## Usage
 
 You will want to create your own resource classes that inherit from `JsonApiClient::Resource` similar to how you would create an `ActiveRecord` class. You may also want to create your own abstract base class to share common behavior. Additionally, you will probably want to namespace your models. Namespacing your model will not affect the url routing to that resource.
@@ -141,6 +139,8 @@ articles.links.related
 
 You can force nested resource paths for your models by using a `belongs_to` association.
 
+**Note: Using belongs_to is only necessary for setting a nested path.**
+
 ```
 module MyApi
   class Account < JsonApiClient::Resource
@@ -272,6 +272,8 @@ Person.where(name: 'Jeff').all
 You can define schema within your client model. You can define basic types and set default values if you wish. If you declare a basic type, we will try to cast any input to be that type.
 
 The added benefit of declaring your schema is that you can access fields before data is set (otherwise, you'll get a `NoMethodError`).
+
+**Note: This is completely optional. This will set default values and handle typecasting.**
 
 ### Example
 
