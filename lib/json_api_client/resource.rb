@@ -267,7 +267,7 @@ module JsonApiClient
       end
       self.attributes = params.merge(self.class.default_attributes)
       self.class.schema.each_property do |property|
-        attributes[property.name] = property.default unless attributes.has_key?(property.name)
+        attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?
       end
     end
 
