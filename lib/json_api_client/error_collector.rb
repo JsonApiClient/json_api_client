@@ -12,7 +12,7 @@ module JsonApiClient
       end
 
       def about
-        attrs.fetch(:links, {})[:about]
+        (attrs[:links] || {})[:about]
       end
 
       def status
@@ -48,11 +48,11 @@ module JsonApiClient
       end
 
       def source
-        attrs.fetch(:source, {})
+        attrs[:source] || {}
       end
 
       def meta
-        MetaData.new(attrs.fetch(:meta, {}))
+        MetaData.new(attrs[:meta] || {})
       end
 
       protected

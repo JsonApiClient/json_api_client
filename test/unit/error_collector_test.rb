@@ -79,9 +79,13 @@ class ErrorCollectorTest < MiniTest::Test
           },
           {
             id: "33333",
+            links: nil,
             status: "400",
             code: "1338",
-            title: "Title already taken"
+            title: "Title already taken",
+            detail: nil,
+            source: nil,
+            meta: nil
           }
         ]
       }.to_json)
