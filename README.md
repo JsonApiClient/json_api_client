@@ -428,3 +428,7 @@ class MyApi::Base < JsonApiClient::Resource
   self.paginator = MyPaginator
 end
 ```
+
+## Changelog
+
+See [changelog](https://github.com/chingor13/json_api_client/blob/master/CHANGELOG.md)
