@@ -118,4 +118,50 @@ class ErrorCollectorTest < MiniTest::Test
     assert error.meta.is_a?(JsonApiClient::MetaData)
   end
 
+  def test_can_handle_explicit_null_error_values
+      stub_request(:post, "http://example.com/articles")
+        .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+            data: {
+              type: "articles",
+              attributes: {
+                title: "Rails is Omakase",
+                email_address: "bar"
+              }
+            }
+          }.to_json)
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+          errors: [
+            {
+              id: "1337",
+              links: nil,
+              status: nil,
+              code: nil,
+              title: nil,
+              detail: nil,
+              source: nil,
+              meta: nil
+            }
+          ]
+        }.to_json)
+
+      article = Article.create({
+        title: "Rails is Omakase",
+        email_address: "bar"
+      })
+      assert !article.persisted?
+      assert article.errors.present?
+      assert_equal 1, article.errors.size
+
+      error = article.last_result_set.errors.first
+      assert_equal "1337", error.id
+
+      assert_equal({}, error.about, nil)
+      assert_equal(nil, error.status, nil)
+      assert_equal(nil, error.code, nil)
+      assert_equal(nil, error.title, nil)
+      assert_equal(nil, error.detail, nil)
+      assert_equal({}, error.source, nil)
+      assert_equal({}, error.meta.attributes,nil)
+  end
+
 end
