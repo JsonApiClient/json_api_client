@@ -9,6 +9,7 @@ class CreationTest < MiniTest::Test
     end
 
     after_create :after_create_method
+
     def after_create_method
       self.bar = 100
     end
@@ -20,29 +21,29 @@ class CreationTest < MiniTest::Test
   def setup
     super
     stub_request(:post, "http://example.com/articles")
-      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
-          data: {
-            type: "articles",
-            attributes: {
-              title: "Rails is Omakase"
-            }
-          }
-        }.to_json)
-      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        data: {
-          type: "articles",
-          id: "1",
-          attributes: {
-            title: "Rails is Omakase"
-          }
-        }
-      }.to_json)
+        .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+                                                                                                         data: {
+                                                                                                             type: "articles",
+                                                                                                             attributes: {
+                                                                                                                 title: "Rails is Omakase"
+                                                                                                             }
+                                                                                                         }
+                                                                                                     }.to_json)
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+                                                                          data: {
+                                                                              type: "articles",
+                                                                              id: "1",
+                                                                              attributes: {
+                                                                                  title: "Rails is Omakase"
+                                                                              }
+                                                                          }
+                                                                      }.to_json)
   end
 
   def test_can_create_with_class_method
     article = Article.create({
-      title: "Rails is Omakase"
-    })
+                                 title: "Rails is Omakase"
+                             })
 
     assert article.persisted?, article.inspect
     assert_equal "1", article.id
@@ -59,12 +60,62 @@ class CreationTest < MiniTest::Test
 
   def test_can_create_with_new_record_and_save
     article = Article.new({
-      title: "Rails is Omakase"
-    })
+                              title: "Rails is Omakase"
+                          })
 
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+  end
+
+  def test_can_create_with_new_record_with_relationships_and_save
+    stub_request(:post, "http://example.com/articles")
+        .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+                                                                                                         data: {
+                                                                                                             type: "articles",
+                                                                                                             attributes: {
+                                                                                                                 title: "Rails is Omakase"
+                                                                                                             }
+                                                                                                         }
+                                                                                                     }.to_json)
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+                                                                          data: {
+                                                                              type: "articles",
+                                                                              id: "1",
+                                                                              attributes: {
+                                                                                  title: "Rails is Omakase"
+                                                                              },
+                                                                              relationships: {
+                                                                                  comments: {
+                                                                                      data: [
+                                                                                          {
+                                                                                              id: "1",
+                                                                                              type: "comments"
+                                                                                          }
+                                                                                      ]
+                                                                                  }
+                                                                              }
+                                                                          },
+                                                                          included: [
+                                                                              {
+                                                                                  id: "1",
+                                                                                  type: "comments",
+                                                                                  attributes: {
+                                                                                      comments: "it is isn't it ?"
+                                                                                  }
+                                                                              }
+                                                                          ]
+                                                                      }.to_json)
+
+    article = Article.new({
+                              title: "Rails is Omakase"
+                          })
+
+    assert article.save
+    assert article.persisted?
+    assert_equal article.comments.length, 1
+    assert_equal "1", article.id
+
   end
 
   def test_correct_create_with_nil_attirbute_value
@@ -97,9 +148,9 @@ class CreationTest < MiniTest::Test
                    }.to_json)
 
     author = Author.new({
-                             name: "John Doe",
-                             description: nil
-                         })
+                            name: "John Doe",
+                            description: nil
+                        })
 
     assert author.save
   end

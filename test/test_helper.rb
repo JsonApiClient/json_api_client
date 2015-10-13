@@ -18,6 +18,7 @@ class TestResource < JsonApiClient::Resource
 end
 
 class Article < TestResource
+  has_many :comments
 end
 
 class Person < TestResource
