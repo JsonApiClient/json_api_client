@@ -100,4 +100,26 @@ class SchemableTest < MiniTest::Test
     assert_equal 12345, resource.d
   end
 
+  def test_boolean_casts_to_true
+    ["1", 1, "true", true].each do |v|
+      resource = SchemaResource.new
+      resource.b = v
+      assert_equal true, resource.b
+    end
+  end
+
+  def test_boolean_casts_to_true
+    ["0", 0, "false", false].each do |v|
+      resource = SchemaResource.new
+      resource.b = v
+      assert_equal false, resource.b
+    end
+  end
+
+  def test_boolean_defaults_to_default
+    resource = SchemaResource.new
+    resource.b = :bogus
+    assert_equal false, resource.b
+  end
+
 end

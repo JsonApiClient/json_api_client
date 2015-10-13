@@ -15,10 +15,14 @@ module JsonApiClient
         when :time
           value.is_a?(Time) || nil ? value : Time.parse(value)
         when :boolean
-          if value.is_a?(String)
-            value == "false" ? false : true
+          case value
+          when "false", "0", 0, false
+            false
+          when "true", "1", 1, true
+            true
           else
-            !!value
+            # if it's unknown, use the default value
+            default
           end
         else
           value
