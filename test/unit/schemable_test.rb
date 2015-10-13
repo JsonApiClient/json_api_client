@@ -17,6 +17,15 @@ end
 
 class SchemableTest < MiniTest::Test
 
+  def test_default_attributes
+    resource = SchemaResource.new
+
+    assert resource.attributes.has_key?(:a), ':a should be in attributes'
+    assert resource.attributes.has_key?(:b), ':b should be in attributes'
+    refute resource.attributes.has_key?(:c), ':c should not be in attributes'
+    refute resource.attributes.has_key?(:d), ':d should not be in attributes'
+  end
+
   def test_defines_fields
     resource = SchemaResource.new
 
