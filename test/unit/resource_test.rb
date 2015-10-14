@@ -63,6 +63,8 @@ class ResourceTest < MiniTest::Test
     assert_equal("baz", article.send(:"foo-bar"))
     assert_equal("baz", article["foo-bar"])
     assert_equal("baz", article[:"foo-bar"])
+    assert_equal("baz", article.foo_bar)
+    assert article.respond_to? :foo_bar
   end
 
 end
