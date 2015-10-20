@@ -13,6 +13,9 @@ module JsonApiClient
     class AccessDenied < ClientError
     end
 
+    class NotAuthorized < ClientError
+    end
+
     class ConnectionError < ApiError
     end
 
