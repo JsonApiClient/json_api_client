@@ -334,6 +334,11 @@ module JsonApiClient
       relationships.set_all_attributes_dirty if relationships
     end
 
+    def valid?(context = nil)
+      context ||= (new_record? ? :create : :update)
+      super(context)
+    end
+
     # Commit the current changes to the resource to the remote server.
     # If the resource was previously loaded from the server, we will
     # try to update the record. Otherwise if it's a new record, then

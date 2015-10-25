@@ -11,7 +11,7 @@ module JsonApiClient
 
         return @attributes unless attrs.present?
         attrs.each do |key, value|
-          set_attribute(key, value)
+          send("#{key}=", value)
         end
       end
 
