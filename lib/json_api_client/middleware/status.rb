@@ -7,8 +7,7 @@ module JsonApiClient
 
           # look for meta[:status]
           if env[:body].is_a?(Hash)
-            code = env[:status]
-            #code = env[:body].fetch("meta", {}).fetch("status", 200).to_i
+            code = env[:body].fetch("meta", {}).fetch("status", 200).to_i
             handle_status(code, env)
           end
         end
