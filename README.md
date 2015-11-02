@@ -8,9 +8,9 @@ This gem is meant to help you build an API client for interacting with REST APIs
 
 You will want to create your own resource classes that inherit from `JsonApiClient::Resource` similar to how you would create an `ActiveRecord` class. You may also want to create your own abstract base class to share common behavior. Additionally, you will probably want to namespace your models. Namespacing your model will not affect the url routing to that resource.
 
-```
+```ruby
 module MyApi
-  # this is an "abstract" base class that 
+  # this is an "abstract" base class that
   class Base < JsonApiClient::Resource
     # set the api base url in an abstract base class
     self.site = "http://example.com/"
@@ -31,7 +31,7 @@ By convention, we figure guess the resource route from the class name. In the ab
 
 Some basic example usage:
 
-```
+```ruby
 MyApi::Article.all
 MyApi::Article.where(author_id: 1).find(2)
 MyApi::Article.where(author_id: 1).all
@@ -62,33 +62,35 @@ All class level finders/creators should return a `JsonApiClient::ResultSet` whic
 
 Out of the box, `json_api_client` handles server side validation only.
 
-```
+```ruby
 User.create(name: "Bob", email_address: "invalid email")
-=> false
+# => false
 
 user = User.new(name: "Bob", email_address: "invalid email")
 user.save
-=> false
+# => false
 
 # returns an error collector which is array-like
 user.errors
-=> ["Email address is invalid"]
+# => ["Email address is invalid"]
 
 # get all error titles
 user.errors.full_messages
-=> ["Email address is invalid"]
+# => ["Email address is invalid"]
 
 # get errors for a specific parameter
 user.errors[:email_address]
-=> ["Email address is invalid"]
+# => ["Email address is invalid"]
 
 user = User.find(1)
 user.update_attributes(email_address: "invalid email")
-=> false
+# => false
+
 user.errors
-=> ["Email address is invalid"]
+# => ["Email address is invalid"]
+
 user.email_address
-=> "invalid email"
+# => "invalid email"
 ```
 
 For now we are assuming that error sources are all parameters.
@@ -101,7 +103,7 @@ If you want to add client side validation, I suggest creating a form model class
 
 If the response has a top level meta data section, we can access it via the `meta` accessor on `ResultSet`.
 
-```
+```ruby
 # Example response:
 {
   "meta": {
@@ -119,9 +121,10 @@ If the response has a top level meta data section, we can access it via the `met
 articles = Articles.all
 
 articles.meta.copyright
-=> "Copyright 2015 Example Corp."
+# => "Copyright 2015 Example Corp."
+
 articles.meta.authors
-=> ["Yehuda Katz", "Steve Klabnik", "Dan Gebhardt"]
+# => ["Yehuda Katz", "Steve Klabnik", "Dan Gebhardt"]
 ```
 
 ## Top-level Links
@@ -130,7 +133,7 @@ articles.meta.authors
 
 If the resource returns top level links, we can access them via the `links` accessor on `ResultSet`.
 
-```
+```ruby
 articles = Articles.find(1)
 articles.links.related
 ```
@@ -141,41 +144,40 @@ You can force nested resource paths for your models by using a `belongs_to` asso
 
 **Note: Using belongs_to is only necessary for setting a nested path.**
 
-```
+```ruby
 module MyApi
   class Account < JsonApiClient::Resource
-  	belongs_to :user
+    belongs_to :user
   end
 end
 
 # try to find without the nested parameter
 MyApi::Account.find(1)
-=> raises ArgumentError
+# => raises ArgumentError
 
 # makes request to /users/2/accounts/1
 MyApi::Account.where(user_id: 2).find(1)
-=> returns ResultSet
+# => returns ResultSet
 ```
 
 ## Custom Methods
 
 You can create custom methods on both collections (class method) and members (instance methods).
 
-```
+```ruby
 module MyApi
   class User < JsonApiClient::Resource
+    # GET /users/search
+    custom_endpoint :search, on: :collection, request_method: :get
 
-  	# GET /users/search
-  	custom_endpoint :search, on: :collection, request_method: :get
-
-  	# PUT /users/:id/verify
-  	custom_endpoint :verify, on: :member, request_method: :put
+    # PUT /users/:id/verify
+    custom_endpoint :verify, on: :member, request_method: :put
   end
 end
 
 # makes GET request to /users/search?name=Jeff
 MyApi::User.search(name: 'Jeff')
-=> <ResultSet of MyApi::User instances>
+# => <ResultSet of MyApi::User instances>
 
 user = MyApi::User.find(1)
 # makes PUT request to /users/1/verify?foo=bar
@@ -188,7 +190,7 @@ user.verify(foo: 'bar')
 
 If the response returns a [compound document](http://jsonapi.org/format/#document-structure-compound-documents), then we should be able to get the related resources.
 
-```
+```ruby
 # makes request to /articles/1?include=author,comments.author
 results = Article.includes(:author, :comments => :author).find(1)
 
@@ -200,24 +202,24 @@ authors = results.map(&:author)
 
 [See specification](http://jsonapi.org/format/#fetching-sparse-fieldsets)
 
-```
+```ruby
 # makes request to /articles?fields[articles]=title,body
 article = Article.select("title,body").first
 
 # should have fetched the requested fields
 article.title
-=> "Rails is Omakase"
+# => "Rails is Omakase"
 
 # should not have returned the created_at
 article.created_at
-=> raise NoMethodError
+# => raise NoMethodError
 ```
 
 ## Sorting
 
 [See specification](http://jsonapi.org/format/#fetching-sorting)
 
-```
+```ruby
 # makes request to /people?sort=age
 youngest = Person.sort(:age).all
 
@@ -234,7 +236,7 @@ oldest = Person.sort(age: :desc).all
 
 ### Requesting
 
-```
+```ruby
 # makes request to /articles?page=2&per_page=30
 articles = Article.page(2).per(30).to_a
 
@@ -248,7 +250,7 @@ articles = Article.paginate(page: 2, per_page: 30).to_a
 
 If the response contains additional pagination links, you can also get at those:
 
-```
+```ruby
 articles = Article.paginate(page: 2, per_page: 30).to_a
 articles.pages.next
 articles.pages.last
@@ -262,7 +264,7 @@ A `JsonApiClient::ResultSet` object should be paginatable with both `kaminari` a
 
 [See specifiation](http://jsonapi.org/format/#fetching-filtering)
 
-```
+```ruby
 # makes request to /people?filter[name]=Jeff
 Person.where(name: 'Jeff').all
 ```
@@ -277,7 +279,7 @@ The added benefit of declaring your schema is that you can access fields before 
 
 ### Example
 
-```
+```ruby
 class User < JsonApiClient::Resource
   property :name, type: :string
   property :is_admin, type: :boolean, default: false
@@ -287,18 +289,20 @@ end
 
 # default values
 u = User.new
+
 u.name
-=> nil
+# => nil
+
 u.is_admin
-=> false
+# => false
+
 u.points_accrued
-=> 0
+# => 0
 
 # casting
 u.average_points_per_day = "0.3"
 u.average_points_per_day
-=> 0.3
-
+# => 0.3
 ```
 
 ### Types
@@ -321,7 +325,7 @@ Note : Do not map the primary key as int.
 
 You can customize this path by changing your resource's `table_name`:
 
-```
+```ruby
 module MyApi
   class SomeResource < Base
     def self.table_name
@@ -338,7 +342,7 @@ MyApi::SomeResource.all
 
 You can configure your API client to use a custom connection that implementes the `run` instance method. It should return data that your parser can handle. The default connection class wraps Faraday and lets you add middleware.
 
-```
+```ruby
 class NullConnection
   def initialize(*args)
   end
@@ -352,7 +356,6 @@ end
 class CustomConnectionResource < TestResource
   self.connection_class = NullConnection
 end
-
 ```
 
 #### Connection Options
@@ -360,7 +363,7 @@ end
 You can configure your connection using Faraday middleware. In general, you'll want
 to do this in a base model that all your resources inherit from:
 
-```
+```ruby
 MyApi::Base.connection do |connection|
   # set OAuth2 headers
   connection.use Faraday::Request::Oauth2, 'MYTOKEN'
@@ -382,10 +385,10 @@ end
 
 You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
 
-```
+```ruby
 class MyCustomParser
   def self.parse(klass, response)
-    …
+    # …
     # returns some ResultSet object
   end
 end
@@ -399,14 +402,14 @@ end
 
 You can customize how the scope builder methods map to request parameters.
 
-```
+```ruby
 class MyQueryBuilder
   def def initialize(klass); end
 
   def where(conditions = {})
   end
 
-  … add order, includes, paginate, page, first, build
+  # … add order, includes, paginate, page, first, build
 end
 
 class MyApi::Base < JsonApiClient::Resource
@@ -418,7 +421,7 @@ end
 
 You can customize how your resources find pagination information from the response.
 
-```
+```ruby
 class MyPaginator
   def initialize(result_set, data); end
   # implement current_page, total_entries, etc
