@@ -54,7 +54,7 @@ module JsonApiClient
       #
       # @return [String] The table name for this resource
       def table_name
-        resource_name.pluralize
+        JsonApiClient.configuration.route_formatter.format(resource_name.pluralize)
       end
 
       # The name of a single resource. i.e. Article -> article, Person -> person
@@ -460,7 +460,9 @@ module JsonApiClient
     end
 
     def association_for(name)
-      self.class.associations.detect{|association| association.attr_name == name}
+      self.class.associations.detect do |association|
+        association.attr_name.to_s == JsonApiClient.configuration.key_formatter.unformat(name)
+      end
     end
 
     def attributes_for_serialization
