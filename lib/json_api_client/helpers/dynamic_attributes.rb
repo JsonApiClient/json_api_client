@@ -38,7 +38,9 @@ module JsonApiClient
       protected
 
       def method_missing(method, *args, &block)
-        if method.to_s =~ /^(.*)=$/
+        normalized_method = JsonApiClient.configuration.key_formatter.unformat(method.to_s)
+
+        if normalized_method =~ /^(.*)=$/
           set_attribute($1, args.first)
         elsif has_attribute?(method)
           attributes[method]

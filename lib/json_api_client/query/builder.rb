@@ -140,7 +140,7 @@ module JsonApiClient
               parse_related_links(*v)
             end
           else
-            table
+            JsonApiClient.configuration.key_formatter.format(table)
           end
         end.flatten
       end
