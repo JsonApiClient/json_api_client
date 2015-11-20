@@ -366,7 +366,7 @@ to do this in a base model that all your resources inherit from:
 ```ruby
 MyApi::Base.connection do |connection|
   # set OAuth2 headers
-  connection.use Faraday::Request::Oauth2, 'MYTOKEN'
+  connection.use FaradayMiddleware::OAuth2, 'MYTOKEN'
 
   # log responses
   connection.use Faraday::Response::Logger
