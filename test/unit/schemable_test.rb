@@ -22,7 +22,7 @@ class DateTypes < TestResource
   property :d, type: :date
 end
 
-class SchemableTest < MiniTest::Unit::TestCase
+class SchemableTest < Minitest::Test
 
   def test_defines_fields
     resource = SchemaResource.new
