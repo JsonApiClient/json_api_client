@@ -25,7 +25,7 @@ module JsonApiClient
 
         def build_connection
           return connection_object unless connection_object.nil?
-          self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
+          self.connection_object = connection_class.new(connection_options.merge(resource: self, site: site)).tap do |conn|
             yield(conn) if block_given?
           end
         end

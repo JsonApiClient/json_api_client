@@ -8,11 +8,19 @@ require 'active_support/core_ext/enumerable'
 
 module JsonApiClient
   class Resource
-    class_attribute :site, :primary_key, :link_style, :default_headers
+    class_attribute :site,
+      :primary_key,
+      :link_style,
+      :default_headers,
+      :server_error_class,
+      :not_found_class
 
     self.primary_key = :id
     self.link_style = :id # or :url
     self.default_headers = {}
+
+    self.server_error_class = JsonApiClient::Errors::ServerError
+    self.not_found_class = JsonApiClient::Errors::NotFound
 
     class << self
       # base URL for this resource
