@@ -78,7 +78,7 @@ module JsonApiClient
       #
       # @return [Connection] The connection to the json api server
       def connection(rebuild = false, &block)
-        _build_connection(&block)
+        _build_connection(rebuild, &block)
         connection_object
       end
 
