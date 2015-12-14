@@ -80,7 +80,7 @@ class LinksTest < MiniTest::Unit::TestCase
             {
               id: 4, address: "1st Ave S", state_id: 1,
               links: {
-                "state": 1
+                state: 1
               }
             }
           ],
