@@ -4,6 +4,8 @@ rvm:
   - 2.0.0
   - 2.1.0
   - 2.2.0
+before_install:
+  - gem update bundler
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=396d4263adb6febf1e6e9b0c0e176fbde35e1a116a3c1ecf8dd4f9384e41979b
