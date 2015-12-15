@@ -17,6 +17,12 @@ module JsonApiClient
         klass = klass_for(type)
         add_data(type, results.map{|result| klass.new(result)})
       end
+
+      @results_by_type_by_id.values.each do |results|
+        results.values.each do |result|
+          result.linked_data = self
+        end
+      end
     end
 
     def data_for(type, ids)

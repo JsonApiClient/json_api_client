@@ -23,6 +23,9 @@ end
 class Address < TestResource
 end
 
+class State < TestResource
+end
+
 # for testing primary key option
 class UserPreference < TestResource
   self.primary_key = :user_id
