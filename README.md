@@ -404,7 +404,7 @@ You can customize how the scope builder methods map to request parameters.
 
 ```ruby
 class MyQueryBuilder
-  def def initialize(klass); end
+  def initialize(klass); end
 
   def where(conditions = {})
   end
