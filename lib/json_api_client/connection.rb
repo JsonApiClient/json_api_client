@@ -1,3 +1,5 @@
+require "yeti_support/enumerable/dasherize_keys"
+
 module JsonApiClient
   class Connection
 
@@ -28,8 +30,31 @@ module JsonApiClient
     end
 
     def run(request_method, path, params = {}, headers = {})
+      # Dasherize the request
+      #
+      # The JSON API 1.0 spec recommends (http://jsonapi.org/recommendations/) that
+      # member names SHOULD contain only a-z, 0-9, and the hyphen as separator
+      # between multiple words.
+      path = path.dasherize
+      params = dasherize_params(params)
+
       faraday.send(request_method, path, params, headers)
     end
+
+    def dasherize_params(params)
+      params.dasherize_keys.tap do |p|
+        # Dasherize the sort fields
+        p["sort"] = p["sort"].dasherize if p.has_key?("sort")
+
+        # Dasherize the sparse fieldset fields
+        if p.has_key?("fields")
+          p["fields"] = p["fields"].map do |resource, fields|
+            { resource => fields.dasherize }
+          end.inject(&:merge)
+        end
+      end
+    end
+    private :dasherize_params
 
   end
 end

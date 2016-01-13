@@ -10,7 +10,7 @@ end
 class CustomEndpointTest < MiniTest::Test
 
   def test_collection_get
-    stub_request(:get, "http://example.com/countries/autocomplete?starts_with=bel")
+    stub_request(:get, "http://example.com/countries/autocomplete?starts-with=bel")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {id: 1, name: 'Belgium'},

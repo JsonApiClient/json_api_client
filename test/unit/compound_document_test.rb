@@ -116,8 +116,8 @@ class CompoundDocumentTest < MiniTest::Test
 
     author = article.author
     assert author.is_a?(Person), "expected this has-one relation to return a single Person resource"
-    assert_equal "Dan", author["first-name"]
-    assert_equal "Gebhardt", author["last-name"]
+    assert_equal "Dan", author["first_name"]
+    assert_equal "Gebhardt", author["last_name"]
     assert_equal "dgeb", author.twitter
     assert_equal "http://example.com/people/9", author.links.self
 

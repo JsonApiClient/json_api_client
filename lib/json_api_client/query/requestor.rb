@@ -7,11 +7,23 @@ module JsonApiClient
         @klass = klass
       end
 
-      # expects a record
       def create(record)
-        request(:post, klass.path(record.attributes), {
-          data: record.as_json_api
-        })
+        if record.is_a?(Array)
+          # Handle multiple records. The caller validates that each record's
+          # path, in cases of nested resources, is the same.
+          #
+          # The JSON API bulk extension (http://jsonapi.org/extensions/bulk/)
+          # provides support for performing multiple operations in a single
+          # request.
+          request(:post, klass.path(record.first.attributes), {
+            data: record.map { |r| r.as_json_api }
+          })
+        else
+          request(:post, klass.path(record.attributes), {
+            data: record.as_json_api
+          })
+        end
+
       end
 
       def update(record)

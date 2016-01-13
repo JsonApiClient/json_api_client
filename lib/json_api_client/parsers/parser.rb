@@ -1,9 +1,18 @@
+require "yeti_support/enumerable/underscore_keys"
+
 module JsonApiClient
   module Parsers
     class Parser
       class << self
         def parse(klass, response)
           data = response.body.present? ? response.body : {}
+
+          # Underscore the response
+          #
+          # The JSON API 1.0 spec recommends (http://jsonapi.org/recommendations/) that
+          # member names SHOULD contain only a-z, 0-9, and the hyphen as separator
+          # between multiple words.
+          data.underscore_keys!
 
           ResultSet.new.tap do |result_set|
             result_set.record_class = klass

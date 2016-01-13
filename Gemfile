@@ -1,4 +1,7 @@
 source "https://rubygems.org"
+source "https://3VRyspynxvkUrsF1waCF@gem.fury.io/me/" do
+  gem "yeti_support", ">= 1.9.1"
+end
 
 gemspec
 

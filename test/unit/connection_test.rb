@@ -25,7 +25,7 @@ end
 
 class CustomAdapterResource < TestResource
   TEST_STUBS = Faraday::Adapter::Test::Stubs.new do |stub|
-    stub.get('/custom_adapter_resources') { |env| [200, {content_type: "application/vnd.api+json"}, {data: [{id: "1", type: "custom_adapter_resources", attributes: {foo: "bar"}}]}.to_json] }
+    stub.get('/custom-adapter-resources') { |env| [200, {content_type: "application/vnd.api+json"}, {data: [{id: "1", type: "custom_adapter_resources", attributes: {foo: "bar"}}]}.to_json] }
   end
   # The Faraday test adapter takes options when building the adapter
   self.connection_options = {

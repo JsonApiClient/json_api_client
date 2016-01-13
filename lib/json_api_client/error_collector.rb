@@ -35,7 +35,7 @@ module JsonApiClient
       def source_parameter
         source.fetch(:parameter) do
           source[:pointer] ?
-            source[:pointer].split("/").last :
+            source[:pointer].split("/").last.underscore :
             nil
         end
       end

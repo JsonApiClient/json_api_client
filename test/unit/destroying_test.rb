@@ -58,7 +58,7 @@ class DestroyingTest < MiniTest::Test
   end
 
   def test_callbacks
-    stub_request(:delete, "http://example.com/callback_tests/6")
+    stub_request(:delete, "http://example.com/callback-tests/6")
         .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
                                                                           data: []
                                                                       }.to_json)

@@ -13,7 +13,7 @@ class CoercionTest < MiniTest::Test
   end
 
   def test_create_entity_with_coercion
-    stub_request(:post, "http://example.com/coercion_types").
+    stub_request(:post, "http://example.com/coercion-types").
       to_return(headers: {content_type: "application/vnd.api+json"}, 
                 body: {
                   data: {
@@ -54,7 +54,7 @@ class CoercionTest < MiniTest::Test
   end
 
   def test_can_parse_and_coerce
-    stub_request(:get, "http://example.com/coercion_types/1").
+    stub_request(:get, "http://example.com/coercion-types/1").
       to_return(headers: {content_type: "application/vnd.api+json"}, 
                 body: {
                   data: {
