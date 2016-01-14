@@ -6,7 +6,7 @@ class CustomHeaderTest < MiniTest::Test
   end
 
   def test_can_set_custom_headers
-    stub_request(:get, "http://example.com/custom_header_resources/1")
+    stub_request(:get, "http://example.com/custom-header-resources/1")
       .with(headers: {"X-My-Header" => "asdf"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
@@ -24,7 +24,7 @@ class CustomHeaderTest < MiniTest::Test
   end
 
   def test_class_method_headers
-    stub_request(:post, "http://example.com/custom_header_resources")
+    stub_request(:post, "http://example.com/custom-header-resources")
       .with(headers: {"X-My-Header" => "asdf"})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
@@ -46,7 +46,7 @@ class CustomHeaderTest < MiniTest::Test
 
     # set up expectations/stubs
     thread_count.times do |i|
-      stub_request(:get, "http://example.com/custom_header_resources/#{i}")
+      stub_request(:get, "http://example.com/custom-header-resources/#{i}")
         .with(headers: {"X-My-Header" => "Header #{i}"})
         .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
           data: {

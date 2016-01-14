@@ -38,6 +38,15 @@ class QueryBuilderTest < MiniTest::Test
     articles = Article.paginate(page: 3, per_page: 6).to_a
   end
 
+  def test_can_page_with_offset_and_limit
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {page: {offset: 17, limit: 6}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.offset(17).limit(6).to_a
+  end
+
   def test_can_sort_asc
     stub_request(:get, "http://example.com/articles")
       .with(query: {sort: "foo"})
@@ -93,6 +102,24 @@ class QueryBuilderTest < MiniTest::Test
         data: []
       }.to_json)
     articles = Article.select("title,body").to_a
+  end
+
+  def test_can_select_fields_with_string_array
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.select("title", "body").to_a
+  end
+
+  def test_can_select_fields_with_symbol_array
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.select(:title, :body).to_a
   end
 
 end

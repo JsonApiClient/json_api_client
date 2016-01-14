@@ -161,7 +161,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_callbacks_on_update
-    stub_request(:post, "http://example.com/callback_tests")
+    stub_request(:post, "http://example.com/callback-tests")
       .with(headers: {
         content_type: "application/vnd.api+json",
         accept: "application/vnd.api+json"

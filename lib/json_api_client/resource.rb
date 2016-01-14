@@ -48,7 +48,7 @@ module JsonApiClient
 
     class << self
       extend Forwardable
-      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
+      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find, :offset, :limit
 
       # The table name for this resource. i.e. Article -> articles, Person -> people
       #
@@ -109,9 +109,62 @@ module JsonApiClient
       #
       # @param attributes [Hash] The attributes to create this resource with
       # @return [Resource] The instance you tried to create. You will have to check the persisted state or errors on this object to see success/failure.
-      def create(attributes = {})
-        new(attributes).tap do |resource|
-          resource.save
+      def create(attributes = nil)
+        if attributes.is_a?(Array)
+          # Handle multiple records being created in a single request
+          #
+          # The JSON API bulk extension (http://jsonapi.org/extensions/bulk/)
+          # provides support for performing multiple operations in a single
+          # request.
+          attributes.map do |attrs|
+            new(attrs)
+          end.tap do |resources|
+            create_multiple(resources)
+          end
+        else
+          new(attributes || {}).tap do |resource|
+            resource.save
+          end
+        end
+      end
+
+      def create_multiple(resources)
+        # Ensure that all resources are valid and have the same path. Different
+        # paths would require multiple requests.
+        first_path = path(resources.first.attributes)
+        return false unless resources.all? do |resource|
+          resource.valid? && path(resource.attributes) == first_path
+        end
+
+        result_set = requestor.create(resources)
+        if result_set.has_errors?
+          resources.each_with_index do |resource, index|
+            # There is nothing in the spec about matching up errors with a
+            # resource when performing multiple operations. For now, just
+            # copy the errors to each resource.
+            resource.last_result_set = result_set
+            result_set.errors.each do |error|
+              if error.source_parameter
+                resource.errors.add(error.source_parameter, error.title)
+              else
+                resource.errors.add(:base, error.title)
+              end
+            end
+          end
+          false
+        else
+          resources.each_with_index do |resource, index|
+            resource.last_result_set = result_set
+            resource.errors.clear if resource.errors
+            resource.mark_as_persisted!
+            if updated = result_set[index]
+              resource.last_result_set = updated
+              resource.attributes = updated.attributes
+              resource.relationships.attributes = updated.relationships.attributes
+              resource.clear_changes_information
+            end
+          end
+          true
         end
       end
 

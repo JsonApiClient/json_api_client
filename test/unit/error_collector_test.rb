@@ -55,7 +55,7 @@ class ErrorCollectorTest < MiniTest::Test
             type: "articles",
             attributes: {
               title: "Rails is Omakase",
-              email_address: "bar"
+              "email-address": "bar"
             }
           }
         }.to_json)
@@ -125,7 +125,7 @@ class ErrorCollectorTest < MiniTest::Test
               type: "articles",
               attributes: {
                 title: "Rails is Omakase",
-                email_address: "bar"
+                "email-address": "bar"
               }
             }
           }.to_json)

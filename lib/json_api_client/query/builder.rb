@@ -32,8 +32,10 @@ module JsonApiClient
         self
       end
 
-      def select(fields)
-        @fields += fields.split(",").map(&:strip)
+      def select(*fields)
+        @fields += fields.flat_map do |f|
+          f.to_s.split(",").map(&:strip)
+        end
         self
       end
 
@@ -51,6 +53,16 @@ module JsonApiClient
 
       def per(size)
         @pagination_params[:size] = size
+        self
+      end
+
+      def offset(number)
+        @pagination_params[:offset] = number
+        self
+      end
+
+      def limit(size)
+        @pagination_params[:limit] = size
         self
       end
 
@@ -115,7 +127,7 @@ module JsonApiClient
       end
 
       def filter_params
-        @filters.empty? ? {} : {filter: @filters}
+        @filters.empty? ? {} : {filter: joined_filters}
       end
 
       def order_params
@@ -157,6 +169,12 @@ module JsonApiClient
             "#{arg}"
           end
         end.flatten
+      end
+
+      def joined_filters
+        @filters.map do |key, value|
+          { key => value.is_a?(Array) ? value.join(",") : value }
+        end.inject({}, &:merge)
       end
 
     end

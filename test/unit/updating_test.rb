@@ -582,7 +582,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_callbacks_on_update
-    stub_request(:get, "http://example.com/callback_tests/1")
+    stub_request(:get, "http://example.com/callback-tests/1")
         .to_return(headers: {
                        content_type: "application/vnd.api+json"
                    }, body: {
@@ -598,7 +598,7 @@ class UpdatingTest < MiniTest::Test
 
     callback_test = CallbackTest.find(1).first
 
-    stub_request(:patch, "http://example.com/callback_tests/1")
+    stub_request(:patch, "http://example.com/callback-tests/1")
         .with(headers: {
                   content_type: "application/vnd.api+json",
                   accept: "application/vnd.api+json"

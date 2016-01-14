@@ -21,3 +21,6 @@
 *.DS_Store
 
 Gemfile.lock
+
+# Ignore RubyMine files
+/.idea
