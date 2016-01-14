@@ -1,6 +1,16 @@
 module JsonApiClient
   module Middleware
     class Status < Faraday::Middleware
+      CONNECTION_ERRORS = [
+          # Faraday 0.8.*
+          "Faraday::Error::ConnectionFailed",
+          "Faraday::Error::TimeoutError",
+          # Faraday 0.9.*
+          "Faraday::ConnectionFailed",
+          "Faraday::TimeoutError"].map do |e|
+        Module.const_get(e) rescue nil
+      end.compact
+
       def call(environment)
         @app.call(environment).on_complete do |env|
           handle_status(env[:status], env)
@@ -11,8 +21,11 @@ module JsonApiClient
             handle_status(code, env)
           end
         end
-      rescue Faraday::ConnectionFailed, Faraday::TimeoutError
-        raise Errors::ConnectionError, environment
+      rescue => ex
+        if CONNECTION_ERRORS.include?(ex.class)
+          raise Errors::ConnectionError, environment
+        end
+        raise
       end
 
       protected
