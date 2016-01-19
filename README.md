@@ -269,6 +269,16 @@ A `JsonApiClient::ResultSet` object should be paginatable with both `kaminari` a
 Person.where(name: 'Jeff').all
 ```
 
+## Headers
+
+You can specify the headers to send with all requests within a block with `with_headers`.
+
+```ruby
+Person.with_headers(authorization: "Token token=#{access_token}") do
+  Person.where(name: 'Jeff').all
+end
+```
+
 ## Schema
 
 You can define schema within your client model. You can define basic types and set default values if you wish. If you declare a basic type, we will try to cast any input to be that type.
