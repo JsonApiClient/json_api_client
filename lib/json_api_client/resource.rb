@@ -48,7 +48,7 @@ module JsonApiClient
 
     class << self
       extend Forwardable
-      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
+      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :with_params, :first, :find
 
       # The table name for this resource. i.e. Article -> articles, Person -> people
       #

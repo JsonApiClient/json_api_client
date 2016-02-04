@@ -9,6 +9,7 @@ module JsonApiClient
         @primary_key = nil
         @pagination_params = {}
         @path_params = {}
+        @additional_params = {}
         @filters = {}
         @includes = []
         @orders = []
@@ -54,6 +55,11 @@ module JsonApiClient
         self
       end
 
+      def with_params(more_params)
+        @additional_params = more_params
+        self
+      end
+
       def first
         paginate(page: 1, per_page: 1).to_a.first
       end
@@ -70,6 +76,7 @@ module JsonApiClient
           .merge(select_params)
           .merge(primary_key_params)
           .merge(path_params)
+          .merge(additional_params)
       end
 
       def to_a
@@ -96,6 +103,10 @@ module JsonApiClient
 
       def path_params
         @path_params.empty? ? {} : {path: @path_params}
+      end
+
+      def additional_params
+        @additional_params
       end
 
       def primary_key_params
