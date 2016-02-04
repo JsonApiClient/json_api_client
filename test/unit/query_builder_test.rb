@@ -86,6 +86,16 @@ class QueryBuilderTest < MiniTest::Test
     articles = Article.order(foo: :desc).order(:bar).to_a
   end
 
+  def test_can_specify_additional_params
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {sort: "foo"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    articles = Article.with_params(sort: "foo").to_a
+  end
+
   def test_can_select_fields
     stub_request(:get, "http://example.com/articles")
       .with(query: {fields: {articles: 'title,body'}})
