@@ -26,7 +26,8 @@ module JsonApiClient
 
       def total_pages
         if links["last"]
-          last_params = params_for_uri(links["last"])
+          uri = result_set.links.link_url_for("last")
+          last_params = params_for_uri(uri)
           last_params.fetch("page") do
             current_page
           end.to_i

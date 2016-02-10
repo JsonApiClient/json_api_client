@@ -71,6 +71,78 @@ class TopLevelLinksTest < MiniTest::Test
         }
       }.to_json)
 
+    assert_pagination
+  end
+
+  def test_can_parse_complex_pagination_links
+    stub_request(:get, "http://example.com/articles")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "1",
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          }
+        }],
+        links: {
+          self: {
+            href: "http://example.com/articles",
+            meta: {}
+          },
+          next: {
+            href: "http://example.com/articles?page=2",
+            meta: {}
+          },
+          prev: nil,
+          first: {
+            href: "http://example.com/articles",
+            meta: {}
+          },
+          last: {
+            href: "http://example.com/articles?page=6",
+            meta: {}
+          }
+        }
+      }.to_json)
+    stub_request(:get, "http://example.com/articles?page=2")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "2",
+          attributes: {
+            title: "This is tha BOMB"
+          }
+        }],
+        links: {
+          self: {
+            href: "http://example.com/articles?page=2",
+            meta: {}
+          },
+          next: {
+            href: "http://example.com/articles?page=3",
+            meta: {}
+          },
+          prev: {
+            href: "http://example.com/articles",
+            meta: {}
+          },
+          first: {
+            href: "http://example.com/articles",
+            meta: {}
+          },
+          last: {
+            href: "http://example.com/articles?page=6",
+            meta: {}
+          }
+        }
+      }.to_json)
+
+    assert_pagination
+  end
+
+  private
+
+  def assert_pagination
     articles = Article.all
 
     # test kaminari pagination params
