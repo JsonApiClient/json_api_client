@@ -21,9 +21,17 @@ module JsonApiClient
         end
       end
 
-      def fetch_link(link_name)
+      def link_url_for(link_name)
         link_definition = links.fetch(link_name.to_s)
-        record_class.requestor.linked(link_definition)
+        if link_definition.is_a?(Hash)
+          link_definition["href"]
+        else
+          link_definition
+        end
+      end
+
+      def fetch_link(link_name)
+        record_class.requestor.linked(link_url_for(link_name))
       end
     end
   end
