@@ -56,7 +56,7 @@ module JsonApiClient
       end
 
       def with_params(more_params)
-        @additional_params = more_params
+        @additional_params.merge!(more_params)
         self
       end
 
