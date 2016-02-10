@@ -13,7 +13,7 @@ module JsonApiClient
       end
 
       def prev
-        result_set.links.fetch_link("next")
+        result_set.links.fetch_link("prev")
       end
 
       def first

@@ -97,6 +97,14 @@ class TopLevelLinksTest < MiniTest::Test
     article = page2.first
     assert_equal "2", article.id
     assert_equal "This is tha BOMB", article.title
+
+    # test browsing to the previous page
+    page1 = page2.pages.prev
+    assert page1.is_a?(JsonApiClient::ResultSet)
+    assert_equal 1, page1.length
+    article = page1.first
+    assert_equal "1", article.id
+    assert_equal "JSON API paints my bikeshed!", article.title
   end
 
 end
