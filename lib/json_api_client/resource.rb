@@ -280,6 +280,14 @@ module JsonApiClient
       save
     end
 
+    # Alias to update_attributes
+    #
+    # @param attrs [Hash] Attributes to update
+    # @return [Boolean] Whether the update succeeded or not
+    def update(attrs = {})
+      update_attributes(attrs)
+    end
+
     # Mark the record as persisted
     def mark_as_persisted!
       @persisted = true
