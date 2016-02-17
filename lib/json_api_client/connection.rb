@@ -5,8 +5,9 @@ module JsonApiClient
 
     def initialize(options = {})
       site = options.fetch(:site)
+      proxy = options.delete(:proxy)
       adapter_options = Array(options.fetch(:adapter, Faraday.default_adapter))
-      @faraday = Faraday.new(site) do |builder|
+      @faraday = Faraday.new(site, proxy: proxy) do |builder|
         builder.request :json
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status

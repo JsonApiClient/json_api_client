@@ -381,6 +381,23 @@ module MyApi
 end
 ```
 
+##### Specifying an HTTP Proxy
+
+All resources have a class method ```connection_options``` used to pass options to the JsonApiClient::Connection initializer.
+
+```ruby
+MyApi::Base.connection_options[:proxy] = 'http://proxy.example.com'
+MyApi::Base.connection do |connection|
+  # ...
+end
+
+module MyApi
+  class User < Base
+    # will use the customized connection with proxy
+  end
+end
+```
+
 ### Custom Parser
 
 You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
