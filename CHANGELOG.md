@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+- [#163](https://github.com/chingor13/json_api_client/pull/163) - Handle faraday connection options (proxy, ssl, etc)
+- [#165](https://github.com/chingor13/json_api_client/pull/165) - Handle null data returned for associated resources
+
 ## v1.1.0
 - [#159](https://github.com/chingor13/json_api_client/pull/159) - Alias update method as update_attributes
 - [#160](https://github.com/chingor13/json_api_client/pull/160) - Add .with_params to add arbitrary query params on find
