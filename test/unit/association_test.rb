@@ -285,6 +285,56 @@ class AssociationTest < MiniTest::Test
     assert_equal("123 Main St.", owner.properties.first.address)
   end
 
+  def test_respect_included_has_many_relationship_empty_data
+    stub_request(:get, "http://example.com/owners/1?include=properties")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            attributes: {name: "Jeff Ching"},
+            relationships: {
+              properties: {
+                links: {
+                  self: "http://example.com/owners/1/relationships/properties",
+                  related: "http://example.com/owners/1/properties"
+                },
+                data: []
+              }
+            }
+          }
+        ]
+      }.to_json)
+
+    owner = Owner.includes('properties').find(1).first
+    assert_equal(0, owner.properties.length)
+  end
+
+  def test_respect_included_has_one_relationship_null_data
+    stub_request(:get, "http://example.com/properties/1?include=owner")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "properties",
+            attributes: {address: "123 Main St."},
+            relationships: {
+              owner: {
+                links: {
+                  self: "http://example.com/properties/1/relationships/owner",
+                  related: "http://example.com/properties/1/owner"
+                },
+                data: nil
+              }
+            }
+          }
+        ]
+      }.to_json)
+
+    property = Property.includes('owner').find(1).first
+
+    assert_nil(property.owner)
+  end
+
   def test_namespaced_association_class_discovery
     has_many = Namespaced::Owner.associations.first
     assert_equal(Namespaced::Property, has_many.association_class)
