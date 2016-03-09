@@ -27,7 +27,7 @@ module MyApi
 end
 ```
 
-By convention, we figure guess the resource route from the class name. In the above example, `Article`'s path is "http://example.com/articles" and `Person`'s path would be "http://example.com/people".
+By convention, we guess the resource route from the class name. In the above example, `Article`'s path is "http://example.com/articles" and `Person`'s path would be "http://example.com/people".
 
 Some basic example usage:
 
