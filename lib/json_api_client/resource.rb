@@ -260,11 +260,6 @@ module JsonApiClient
     def initialize(params = {})
       self.links = self.class.linker.new(params.delete("links") || {})
       self.relationships = self.class.relationship_linker.new(params.delete("relationships") || {})
-      self.class.associations.each do |association|
-        if params.has_key?(association.attr_name.to_s)
-          set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
-        end
-      end
       self.attributes = params.merge(self.class.default_attributes)
       self.class.schema.each_property do |property|
         attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?
@@ -403,24 +398,9 @@ module JsonApiClient
     protected
 
     def method_missing(method, *args)
-      association = association_for(method)
+      return read_relationship(method) if has_relationship?(method) || has_association?(method)
 
-      return super unless association || (relationships && relationships.has_attribute?(method))
-
-      return nil unless relationship_definitions = relationships[method]
-
-      # look in included data
-      if relationship_definitions.key?("data")
-        return last_result_set.included.data_for(method, relationship_definitions)
-      end
-
-      if association = association_for(method)
-        # look for a defined relationship url
-        if relationship_definitions["links"] && url = relationship_definitions["links"]["related"]
-          return association.data(url)
-        end
-      end
-      nil
+      super
     end
 
     def respond_to_missing?(symbol, include_all = false)
@@ -437,6 +417,32 @@ module JsonApiClient
 
     def has_attribute?(attr_name)
       !!property_for(attr_name) || super
+    end
+
+    def has_association?(name)
+      !!association_for(name)
+    end
+
+    def has_relationship?(name)
+      relationships && relationships.has_attribute?(name)
+    end
+
+    def read_relationship(name)
+      relationship_definitions = relationships[name]
+      return nil unless relationship_definitions
+
+      if relationship_definitions.key?("data")
+        return last_result_set.included.data_for(name, relationship_definitions)
+      end
+
+      association = association_for(name)
+      if association &&
+        relationship_definitions["links"] &&
+        url = relationship_definitions["links"]["related"]
+        return association.data(url)
+      end
+
+      nil
     end
 
     def property_for(name)
