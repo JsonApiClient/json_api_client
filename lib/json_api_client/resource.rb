@@ -64,6 +64,22 @@ module JsonApiClient
         name.demodulize.underscore
       end
 
+      # Specifies the JSON API resource type. By default this is inferred
+      # from the resource class name.
+      #
+      # @return [String] Resource path
+      def type
+        table_name
+      end
+
+      # Specifies the relative path that should be used for this resource;
+      # by default, this is inferred from the resource class name.
+      #
+      # @return [String] Resource path
+      def resource_path
+        table_name
+      end
+
       # Load a resource object from attributes and consider it persisted
       #
       # @return [Resource] Persisted resource object
@@ -92,14 +108,14 @@ module JsonApiClient
 
       # Return the path or path pattern for this resource
       def path(params = nil)
-        parts = [table_name]
+        parts = [resource_path]
         if params
           path_params = params.delete(:path) || params
           parts.unshift(_prefix_path % path_params.symbolize_keys)
         else
           parts.unshift(_prefix_path)
         end
-        parts.reject!{|part| part == "" }
+        parts.reject!(&:blank?)
         File.join(*parts)
       rescue KeyError
         raise ArgumentError, "Not all prefix parameters specified"
@@ -147,7 +163,7 @@ module JsonApiClient
       #
       # @return [Hash] Default attributes
       def default_attributes
-        {type: table_name}
+        {type: type}
       end
 
       # Returns the schema for this resource class
