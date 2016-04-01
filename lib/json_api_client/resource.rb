@@ -154,7 +154,7 @@ module JsonApiClient
       #
       # @return [Schema] The schema for this resource class
       def schema
-        @schema ||= Schema.new
+        @schema ||= Schema::Registry.new
       end
 
       protected

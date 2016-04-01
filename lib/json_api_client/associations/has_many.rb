@@ -5,7 +5,9 @@ module JsonApiClient
 
       module ClassMethods
         def has_many(attr_name, options = {})
-          self.associations = self.associations + [HasMany::Association.new(attr_name, self, options)]
+          association = HasMany::Association.new(attr_name, self, options)
+          self.associations = self.associations + [association]
+          property(attr_name, type: :association, association: association, multiple: true)
         end
       end
 

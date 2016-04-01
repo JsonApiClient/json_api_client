@@ -21,6 +21,7 @@ module JsonApiClient
       def from_result_set(result_set)
         result_set.to_a
       end
+
     end
   end
 end

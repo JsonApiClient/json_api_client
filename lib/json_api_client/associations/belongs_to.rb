@@ -5,8 +5,9 @@ module JsonApiClient
 
       module ClassMethods
         def belongs_to(attr_name, options = {})
-          # self.associations = self.associations + [HasOne::Association.new(attr_name, self, options)]
-          self.associations += [BelongsTo::Association.new(attr_name, self, options)]
+          association = BelongsTo::Association.new(attr_name, self, options)
+          self.associations += [association]
+          property(attr_name, type: :association, association: association)
         end
       end
 
