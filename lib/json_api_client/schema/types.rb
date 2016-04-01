@@ -41,6 +41,8 @@ module JsonApiClient
         end
 
         def cast(value)
+          return nil unless value
+          return value if value.is_a?(association.association_class)
           association.association_class.load(value)
         end
       end
@@ -58,7 +60,12 @@ module JsonApiClient
         def cast(value)
           return [] unless value
           value = [value] unless value.is_a?(Array)
-          value.map{|val| association.association_class.load(val)}
+          value.map(&method(:cast_single))
+        end
+
+        def cast_single(value)
+          return value if value.is_a?(association.association_class)
+          association.association_class.load(value)
         end
       end
 
@@ -123,6 +130,7 @@ module JsonApiClient
       register(Boolean, :boolean)
       register(Float, :float)
       register(Integer, [:integer, :int])
+      register(MultiAssociation, :multi_association)
       register(String, :string)
       register(Time, :time)
 
