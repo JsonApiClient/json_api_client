@@ -31,10 +31,9 @@ module JsonApiClient
       end
 
       class Association < Base
-        attr_accessor :association, :multiple
-        def initialize(association:, multiple: false, type:)
+        attr_accessor :association
+        def initialize(association:, type:)
           self.association = association
-          self.multiple = multiple
         end
 
         def type
@@ -42,12 +41,24 @@ module JsonApiClient
         end
 
         def cast(value)
-          if multiple
-            value = [value] if multiple && !value.is_a?(Array)
-            value.map{|val| association.association_class.load(val)}
-          else
-            association.association_class.load(value)
-          end
+          association.association_class.load(value)
+        end
+      end
+
+      class MultiAssociation < Base
+        attr_accessor :association
+        def initialize(association:, type:)
+          self.association = association
+        end
+
+        def type
+          :multi_association
+        end
+
+        def cast(value)
+          return [] unless value
+          value = [value] unless value.is_a?(Array)
+          value.map{|val| association.association_class.load(val)}
         end
       end
 
