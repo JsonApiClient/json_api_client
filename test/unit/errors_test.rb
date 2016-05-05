@@ -17,7 +17,7 @@ class ErrorsTest < MiniTest::Test
 
     assert_raises JsonApiClient::Errors::ConnectionError do
       User.all
-    end 
+    end
   end
 
   def test_500_errors
@@ -34,6 +34,15 @@ class ErrorsTest < MiniTest::Test
       .to_return(status: 404, body: "something irrelevant")
 
     assert_raises JsonApiClient::Errors::NotFound do
+      User.all
+    end
+  end
+
+  def test_conflict
+    stub_request(:get, "http://example.com/users")
+      .to_return(status: 409, body: "something irrelevant")
+
+    assert_raises JsonApiClient::Errors::Conflict do
       User.all
     end
   end
