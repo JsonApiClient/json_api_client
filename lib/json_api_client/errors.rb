@@ -25,6 +25,12 @@ module JsonApiClient
       end
     end
 
+    class Conflict < ServerError
+      def message
+        "Resource already exists"
+      end
+    end
+
     class NotFound < ServerError
       attr_reader :uri
       def initialize(uri)
