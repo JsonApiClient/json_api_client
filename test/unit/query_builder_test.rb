@@ -105,4 +105,31 @@ class QueryBuilderTest < MiniTest::Test
     articles = Article.select("title,body").to_a
   end
 
+  def test_can_select_fields_using_array_of_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.select(["title", "body"]).to_a
+  end
+
+  def test_can_select_fields_using_array_of_symbols
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.select([:title, :body]).to_a
+  end
+
+  def test_can_select_fields_using_implicit_array
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    articles = Article.select(:title, :body).to_a
+  end
+
 end
