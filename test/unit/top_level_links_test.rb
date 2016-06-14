@@ -47,13 +47,13 @@ class TopLevelLinksTest < MiniTest::Test
         }],
         links: {
           self: "http://example.com/articles",
-          next: "http://example.com/articles?page=2",
+          next: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
           prev: nil,
           first: "http://example.com/articles",
-          last: "http://example.com/articles?page=6"
+          last: "http://example.com/articles?#{{page: {number: 6}}.to_query}"
         }
       }.to_json)
-    stub_request(:get, "http://example.com/articles?page=2")
+    stub_request(:get, "http://example.com/articles?#{{page: {number: 2}}.to_query}")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
           type: "articles",
@@ -63,11 +63,11 @@ class TopLevelLinksTest < MiniTest::Test
           }
         }],
         links: {
-          self: "http://example.com/articles?page=2",
-          next: "http://example.com/articles?page=3",
+          self: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
+          next: "http://example.com/articles?#{{page: {number: 3}}.to_query}",
           prev: "http://example.com/articles",
           first: "http://example.com/articles",
-          last: "http://example.com/articles?page=6"
+          last: "http://example.com/articles?#{{page: {number: 6}}.to_query}"
         }
       }.to_json)
 
@@ -90,7 +90,7 @@ class TopLevelLinksTest < MiniTest::Test
             meta: {}
           },
           next: {
-            href: "http://example.com/articles?page=2",
+            href: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
             meta: {}
           },
           prev: nil,
@@ -99,12 +99,12 @@ class TopLevelLinksTest < MiniTest::Test
             meta: {}
           },
           last: {
-            href: "http://example.com/articles?page=6",
+            href: "http://example.com/articles?#{{page: {number: 6}}.to_query}",
             meta: {}
           }
         }
       }.to_json)
-    stub_request(:get, "http://example.com/articles?page=2")
+    stub_request(:get, "http://example.com/articles?#{{page: {number: 2}}.to_query}")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [{
           type: "articles",
@@ -115,11 +115,11 @@ class TopLevelLinksTest < MiniTest::Test
         }],
         links: {
           self: {
-            href: "http://example.com/articles?page=2",
+            href: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
             meta: {}
           },
           next: {
-            href: "http://example.com/articles?page=3",
+            href: "http://example.com/articles?#{{page: {number: 3}}.to_query}",
             meta: {}
           },
           prev: {
@@ -131,7 +131,7 @@ class TopLevelLinksTest < MiniTest::Test
             meta: {}
           },
           last: {
-            href: "http://example.com/articles?page=6",
+            href: "http://example.com/articles?#{{page: {number: 6}}.to_query}",
             meta: {}
           }
         }
