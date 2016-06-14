@@ -46,7 +46,7 @@ module JsonApiClient
       end
 
       def page(number)
-        @pagination_params[:number] = number
+        @pagination_params[:number] = number || 1
         self
       end
 
