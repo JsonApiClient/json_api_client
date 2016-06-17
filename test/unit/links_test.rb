@@ -13,7 +13,7 @@ class LinksTest < MiniTest::Unit::TestCase
         ],
         links: {
           "user.posts" => {
-            href: 'http://localhost:3000/api/1/posts/{user.posts}',
+            href: 'http://localhost:3000/api/1/posts?ids={user.posts}',
             type: "posts"
           },
           "user.address" => {
@@ -22,7 +22,7 @@ class LinksTest < MiniTest::Unit::TestCase
           }
         }
       }.to_json)
-    stub_request(:get, "http://localhost:3000/api/1/posts/2,3.json")
+    stub_request(:get, "http://localhost:3000/api/1/posts.json?ids=2,3")
       .to_return(headers: {content_type: "application/json"}, body: {
         posts: [
           {id: 2, title: "Yo", body: "Lo"},
