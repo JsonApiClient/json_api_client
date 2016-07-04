@@ -19,6 +19,7 @@ end
 
 class Article < TestResource
   has_many :comments
+  has_one :author
 end
 
 class Person < TestResource
