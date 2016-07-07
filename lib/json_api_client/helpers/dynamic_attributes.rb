@@ -11,7 +11,7 @@ module JsonApiClient
 
         return @attributes unless attrs.present?
         attrs.each do |key, value|
-          send("#{key}=", value)
+          set_attribute(key, value)
         end
       end
 
@@ -31,8 +31,8 @@ module JsonApiClient
         end
       end
 
-      def has_attribute?(attr_name)
-        attributes.has_key?(attr_name)
+      def has_attribute?(name)
+        attributes.has_key?(name) || attributes.has_key?(name.to_s.dasherize)
       end
 
       protected
@@ -41,14 +41,14 @@ module JsonApiClient
         if method.to_s =~ /^(.*)=$/
           set_attribute($1, args.first)
         elsif has_attribute?(method)
-          attributes[method]
+          read_attribute(method)
         else
           super
         end
       end
 
       def read_attribute(name)
-        attributes.fetch(name, nil)
+        attributes.fetch(name) { attributes.fetch(name.to_s.dasherize, nil) }
       end
 
       def set_attribute(name, value)
