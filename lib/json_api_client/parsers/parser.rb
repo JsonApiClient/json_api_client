@@ -78,7 +78,7 @@ module JsonApiClient
         end
 
         def handle_meta(result_set, data)
-          result_set.meta = MetaData.new(data.fetch("meta", {}))
+          result_set.meta = MetaData.new(data.fetch("meta", {}), result_set.record_class)
         end
 
         def handle_links(result_set, data)
