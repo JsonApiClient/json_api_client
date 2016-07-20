@@ -57,7 +57,7 @@ class ResourceTest < MiniTest::Test
     end
   end
 
-  def test_dasherized_keys_support
+  def test_formatted_key_accessors
     with_altered_config(Article, :json_key_format => :dasherized_key) do
       article = Article.new("foo-bar" => "baz")
       # Exposed dasherized attributes as first class ruby methods and attributes
@@ -82,5 +82,4 @@ class ResourceTest < MiniTest::Test
       assert_equal("baz", article[:"foo-bar"])
     end
   end
-
 end

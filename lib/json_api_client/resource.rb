@@ -353,9 +353,9 @@ module JsonApiClient
     def as_json_api(*)
       attributes.slice(:id, :type).tap do |h|
         relationships_for_serialization.tap do |r|
-          h[:relationships] = r unless r.empty?
+          h[:relationships] = self.class.key_formatter.format_keys(r) unless r.empty?
         end
-        h[:attributes] = attributes_for_serialization
+        h[:attributes] = self.class.key_formatter.format_keys(attributes_for_serialization)
       end
     end
 

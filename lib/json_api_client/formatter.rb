@@ -28,6 +28,14 @@ module JsonApiClient
         super
       end
 
+      def format_keys(hash)
+        Hash[
+          hash.map do |key, value|
+            [format(key).to_sym, value]
+          end
+        ]
+      end
+
       def unformat(formatted_key)
         super
       end
