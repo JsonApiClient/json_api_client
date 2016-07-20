@@ -58,21 +58,21 @@ class ResourceTest < MiniTest::Test
   end
 
   def test_dasherized_keys_support
-    with_altered_config(:json_key_format => :dasherized_key) do
+    with_altered_config(Article, :json_key_format => :dasherized_key) do
       article = Article.new("foo-bar" => "baz")
       # Exposed dasherized attributes as first class ruby methods and attributes
       assert_equal("baz", article.foo_bar)
       assert_equal("baz", article["foo_bar"])
     end
 
-    with_altered_config(:json_key_format => :camelized_key) do
+    with_altered_config(Article, :json_key_format => :camelized_key) do
       article = Article.new("fooBar" => "baz")
       # Exposed camelized attributes as first class ruby methods and attributes
       assert_equal("baz", article.foo_bar)
       assert_equal("baz", article["foo_bar"])
     end
 
-    with_altered_config(:json_key_format => :underscored_key) do
+    with_altered_config(Article, :json_key_format => :underscored_key) do
       article = Article.new("foo-bar" => "baz")
       # Does not recognize dasherized attributes, fall back to hash syntax
       refute article.respond_to? :foo_bar

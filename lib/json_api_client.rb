@@ -1,8 +1,7 @@
 require 'faraday'
 require 'faraday_middleware'
 require 'json'
-require "addressable/uri"
-require 'json_api_client/configuration'
+require 'addressable/uri'
 
 module JsonApiClient
   autoload :Associations, 'json_api_client/associations'
@@ -10,6 +9,7 @@ module JsonApiClient
   autoload :Connection, 'json_api_client/connection'
   autoload :Errors, 'json_api_client/errors'
   autoload :ErrorCollector, 'json_api_client/error_collector'
+  autoload :Formatter, 'json_api_client/formatter'
   autoload :Helpers, 'json_api_client/helpers'
   autoload :Implementation, 'json_api_client/implementation'
   autoload :IncludedData, 'json_api_client/included_data'

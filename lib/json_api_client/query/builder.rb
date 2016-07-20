@@ -3,6 +3,7 @@ module JsonApiClient
     class Builder
 
       attr_reader :klass, :path_params
+      delegate :key_formatter, to: :klass
 
       def initialize(klass)
         @klass = klass
@@ -151,7 +152,7 @@ module JsonApiClient
               parse_related_links(*v)
             end
           else
-            JsonApiClient.configuration.key_formatter.format(table)
+            key_formatter.format(table)
           end
         end.flatten
       end

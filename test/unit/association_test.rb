@@ -322,7 +322,7 @@ class AssociationTest < MiniTest::Test
   end
 
   def test_load_has_many_with_configurable_multiword_resource_name_and_type
-    with_altered_config(:json_key_format => :camelized_key,
+    with_altered_config(PrefixedOwner, :json_key_format => :camelized_key,
       :route_format => :dasherized_route) do
 
       stub_request(:get, "http://example.com/prefixed-owners")
