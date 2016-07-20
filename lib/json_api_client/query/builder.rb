@@ -2,7 +2,7 @@ module JsonApiClient
   module Query
     class Builder
 
-      attr_reader :klass, :path_params
+      attr_reader :klass
       delegate :key_formatter, to: :klass
 
       def initialize(klass)
