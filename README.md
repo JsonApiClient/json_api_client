@@ -204,7 +204,7 @@ authors = results.map(&:author)
 
 ```ruby
 # makes request to /articles?fields[articles]=title,body
-article = Article.select("title,body").first
+article = Article.select("title", "body").first
 
 # should have fetched the requested fields
 article.title

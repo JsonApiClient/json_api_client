@@ -34,7 +34,11 @@ module JsonApiClient
       end
 
       def select(*fields)
-        @fields += Array(fields).flatten.map(&:to_s).map { |i| i.split(",") }.flatten.map(&:strip)
+        fields = Array(fields).flatten
+        fields = fields.map { |i| i.to_s.split(",") }.flatten
+
+        @fields += fields.map(&:strip)
+
         self
       end
 
