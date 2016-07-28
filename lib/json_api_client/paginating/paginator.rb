@@ -40,7 +40,7 @@ module JsonApiClient
       def total_entries
         per_page * total_pages
       end
-      alias_method :total_count, :total_entries
+      def total_count; total_entries; end
 
       def offset
         per_page * (current_page - 1)
