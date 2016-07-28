@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.0
+- [#201](https://github.com/chingor13/json_api_client/pull/201) - Configurable key and path formatter on a per-resource basis
+- [#190](https://github.com/chingor13/json_api_client/pull/190) - Allow hook for overriding the `total_entries` method on the default paginator
+- [#199](https://github.com/chingor13/json_api_client/pull/199) - Clean up test warnings
+- [#198](https://github.com/chingor13/json_api_client/pull/198) - Clean up test warnings
+- [#187](https://github.com/chingor13/json_api_client/pull/187) - README update and cleanup around `select` for `Query::Builder`
+- [#191](https://github.com/chingor13/json_api_client/pull/191) - Don't explode when parsing `"data": null`
+- [#183](https://github.com/chingor13/json_api_client/pull/183) - `select` for `Query::Builder` can accept strings, symbols, arrays
+- [#181](https://github.com/chingor13/json_api_client/pull/181) - Handle HTTP 409 - Conflict error
+
 ## v1.1.1
 - [#163](https://github.com/chingor13/json_api_client/pull/163) - Handle faraday connection options (proxy, ssl, etc)
 - [#165](https://github.com/chingor13/json_api_client/pull/165) - Handle null data returned for associated resources
