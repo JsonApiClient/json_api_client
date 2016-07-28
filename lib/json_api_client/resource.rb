@@ -29,6 +29,8 @@ module JsonApiClient
                     :read_only_attributes,
                     :requestor_class,
                     :associations,
+                    :json_key_format,
+                    :route_format,
                     instance_accessor: false
     self.primary_key          = :id
     self.parser               = Parsers::Parser
@@ -42,6 +44,12 @@ module JsonApiClient
     self.requestor_class      = Query::Requestor
     self.associations         = []
 
+    #:underscored_key, :camelized_key, :dasherized_key, or custom
+    self.json_key_format = :underscored_key
+
+    #:underscored_route, :camelized_route, :dasherized_route, or custom
+    self.route_format = :underscored_route
+
     include Associations::BelongsTo
     include Associations::HasMany
     include Associations::HasOne
@@ -54,7 +62,7 @@ module JsonApiClient
       #
       # @return [String] The table name for this resource
       def table_name
-        resource_name.pluralize
+        route_formatter.format(resource_name.pluralize)
       end
 
       # The name of a single resource. i.e. Article -> article, Person -> person
@@ -171,6 +179,14 @@ module JsonApiClient
       # @return [Schema] The schema for this resource class
       def schema
         @schema ||= Schema.new
+      end
+
+      def key_formatter
+        JsonApiClient::Formatter.formatter_for(json_key_format)
+      end
+
+      def route_formatter
+        JsonApiClient::Formatter.formatter_for(route_format)
       end
 
       protected
@@ -337,9 +353,9 @@ module JsonApiClient
     def as_json_api(*)
       attributes.slice(:id, :type).tap do |h|
         relationships_for_serialization.tap do |r|
-          h[:relationships] = r unless r.empty?
+          h[:relationships] = self.class.key_formatter.format_keys(r) unless r.empty?
         end
-        h[:attributes] = attributes_for_serialization
+        h[:attributes] = self.class.key_formatter.format_keys(attributes_for_serialization)
       end
     end
 
@@ -460,7 +476,9 @@ module JsonApiClient
     end
 
     def association_for(name)
-      self.class.associations.detect{|association| association.attr_name == name}
+      self.class.associations.detect do |association|
+        association.attr_name.to_s == self.class.key_formatter.unformat(name)
+      end
     end
 
     def attributes_for_serialization
