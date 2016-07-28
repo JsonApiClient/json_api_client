@@ -109,7 +109,7 @@ module JsonApiClient
       # Return the path or path pattern for this resource
       def path(params = nil)
         parts = [resource_path]
-        if params
+        if params && _prefix_path.present?
           path_params = params.delete(:path) || params
           parts.unshift(_prefix_path % path_params.symbolize_keys)
         else
