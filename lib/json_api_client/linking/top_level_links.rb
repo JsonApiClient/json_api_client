@@ -31,6 +31,7 @@ module JsonApiClient
       end
 
       def fetch_link(link_name)
+        return unless respond_to_missing?(link_name)
         record_class.requestor.linked(link_url_for(link_name))
       end
     end
