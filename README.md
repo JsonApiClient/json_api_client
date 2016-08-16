@@ -221,13 +221,13 @@ article.created_at
 
 ```ruby
 # makes request to /people?sort=age
-youngest = Person.sort(:age).all
+youngest = Person.order(:age).all
 
 # also makes request to /people?sort=age
-youngest = Person.sort(age: :asc).all
+youngest = Person.order(age: :asc).all
 
 # makes request to /people?sort=-age
-oldest = Person.sort(age: :desc).all
+oldest = Person.order(age: :desc).all
 ```
 
 ## Paginating
