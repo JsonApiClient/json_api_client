@@ -5,7 +5,11 @@ module JsonApiClient
       include Helpers::Dirty
       include ActiveModel::Serialization
 
-      def initialize(relations)
+      attr_reader :record_class
+      delegate :key_formatter, to: :record_class
+
+      def initialize(record_class, relations)
+        @record_class = record_class
         self.attributes = relations
         clear_changes_information
       end

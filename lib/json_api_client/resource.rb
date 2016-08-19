@@ -292,7 +292,7 @@ module JsonApiClient
     def initialize(params = {})
       @persisted = nil
       self.links = self.class.linker.new(params.delete("links") || {})
-      self.relationships = self.class.relationship_linker.new(params.delete("relationships") || {})
+      self.relationships = self.class.relationship_linker.new(self.class, params.delete("relationships") || {})
       self.class.associations.each do |association|
         if params.has_key?(association.attr_name.to_s)
           set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))

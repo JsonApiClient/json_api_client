@@ -272,7 +272,7 @@ class AssociationTest < MiniTest::Test
               name: "Jeff Ching",
             },
             relationships: {
-              properties: {
+              prefixed_properties: {
                 data: [
                   {id: 1, type: 'prefixed_property'},
                   {id: 2, type: 'prefixed_property'}
@@ -287,7 +287,7 @@ class AssociationTest < MiniTest::Test
               name: "Hank Aaron"
             },
             relationships: {
-              properties: {
+              prefixed_properties: {
                 data: [
                   {id: 3, type: 'prefixed_property'}
                 ]
@@ -316,9 +316,9 @@ class AssociationTest < MiniTest::Test
     owners = PrefixedOwner.all
     jeff = owners[0]
     assert_equal("Jeff Ching", jeff.name)
-    assert_equal(2, jeff.properties.length)
-    assert_equal(PrefixedProperty, jeff.properties.first.class)
-    assert_equal("123 Main St.", jeff.properties.first.address)
+    assert_equal(2, jeff.prefixed_properties.length)
+    assert_equal(PrefixedProperty, jeff.prefixed_properties.first.class)
+    assert_equal("123 Main St.", jeff.prefixed_properties.first.address)
   end
 
   def test_load_has_many_with_configurable_multiword_resource_name_and_type
@@ -334,7 +334,7 @@ class AssociationTest < MiniTest::Test
                 name: "Jeff Ching",
               },
               relationships: {
-                properties: {
+                prefixedProperties: {
                   data: [
                     {id: 1, type: 'prefixed-property'},
                     {id: 2, type: 'prefixed-property'}
@@ -349,7 +349,7 @@ class AssociationTest < MiniTest::Test
                 name: "Hank Aaron"
               },
               relationships: {
-                properties: {
+                prefixedProperties: {
                   data: [
                     {id: 3, type: 'prefixed-property'}
                   ]
@@ -378,9 +378,9 @@ class AssociationTest < MiniTest::Test
       owners = PrefixedOwner.all
       jeff = owners[0]
       assert_equal("Jeff Ching", jeff.name)
-      assert_equal(2, jeff.properties.length)
-      assert_equal(PrefixedProperty, jeff.properties.first.class)
-      assert_equal("123 Main St.", jeff.properties.first.address)
+      assert_equal(2, jeff.prefixed_properties.length)
+      assert_equal(PrefixedProperty, jeff.prefixed_properties.first.class)
+      assert_equal("123 Main St.", jeff.prefixed_properties.first.address)
     end
   end
 
