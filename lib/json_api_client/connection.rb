@@ -12,7 +12,7 @@ module JsonApiClient
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status
         builder.use Middleware::ParseJson
-        builder.adapter *adapter_options
+        builder.adapter(*adapter_options)
       end
       yield(self) if block_given?
     end

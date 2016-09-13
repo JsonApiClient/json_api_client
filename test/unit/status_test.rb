@@ -12,7 +12,7 @@ class StatusTest < MiniTest::Test
       }.to_json)
 
     assert_raises JsonApiClient::Errors::ServerError do
-      users = User.find(1)
+      User.find(1)
     end
   end
 
@@ -25,7 +25,7 @@ class StatusTest < MiniTest::Test
       body: "something irrelevant")
 
     assert_raises JsonApiClient::Errors::ServerError do
-      users = User.find(1)
+      User.find(1)
     end
   end
 
@@ -38,7 +38,7 @@ class StatusTest < MiniTest::Test
       body: "something irrelevant")
 
     assert_raises JsonApiClient::Errors::NotFound do
-      users = User.find(1)
+      User.find(1)
     end
   end
 
@@ -52,7 +52,7 @@ class StatusTest < MiniTest::Test
       }.to_json)
 
     assert_raises JsonApiClient::Errors::NotFound do
-      users = User.find(1)
+      User.find(1)
     end
   end
 

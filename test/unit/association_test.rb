@@ -518,7 +518,7 @@ class AssociationTest < MiniTest::Test
         ]
       }.to_json)
 
-    specified = Specified.create({
+    Specified.create({
       :id => 12,
       :foo_id => 10,
       :name => "Blah"
@@ -557,7 +557,7 @@ class AssociationTest < MiniTest::Test
         }
       }.to_json)
 
-    specified = Specified.create(foo_id: 1)
+    Specified.create(foo_id: 1)
   end
 
 end

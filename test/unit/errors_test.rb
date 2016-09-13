@@ -56,7 +56,7 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
-  def test_access_denied
+  def test_not_authorized
     stub_request(:get, "http://example.com/users")
       .to_return(headers: {content_type: "text/plain"}, status: 401, body: "not authorized")
 

@@ -117,7 +117,7 @@ class SchemableTest < MiniTest::Test
     end
   end
 
-  def test_boolean_casts_to_true
+  def test_boolean_casts_to_false
     ["0", 0, "false", false].each do |v|
       resource = SchemaResource.new
       resource.b = v
