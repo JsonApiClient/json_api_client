@@ -74,6 +74,27 @@ class TopLevelLinksTest < MiniTest::Test
     assert_pagination
   end
 
+  def test_can_parse_pagination_links_when_no_next_page
+    stub_request(:get, "http://example.com/articles")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "1",
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          }
+        }],
+        links: {
+          self: "http://example.com/articles",
+          prev: nil,
+          first: "http://example.com/articles",
+          last: "http://example.com/articles?page=1"
+        }
+      }.to_json)
+
+    assert_pagination_when_no_next_page
+  end
+
   def test_can_parse_complex_pagination_links
     stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -179,4 +200,28 @@ class TopLevelLinksTest < MiniTest::Test
     assert_equal "JSON API paints my bikeshed!", article.title
   end
 
+  def assert_pagination_when_no_next_page
+    articles = Article.all
+
+    # test kaminari pagination params
+    assert_equal 1, articles.current_page
+    assert_equal 1, articles.per_page
+    assert_equal 1, articles.total_pages
+    assert_equal 0, articles.offset
+    assert_equal 1, articles.total_entries
+    assert_equal 1, articles.limit_value
+    assert_equal nil, articles.next_page
+    assert_equal 1, articles.per_page
+    assert_equal false, articles.out_of_bounds?
+
+    # test browsing to next page
+    pages = articles.pages
+    assert pages.respond_to?(:next)
+    assert pages.respond_to?(:prev)
+    assert pages.respond_to?(:last)
+    assert pages.respond_to?(:first)
+
+    page2 = articles.pages.next
+    assert page2.nil?
+  end
 end
