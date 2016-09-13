@@ -25,4 +25,5 @@ module JsonApiClient
   autoload :ResultSet, 'json_api_client/result_set'
   autoload :Schema, 'json_api_client/schema'
   autoload :Utils, 'json_api_client/utils'
+  autoload :VERSION, 'json_api_client/version'
 end
