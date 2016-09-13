@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.0
+- [#208](https://github.com/chingor13/json_api_client/pull/208) - Fall back to error.detail for the error message [#196](https://github.com/chingor13/json_api_client/issues/196)
+- [#206](https://github.com/chingor13/json_api_client/pull/206) - Autoload `JsonApiClient::VERSION` constant
+- [#205](https://github.com/chingor13/json_api_client/pull/205) - `RelationshipLinker` now correctly uses the resource class' `KeyFormatter`
+- [#203](https://github.com/chingor13/json_api_client/pull/203) - No longer raise `KeyError` when trying to paginate to a page that doesn't exist. Return nil instead
+
 ## v1.2.0
 - [#201](https://github.com/chingor13/json_api_client/pull/201) - Configurable key and path formatter on a per-resource basis
 - [#190](https://github.com/chingor13/json_api_client/pull/190) - Allow hook for overriding the `total_entries` method on the default paginator
