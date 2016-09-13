@@ -398,9 +398,9 @@ module JsonApiClient
       if last_result_set.has_errors?
         last_result_set.errors.each do |error|
           if error.source_parameter
-            errors.add(error.source_parameter, error.title)
+            errors.add(error.source_parameter, error.title || error.detail)
           else
-            errors.add(:base, error.title)
+            errors.add(:base, error.title || error.detail)
           end
         end
         false
