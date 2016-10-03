@@ -188,7 +188,7 @@ user.verify(foo: 'bar')
 
 [See specification](http://jsonapi.org/format/#fetching-includes)
 
-If the response returns a [compound document](http://jsonapi.org/format/#document-structure-compound-documents), then we should be able to get the related resources.
+If the response returns a [compound document](http://jsonapi.org/format/#document-compound-documents), then we should be able to get the related resources.
 
 ```ruby
 # makes request to /articles/1?include=author,comments.author
