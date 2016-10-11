@@ -338,6 +338,15 @@ end
 MyApi::SomeResource.all
 ```
 
+### Custom headers
+
+You can inject custom headers on resource request by wrapping your code into block:
+```ruby
+MyApi::SomeResource.with_headers(x_access_token: 'secure_token_here') do
+  MyApi::SomeResource.find(1)
+end
+```
+
 ### Connections
 
 You can configure your API client to use a custom connection that implementes the `run` instance method. It should return data that your parser can handle. The default connection class wraps Faraday and lets you add middleware.
