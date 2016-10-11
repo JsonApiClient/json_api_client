@@ -31,6 +31,12 @@ module JsonApiClient
       end
     end
 
+    class UnprocessableEntity < ServerError
+      def message
+        "Unable to process the request"
+      end
+    end
+
     class NotFound < ServerError
       attr_reader :uri
       def initialize(uri)

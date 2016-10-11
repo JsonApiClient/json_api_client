@@ -65,6 +65,15 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
+  def test_unprocessable_entity
+    stub_request(:get, "http://example.com/users")
+      .to_return(status: 422, body: "something irrelevant")
+
+    assert_raises JsonApiClient::Errors::UnprocessableEntity do
+      User.all
+    end
+  end
+
   def test_errors_are_rescuable_by_default_rescue
     begin
       raise JsonApiClient::Errors::ApiError, "Something bad happened"
