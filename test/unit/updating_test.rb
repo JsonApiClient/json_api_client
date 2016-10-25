@@ -137,6 +137,38 @@ class UpdatingTest < MiniTest::Test
     })
   end
 
+  def test_can_update_found_record_in_builk_using_update_method
+    articles = Article.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/articles/1")
+      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+          data: {
+            id: "1",
+            type: "articles",
+            attributes: {
+              title: "Modified title",
+              foo: "bar"
+            }
+          }
+        }.to_json)
+      .to_return(headers: {status: 200, content_type: "application/vnd.api+json"}, body: {
+        data: {
+          id: "1",
+          type: "articles",
+          attirbutes: {
+            title: "Modified title",
+            foo: "bar"
+          }
+        }
+      }.to_json)
+
+    assert article.update({
+      title: "Modified title",
+      foo: "bar"
+    })
+  end
+
   def test_can_update_single_relationship
     articles = Article.find(1)
     article = articles.first

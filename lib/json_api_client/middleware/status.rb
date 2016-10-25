@@ -20,10 +20,16 @@ module JsonApiClient
       def handle_status(code, env)
         case code
         when 200..399
+        when 401
+          raise Errors::NotAuthorized, env
         when 403
           raise Errors::AccessDenied, env
         when 404
           raise Errors::NotFound, env[:url]
+        when 409
+          raise Errors::Conflict, env
+        when 422
+          raise Errors::UnprocessableEntity, env
         when 400..499
           # some other error
         when 500..599

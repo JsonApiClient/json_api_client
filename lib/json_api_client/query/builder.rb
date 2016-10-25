@@ -2,13 +2,15 @@ module JsonApiClient
   module Query
     class Builder
 
-      attr_reader :klass, :path_params
+      attr_reader :klass
+      delegate :key_formatter, to: :klass
 
       def initialize(klass)
         @klass = klass
         @primary_key = nil
         @pagination_params = {}
         @path_params = {}
+        @additional_params = {}
         @filters = {}
         @includes = []
         @orders = []
@@ -32,8 +34,12 @@ module JsonApiClient
         self
       end
 
-      def select(fields)
-        @fields += fields.split(",").map(&:strip)
+      def select(*fields)
+        fields = Array(fields).flatten
+        fields = fields.map { |i| i.to_s.split(",") }.flatten
+
+        @fields += fields.map(&:strip)
+
         self
       end
 
@@ -54,6 +60,11 @@ module JsonApiClient
         self
       end
 
+      def with_params(more_params)
+        @additional_params.merge!(more_params)
+        self
+      end
+
       def first
         paginate(page: 1, per_page: 1).to_a.first
       end
@@ -70,6 +81,7 @@ module JsonApiClient
           .merge(select_params)
           .merge(primary_key_params)
           .merge(path_params)
+          .merge(additional_params)
       end
 
       def to_a
@@ -96,6 +108,10 @@ module JsonApiClient
 
       def path_params
         @path_params.empty? ? {} : {path: @path_params}
+      end
+
+      def additional_params
+        @additional_params
       end
 
       def primary_key_params
@@ -140,7 +156,7 @@ module JsonApiClient
               parse_related_links(*v)
             end
           else
-            table
+            key_formatter.format(table)
           end
         end.flatten
       end

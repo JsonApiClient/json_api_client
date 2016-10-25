@@ -29,6 +29,8 @@ module JsonApiClient
                     :read_only_attributes,
                     :requestor_class,
                     :associations,
+                    :json_key_format,
+                    :route_format,
                     instance_accessor: false
     self.primary_key          = :id
     self.parser               = Parsers::Parser
@@ -42,19 +44,25 @@ module JsonApiClient
     self.requestor_class      = Query::Requestor
     self.associations         = []
 
+    #:underscored_key, :camelized_key, :dasherized_key, or custom
+    self.json_key_format = :underscored_key
+
+    #:underscored_route, :camelized_route, :dasherized_route, or custom
+    self.route_format = :underscored_route
+
     include Associations::BelongsTo
     include Associations::HasMany
     include Associations::HasOne
 
     class << self
       extend Forwardable
-      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :first, :find
+      def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :with_params, :first, :find
 
       # The table name for this resource. i.e. Article -> articles, Person -> people
       #
       # @return [String] The table name for this resource
       def table_name
-        resource_name.pluralize
+        route_formatter.format(resource_name.pluralize)
       end
 
       # The name of a single resource. i.e. Article -> article, Person -> person
@@ -62,6 +70,22 @@ module JsonApiClient
       # @return [String]
       def resource_name
         name.demodulize.underscore
+      end
+
+      # Specifies the JSON API resource type. By default this is inferred
+      # from the resource class name.
+      #
+      # @return [String] Resource path
+      def type
+        table_name
+      end
+
+      # Specifies the relative path that should be used for this resource;
+      # by default, this is inferred from the resource class name.
+      #
+      # @return [String] Resource path
+      def resource_path
+        table_name
       end
 
       # Load a resource object from attributes and consider it persisted
@@ -78,7 +102,7 @@ module JsonApiClient
       #
       # @return [Connection] The connection to the json api server
       def connection(rebuild = false, &block)
-        _build_connection(&block)
+        _build_connection(rebuild, &block)
         connection_object
       end
 
@@ -92,14 +116,14 @@ module JsonApiClient
 
       # Return the path or path pattern for this resource
       def path(params = nil)
-        parts = [table_name]
-        if params
+        parts = [resource_path]
+        if params && _prefix_path.present?
           path_params = params.delete(:path) || params
           parts.unshift(_prefix_path % path_params.symbolize_keys)
         else
           parts.unshift(_prefix_path)
         end
-        parts.reject!{|part| part == "" }
+        parts.reject!(&:blank?)
         File.join(*parts)
       rescue KeyError
         raise ArgumentError, "Not all prefix parameters specified"
@@ -147,7 +171,7 @@ module JsonApiClient
       #
       # @return [Hash] Default attributes
       def default_attributes
-        {type: table_name}
+        {type: type}
       end
 
       # Returns the schema for this resource class
@@ -155,6 +179,14 @@ module JsonApiClient
       # @return [Schema] The schema for this resource class
       def schema
         @schema ||= Schema.new
+      end
+
+      def key_formatter
+        JsonApiClient::Formatter.formatter_for(json_key_format)
+      end
+
+      def route_formatter
+        JsonApiClient::Formatter.formatter_for(route_format)
       end
 
       protected
@@ -258,8 +290,9 @@ module JsonApiClient
     #
     # @param params [Hash] Attributes, links, and relationships
     def initialize(params = {})
+      @persisted = nil
       self.links = self.class.linker.new(params.delete("links") || {})
-      self.relationships = self.class.relationship_linker.new(params.delete("relationships") || {})
+      self.relationships = self.class.relationship_linker.new(self.class, params.delete("relationships") || {})
       self.class.associations.each do |association|
         if params.has_key?(association.attr_name.to_s)
           set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
@@ -267,7 +300,7 @@ module JsonApiClient
       end
       self.attributes = params.merge(self.class.default_attributes)
       self.class.schema.each_property do |property|
-        attributes[property.name] = property.default unless attributes.has_key?(property.name)
+        attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?
       end
     end
 
@@ -278,6 +311,14 @@ module JsonApiClient
     def update_attributes(attrs = {})
       self.attributes = attrs
       save
+    end
+
+    # Alias to update_attributes
+    #
+    # @param attrs [Hash] Attributes to update
+    # @return [Boolean] Whether the update succeeded or not
+    def update(attrs = {})
+      update_attributes(attrs)
     end
 
     # Mark the record as persisted
@@ -313,9 +354,9 @@ module JsonApiClient
     def as_json_api(*)
       attributes.slice(:id, :type).tap do |h|
         relationships_for_serialization.tap do |r|
-          h[:relationships] = r unless r.empty?
+          h[:relationships] = self.class.key_formatter.format_keys(r) unless r.empty?
         end
-        h[:attributes] = attributes_for_serialization
+        h[:attributes] = self.class.key_formatter.format_keys(attributes_for_serialization)
       end
     end
 
@@ -332,6 +373,11 @@ module JsonApiClient
     def set_all_dirty!
       set_all_attributes_dirty
       relationships.set_all_attributes_dirty if relationships
+    end
+
+    def valid?(context = nil)
+      context ||= (new_record? ? :create : :update)
+      super(context)
     end
 
     # Commit the current changes to the resource to the remote server.
@@ -352,9 +398,9 @@ module JsonApiClient
       if last_result_set.has_errors?
         last_result_set.errors.each do |error|
           if error.source_parameter
-            errors.add(error.source_parameter, error.title)
+            errors.add(error.source_parameter, error.title || error.detail)
           else
-            errors.add(:base, error.title)
+            errors.add(:base, error.title || error.detail)
           end
         end
         false
@@ -397,8 +443,9 @@ module JsonApiClient
       return nil unless relationship_definitions = relationships[method]
 
       # look in included data
-      data = last_result_set.included.data_for(method, relationship_definitions)
-      return data if data
+      if relationship_definitions.key?("data")
+        return last_result_set.included.data_for(method, relationship_definitions)
+      end
 
       if association = association_for(method)
         # look for a defined relationship url
@@ -430,7 +477,9 @@ module JsonApiClient
     end
 
     def association_for(name)
-      self.class.associations.detect{|association| association.attr_name == name}
+      self.class.associations.detect do |association|
+        association.attr_name.to_s == self.class.key_formatter.unformat(name)
+      end
     end
 
     def attributes_for_serialization

@@ -17,7 +17,7 @@ class ErrorsTest < MiniTest::Test
 
     assert_raises JsonApiClient::Errors::ConnectionError do
       User.all
-    end 
+    end
   end
 
   def test_500_errors
@@ -38,11 +38,38 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
+  def test_conflict
+    stub_request(:get, "http://example.com/users")
+      .to_return(status: 409, body: "something irrelevant")
+
+    assert_raises JsonApiClient::Errors::Conflict do
+      User.all
+    end
+  end
+
   def test_access_denied
     stub_request(:get, "http://example.com/users")
       .to_return(headers: {content_type: "text/plain"}, status: 403, body: "access denied")
 
     assert_raises JsonApiClient::Errors::AccessDenied do
+      User.all
+    end
+  end
+
+  def test_not_authorized
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 401, body: "not authorized")
+
+    assert_raises JsonApiClient::Errors::NotAuthorized do
+      User.all
+    end
+  end
+
+  def test_unprocessable_entity
+    stub_request(:get, "http://example.com/users")
+      .to_return(status: 422, body: "something irrelevant")
+
+    assert_raises JsonApiClient::Errors::UnprocessableEntity do
       User.all
     end
   end

@@ -62,4 +62,11 @@ class ConnectionTest < MiniTest::Test
     assert_equal "bar", resource.foo
   end
 
+  def test_can_specify_http_proxy
+    CustomAdapterResource.connection_options[:proxy] = 'http://proxy.example.com'
+    CustomAdapterResource.connection(true)
+    proxy = CustomAdapterResource.connection.faraday.proxy
+    assert_equal proxy.uri.to_s, 'http://proxy.example.com'
+  end
+
 end

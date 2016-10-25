@@ -8,7 +8,7 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.where(author: '5').to_a
+    Article.where(author: '5').to_a
   end
 
   def test_can_specify_nested_includes
@@ -17,7 +17,7 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.includes(comments: :author).to_a
+    Article.includes(comments: :author).to_a
   end
 
   def test_can_specify_multiple_includes
@@ -26,7 +26,7 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.includes({comments: :author}, :tags).to_a
+    Article.includes({comments: :author}, :tags).to_a
   end
 
   def test_can_paginate
@@ -35,7 +35,7 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.paginate(page: 3, per_page: 6).to_a
+    Article.paginate(page: 3, per_page: 6).to_a
   end
 
   def test_can_sort_asc
@@ -45,7 +45,7 @@ class QueryBuilderTest < MiniTest::Test
         data: []
       }.to_json)
 
-    articles = Article.order(foo: :asc).to_a
+    Article.order(foo: :asc).to_a
   end
 
   def test_sort_defaults_to_asc
@@ -55,7 +55,7 @@ class QueryBuilderTest < MiniTest::Test
         data: []
       }.to_json)
 
-    articles = Article.order(:foo).to_a
+    Article.order(:foo).to_a
   end
 
   def test_can_sort_desc
@@ -65,7 +65,7 @@ class QueryBuilderTest < MiniTest::Test
         data: []
       }.to_json)
 
-    articles = Article.order(foo: :desc).to_a
+    Article.order(foo: :desc).to_a
   end
 
   def test_can_sort_multiple
@@ -74,7 +74,7 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.order(foo: :desc, bar: :asc).to_a
+    Article.order(foo: :desc, bar: :asc).to_a
   end
 
   def test_can_sort_mixed
@@ -83,7 +83,17 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.order(foo: :desc).order(:bar).to_a
+    Article.order(foo: :desc).order(:bar).to_a
+  end
+
+  def test_can_specify_additional_params
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {sort: "foo"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    Article.with_params(sort: "foo").to_a
   end
 
   def test_can_select_fields
@@ -92,7 +102,34 @@ class QueryBuilderTest < MiniTest::Test
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
-    articles = Article.select("title,body").to_a
+    Article.select("title,body").to_a
+  end
+
+  def test_can_select_fields_using_array_of_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select(["title", "body"]).to_a
+  end
+
+  def test_can_select_fields_using_array_of_symbols
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select([:title, :body]).to_a
+  end
+
+  def test_can_select_fields_using_implicit_array
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'title,body'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select(:title, :body).to_a
   end
 
 end

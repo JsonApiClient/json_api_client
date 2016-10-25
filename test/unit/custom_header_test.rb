@@ -19,7 +19,7 @@ class CustomHeaderTest < MiniTest::Test
       }.to_json)
 
     CustomHeaderResource.with_headers(x_my_header: "asdf") do
-      resources = CustomHeaderResource.find(1)
+      CustomHeaderResource.find(1)
     end
   end
 
@@ -37,7 +37,7 @@ class CustomHeaderTest < MiniTest::Test
       }.to_json)
 
     CustomHeaderResource.with_headers(x_my_header: "asdf") do
-      resources = CustomHeaderResource.create(foo: "bar")
+      CustomHeaderResource.create(foo: "bar")
     end
   end
 
@@ -67,7 +67,7 @@ class CustomHeaderTest < MiniTest::Test
       threads << Thread.new do
         CustomHeaderResource.with_headers(x_my_header: "Header #{i}") do
           wait_for { @ready }
-          resources = CustomHeaderResource.find(i)
+          CustomHeaderResource.find(i)
         end
       end
     end

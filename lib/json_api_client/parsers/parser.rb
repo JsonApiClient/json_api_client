@@ -65,7 +65,7 @@ module JsonApiClient
 
           # we will treat everything as an Array
           results = [results] unless results.is_a?(Array)
-          resources = results.map do |res|
+          resources = results.compact.map do |res|
             resource = result_set.record_class.load(parameters_from_resource(res))
             resource.last_result_set = result_set
             resource
@@ -78,7 +78,7 @@ module JsonApiClient
         end
 
         def handle_meta(result_set, data)
-          result_set.meta = MetaData.new(data.fetch("meta", {}))
+          result_set.meta = MetaData.new(data.fetch("meta", {}), result_set.record_class)
         end
 
         def handle_links(result_set, data)

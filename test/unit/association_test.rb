@@ -13,6 +13,14 @@ class Specified < TestResource
   has_many :bars, class_name: "Owner"
 end
 
+class PrefixedOwner < TestResource
+  has_many :prefixed_properties
+end
+
+class PrefixedProperty < TestResource
+  has_one :prefixed_owner
+end
+
 module Namespaced
   class Owner < TestResource
     has_many :properties
@@ -254,6 +262,128 @@ class AssociationTest < MiniTest::Test
     assert_equal("123 Main St.", jeff.properties.first.address)
   end
 
+  def test_load_has_many_with_multiword_resource_name
+    stub_request(:get, "http://example.com/prefixed_owners")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            attributes: {
+              name: "Jeff Ching",
+            },
+            relationships: {
+              prefixed_properties: {
+                data: [
+                  {id: 1, type: 'prefixed_property'},
+                  {id: 2, type: 'prefixed_property'}
+                ]
+              }
+            }
+          },
+          {id: 2, attributes: {name: "Barry Bonds"}},
+          {
+            id: 3,
+            attributes: {
+              name: "Hank Aaron"
+            },
+            relationships: {
+              prefixed_properties: {
+                data: [
+                  {id: 3, type: 'prefixed_property'}
+                ]
+              }
+            }
+          }
+        ],
+        included: [
+          {
+            id: 1,
+            type: 'prefixed_property',
+            attributes: {address: "123 Main St."}
+          },
+          {
+            id: 2,
+            type: 'prefixed_property',
+            attributes: {address: "223 Elm St."}
+          },
+          {
+            id: 3,
+            type: 'prefixed_property',
+            attributes: {address: "314 150th Ave"}
+          }
+        ]
+      }.to_json)
+    owners = PrefixedOwner.all
+    jeff = owners[0]
+    assert_equal("Jeff Ching", jeff.name)
+    assert_equal(2, jeff.prefixed_properties.length)
+    assert_equal(PrefixedProperty, jeff.prefixed_properties.first.class)
+    assert_equal("123 Main St.", jeff.prefixed_properties.first.address)
+  end
+
+  def test_load_has_many_with_configurable_multiword_resource_name_and_type
+    with_altered_config(PrefixedOwner, :json_key_format => :camelized_key,
+      :route_format => :dasherized_route) do
+
+      stub_request(:get, "http://example.com/prefixed-owners")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+          data: [
+            {
+              id: 1,
+              attributes: {
+                name: "Jeff Ching",
+              },
+              relationships: {
+                prefixedProperties: {
+                  data: [
+                    {id: 1, type: 'prefixed-property'},
+                    {id: 2, type: 'prefixed-property'}
+                  ]
+                }
+              }
+            },
+            {id: 2, attributes: {name: "Barry Bonds"}},
+            {
+              id: 3,
+              attributes: {
+                name: "Hank Aaron"
+              },
+              relationships: {
+                prefixedProperties: {
+                  data: [
+                    {id: 3, type: 'prefixed-property'}
+                  ]
+                }
+              }
+            }
+          ],
+          included: [
+            {
+              id: 1,
+              type: 'prefixed-property',
+              attributes: {address: "123 Main St."}
+            },
+            {
+              id: 2,
+              type: 'prefixed-property',
+              attributes: {address: "223 Elm St."}
+            },
+            {
+              id: 3,
+              type: 'prefixed-property',
+              attributes: {address: "314 150th Ave"}
+            }
+          ]
+        }.to_json)
+      owners = PrefixedOwner.all
+      jeff = owners[0]
+      assert_equal("Jeff Ching", jeff.name)
+      assert_equal(2, jeff.prefixed_properties.length)
+      assert_equal(PrefixedProperty, jeff.prefixed_properties.first.class)
+      assert_equal("123 Main St.", jeff.prefixed_properties.first.address)
+    end
+  end
+
   def test_load_has_many_single_entry
     stub_request(:get, "http://example.com/owners/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -283,6 +413,56 @@ class AssociationTest < MiniTest::Test
     assert_equal(1, owner.properties.length)
     assert_equal(Property, owner.properties.first.class)
     assert_equal("123 Main St.", owner.properties.first.address)
+  end
+
+  def test_respect_included_has_many_relationship_empty_data
+    stub_request(:get, "http://example.com/owners/1?include=properties")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            attributes: {name: "Jeff Ching"},
+            relationships: {
+              properties: {
+                links: {
+                  self: "http://example.com/owners/1/relationships/properties",
+                  related: "http://example.com/owners/1/properties"
+                },
+                data: []
+              }
+            }
+          }
+        ]
+      }.to_json)
+
+    owner = Owner.includes('properties').find(1).first
+    assert_equal(0, owner.properties.length)
+  end
+
+  def test_respect_included_has_one_relationship_null_data
+    stub_request(:get, "http://example.com/properties/1?include=owner")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "properties",
+            attributes: {address: "123 Main St."},
+            relationships: {
+              owner: {
+                links: {
+                  self: "http://example.com/properties/1/relationships/owner",
+                  related: "http://example.com/properties/1/owner"
+                },
+                data: nil
+              }
+            }
+          }
+        ]
+      }.to_json)
+
+    property = Property.includes('owner').find(1).first
+
+    assert_nil(property.owner)
   end
 
   def test_namespaced_association_class_discovery
@@ -338,7 +518,7 @@ class AssociationTest < MiniTest::Test
         ]
       }.to_json)
 
-    specified = Specified.create({
+    Specified.create({
       :id => 12,
       :foo_id => 10,
       :name => "Blah"
@@ -377,7 +557,7 @@ class AssociationTest < MiniTest::Test
         }
       }.to_json)
 
-    specified = Specified.create(foo_id: 1)
+    Specified.create(foo_id: 1)
   end
 
 end

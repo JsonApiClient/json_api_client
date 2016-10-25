@@ -13,12 +13,27 @@ module JsonApiClient
     class AccessDenied < ClientError
     end
 
+    class NotAuthorized < ClientError
+    end
+
     class ConnectionError < ApiError
     end
 
     class ServerError < ApiError
       def message
         "Internal server error"
+      end
+    end
+
+    class Conflict < ServerError
+      def message
+        "Resource already exists"
+      end
+    end
+
+    class UnprocessableEntity < ServerError
+      def message
+        "Unable to process the request"
       end
     end
 

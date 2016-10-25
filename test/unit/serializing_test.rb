@@ -228,4 +228,93 @@ class SerializingTest < MiniTest::Test
     assert_equal expected, resource.as_json_api
   end
 
+  def test_dasherized_attribute_key_serialization
+    with_altered_config(Article, :json_key_format => :dasherized_key) do
+      article = Article.new
+      article.foo_bar = 'baz'
+
+      json = article.as_json_api
+      attributes = json[:attributes]
+
+      assert_equal("baz", attributes['foo-bar'])
+    end
+  end
+
+  def test_camelized_attribute_key_serialization
+    with_altered_config(Article, :json_key_format => :camelized_key) do
+      article = Article.new
+      article.foo_bar = 'baz'
+
+      json = article.as_json_api
+      attributes = json[:attributes]
+
+      assert_equal("baz", attributes['fooBar'])
+    end
+  end
+
+  def test_underscored_attribute_key_serialization
+    with_altered_config(Article, :json_key_format => :underscored_key) do
+      article = Article.new
+      article.foo_bar = 'baz'
+
+      json = article.as_json_api
+      attributes = json[:attributes]
+
+      assert_equal("baz", attributes['foo_bar'])
+    end
+  end
+
+  def test_dasherized_relationship_key_serialization
+    with_altered_config(Article, :json_key_format => :dasherized_key) do
+      expected = {
+        'primary-author' => {
+          'data' => {
+            'type' => 'people',
+            'id' => 123
+          }
+        }
+      }
+
+      article = Article.new
+      article.relationships.primary_author = Person.new(id: 123, name: 'Bob')
+
+      assert_equal expected, article.as_json_api['relationships']
+    end
+  end
+
+  def test_camelized_relationship_key_serialization
+    with_altered_config(Article, :json_key_format => :camelized_key) do
+      expected = {
+        'primaryAuthor' => {
+          'data' => {
+            'type' => 'people',
+            'id' => 123
+          }
+        }
+      }
+
+      article = Article.new
+      article.relationships.primary_author = Person.new(id: 123, name: 'Bob')
+
+      assert_equal expected, article.as_json_api['relationships']
+    end
+  end
+
+  def test_underscored_relationship_key_serialization
+    with_altered_config(Article, :json_key_format => :underscored_key) do
+      expected = {
+        'primary_author' => {
+          'data' => {
+            'type' => 'people',
+            'id' => 123
+          }
+        }
+      }
+
+      article = Article.new
+      article.relationships.primary_author = Person.new(id: 123, name: 'Bob')
+
+      assert_equal expected, article.as_json_api['relationships']
+    end
+  end
 end

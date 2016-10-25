@@ -17,6 +17,15 @@ end
 
 class SchemableTest < MiniTest::Test
 
+  def test_default_attributes
+    resource = SchemaResource.new
+
+    assert resource.attributes.has_key?(:a), ':a should be in attributes'
+    assert resource.attributes.has_key?(:b), ':b should be in attributes'
+    refute resource.attributes.has_key?(:c), ':c should not be in attributes'
+    refute resource.attributes.has_key?(:d), ':d should not be in attributes'
+  end
+
   def test_defines_fields
     resource = SchemaResource.new
 
@@ -98,6 +107,28 @@ class SchemableTest < MiniTest::Test
     assert_equal false, resource.b
     assert_equal :blah, resource.c
     assert_equal 12345, resource.d
+  end
+
+  def test_boolean_casts_to_true
+    ["1", 1, "true", true].each do |v|
+      resource = SchemaResource.new
+      resource.b = v
+      assert_equal true, resource.b
+    end
+  end
+
+  def test_boolean_casts_to_false
+    ["0", 0, "false", false].each do |v|
+      resource = SchemaResource.new
+      resource.b = v
+      assert_equal false, resource.b
+    end
+  end
+
+  def test_boolean_defaults_to_default
+    resource = SchemaResource.new
+    resource.b = :bogus
+    assert_equal false, resource.b
   end
 
 end
