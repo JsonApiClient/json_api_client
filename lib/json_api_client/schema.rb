@@ -1,3 +1,4 @@
+require 'bigdecimal'
 module JsonApiClient
   class Schema
     Property = Struct.new(:name, :type, :default) do
@@ -14,6 +15,8 @@ module JsonApiClient
           value.to_f
         when :time
           value.is_a?(Time) || nil ? value : Time.parse(value)
+        when :decimal
+          value.nil? ? nil : BigDecimal.new(value)
         when :boolean
           case value
           when "false", "0", 0, false
