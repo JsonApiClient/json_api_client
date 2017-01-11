@@ -69,6 +69,10 @@ module JsonApiClient
         paginate(page: 1, per_page: 1).to_a.first
       end
 
+      def last
+        paginate(page: 1, per_page: 1).pages.last.to_a.last
+      end
+
       def build
         klass.new(params)
       end
