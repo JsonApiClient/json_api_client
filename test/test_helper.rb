@@ -1,5 +1,5 @@
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
+require 'simplecov'
+SimpleCov.start
 Bundler.require(:default, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
