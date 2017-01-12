@@ -10,11 +10,12 @@ class CoercionTest < MiniTest::Test
     property :integer_me, type: :integer
     property :string_me, type: :string
     property :time_me, type: :time
+    property :decimal_me, type: :decimal
   end
 
   def test_create_entity_with_coercion
     stub_request(:post, "http://example.com/coercion_types").
-      to_return(headers: {content_type: "application/vnd.api+json"}, 
+      to_return(headers: {content_type: "application/vnd.api+json"},
                 body: {
                   data: {
                     attributes: {
@@ -23,7 +24,8 @@ class CoercionTest < MiniTest::Test
                       int_me: "1",
                       integer_me: "2",
                       string_me: 1.0,
-                      time_me: "2015-04-28 10:45:35 -0700"
+                      time_me: "2015-04-28 10:45:35 -0700",
+                      decimal_me: "1.5"
                     },
                     type: "coercion_types",
                     id: 123
@@ -36,7 +38,8 @@ class CoercionTest < MiniTest::Test
       int_me: '1',
       integer_me: '2',
       string_me: 1.0,
-      time_me: TIME_STRING
+      time_me: TIME_STRING,
+      decimal_me: BigDecimal('1.5')
       })
     validate_coercion_targets coerced
   end
@@ -48,14 +51,15 @@ class CoercionTest < MiniTest::Test
       int_me: '1',
       integer_me: '2',
       string_me: 1.0,
-      time_me: TIME_STRING
+      time_me: TIME_STRING,
+      decimal_me: '1.5'
       })
     validate_coercion_targets coerced
   end
 
   def test_can_parse_and_coerce
     stub_request(:get, "http://example.com/coercion_types/1").
-      to_return(headers: {content_type: "application/vnd.api+json"}, 
+      to_return(headers: {content_type: "application/vnd.api+json"},
                 body: {
                   data: {
                     attributes: {
@@ -64,7 +68,8 @@ class CoercionTest < MiniTest::Test
                       int_me: "1",
                       integer_me: "2",
                       string_me: 1.0,
-                      time_me: "2015-04-28 10:45:35 -0700"
+                      time_me: "2015-04-28 10:45:35 -0700",
+                      decimal_me: "1.5"
                     },
                     type: "coercion_types",
                     id: 1
@@ -83,5 +88,6 @@ class CoercionTest < MiniTest::Test
     assert_equal target.integer_me, 2
     assert_equal target.string_me, '1.0'
     assert_equal target.time_me, Time.parse(TIME_STRING)
+    assert_equal target.decimal_me, BigDecimal.new('1.5')
   end
 end
