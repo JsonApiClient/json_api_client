@@ -56,4 +56,19 @@ class StatusTest < MiniTest::Test
     end
   end
 
+  def test_server_responding_with_custom_error_status
+    JsonApiClient::Middleware::Status.raise_on(400, 422..499)
+
+    stub_request(:get, "http://example.com/users/1")
+      .to_return(headers: {
+        content_type: "text/plain"
+      },
+      status: 422,
+      body: "something irrelevant")
+
+    assert_raises JsonApiClient::Errors::ApiError do
+      User.find(1)
+    end
+  end
+
 end
