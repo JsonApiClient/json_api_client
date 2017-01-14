@@ -4,6 +4,7 @@ rvm:
   - 2.1.0
   - 2.2.0
   - 2.3.1
+  - 2.4.0
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=396d4263adb6febf1e6e9b0c0e176fbde35e1a116a3c1ecf8dd4f9384e41979b
@@ -12,7 +13,8 @@ env:
     - "AS_VERSION=4.0.0"
     - "AS_VERSION=4.1.0"
     - "AS_VERSION=4.2.0"
+    - "AS_VERSION=5.0.0"
 # We need to install latest version of bundler, because one in travis
-# image is too old to recognize platform => :mri_22 in Gemfile. 
+# image is too old to recognize platform => :mri_22 in Gemfile.
 before_install:
   - gem install bundler
