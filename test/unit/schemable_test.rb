@@ -1,5 +1,13 @@
 require 'test_helper'
 
+class CustomTypeCaster
+  def self.cast(*)
+     :mock
+  end
+end
+
+JsonApiClient::Schema.register custom: CustomTypeCaster
+
 class SchemaResource < TestResource
   property :a, type: :string, default: 'foo'
   property :b, type: :boolean, default: false
@@ -9,6 +17,10 @@ end
 
 class SchemaResource2 < TestResource
   property :a, type: :float
+end
+
+class SchemaResource3 < TestResource
+  property :a, type: :custom
 end
 
 class MultipleSchema < TestResource
@@ -129,6 +141,12 @@ class SchemableTest < MiniTest::Test
     resource = SchemaResource.new
     resource.b = :bogus
     assert_equal false, resource.b
+  end
+
+  def test_custom_types
+    resource = SchemaResource3.new(a: 'anything')
+    assert_equal :mock, resource.a
+    assert_equal :mock, resource['a']
   end
 
 end
