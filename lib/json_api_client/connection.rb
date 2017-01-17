@@ -5,11 +5,13 @@ module JsonApiClient
 
     def initialize(options = {})
       site = options.fetch(:site)
+      resource = options.fetch(:resource)
       @faraday = Faraday.new(site) do |builder|
         builder.request :url_encoded
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status
         builder.use Middleware::ParseJson
+        builder.use Middleware::InsertResource, resource
         builder.adapter Faraday.default_adapter
       end
       yield(self) if block_given?
@@ -27,7 +29,10 @@ module JsonApiClient
     end
 
     def execute(query)
-      faraday.send(query.request_method, query.path, query.params, query.headers)
+      faraday.send(query.request_method,
+                   query.path,
+                   query.params,
+                   query.headers)
     end
 
   end

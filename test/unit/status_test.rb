@@ -62,4 +62,49 @@ class StatusTest < MiniTest::Unit::TestCase
     end
   end
 
+  CustomServerError = Class.new(JsonApiClient::Errors::ServerError)
+  CustomNotFound = Class.new(JsonApiClient::Errors::NotFound)
+
+  def test_custom_server_error_class
+    original_server_error = User.server_error_class
+    User.server_error_class = CustomServerError
+
+    stub_request(:get, @api_url)
+      .to_return(status: 500,
+                 headers: {content_type: "application/json"},
+                 body: {
+                   meta: {
+                     status: 500,
+                     message: "An internal server error has occurred."
+                   }
+                 }.to_json)
+
+    server_error = assert_raises CustomServerError do
+      User.find(1)
+    end
+    assert_equal server_error.message, "Internal server error at: #{@api_url}"
+
+    User.server_error_class = original_server_error
+  end
+
+  def test_custom_not_found_class
+    original_not_found = User.not_found_class
+    User.not_found_class = CustomNotFound
+
+    stub_request(:get, @api_url)
+      .to_return(status: 404,
+                 headers: {content_type: "application/json"},
+                 body: {
+                   meta: {
+                     status: 404,
+                     message: "Blah blah"
+                   }
+                 }.to_json)
+
+    assert_raises CustomNotFound do
+      users = User.find(1)
+    end
+
+    User.not_found_class = original_not_found
+  end
 end

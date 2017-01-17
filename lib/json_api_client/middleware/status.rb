@@ -18,9 +18,11 @@ module JsonApiClient
       def handle_status(code, env)
         case code
         when 404
-          raise Errors::NotFound, env[:url]
+          error_class = env[:resource].not_found_class
+          raise error_class, env[:url]
         when 500..599
-          raise Errors::ServerError, env[:url]
+          error_class = env[:resource].server_error_class
+          raise error_class, env[:url]
         end
       end
     end
