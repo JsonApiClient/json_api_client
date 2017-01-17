@@ -14,9 +14,9 @@ module JsonApiClient
         when :float
           value.to_f
         when :time
-          value.is_a?(Time) || nil ? value : Time.parse(value)
+          value.is_a?(Time) ? value : Time.parse(value.to_s)
         when :decimal
-          value.nil? ? nil : BigDecimal.new(value)
+          BigDecimal.new(value)
         when :boolean
           case value
           when "false", "0", 0, false
