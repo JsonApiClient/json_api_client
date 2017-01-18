@@ -1,8 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- [#228](https://github.com/chingor13/json_api_client/pull/228) - All schema types to be pluggable.
+
 ## v1.4.0
-- [#217](https://github.com/chingor13/json_api_client/217) - Add decimal (BigDecimal) as a serializing type
-- [#222](https://github.com/chingor13/json_api_client/222) - Add `last` method for a resource and scope (similar to `first`)
+- [#217](https://github.com/chingor13/json_api_client/pull/217) - Add decimal (BigDecimal) as a serializing type
+- [#222](https://github.com/chingor13/json_api_client/pull/222) - Add `last` method for a resource and scope (similar to `first`)
 
 ## v1.3.0
 - [#208](https://github.com/chingor13/json_api_client/pull/208) - Fall back to error.detail for the error message [#196](https://github.com/chingor13/json_api_client/issues/196)
