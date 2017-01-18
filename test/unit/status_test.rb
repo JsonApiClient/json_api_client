@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class StatusTest < MiniTest::Unit::TestCase
+class StatusTest < Minitest::Test
   def setup
     @api_url = "http://localhost:3000/api/1/users/1.json"
   end

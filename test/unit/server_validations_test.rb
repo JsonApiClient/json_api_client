@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ServerValidationsTest < MiniTest::Unit::TestCase
+class ServerValidationsTest < Minitest::Test
 
   def test_update_validation_error
     stub_request(:put, "http://localhost:3000/api/1/users/6.json")
