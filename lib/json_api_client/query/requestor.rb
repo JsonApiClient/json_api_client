@@ -9,7 +9,7 @@ module JsonApiClient
 
       # expects a record
       def create(record)
-        request(:post, klass.path(record.attributes), {
+        request(:post, resource_path(record.attributes), {
           data: record.as_json_api
         })
       end
@@ -48,11 +48,12 @@ module JsonApiClient
       def_delegators :klass, :connection
 
       def resource_path(parameters)
-        if resource_id = parameters[klass.primary_key]
-          File.join(klass.path(parameters), encoded(resource_id))
+        path = if resource_id = parameters[klass.primary_key]
+          File.join(klass.path(parameters), resource_id)
         else
           klass.path(parameters)
         end
+        URI.escape(path)
       end
 
       def encoded(part)
