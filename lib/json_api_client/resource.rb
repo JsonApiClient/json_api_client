@@ -124,7 +124,7 @@ module JsonApiClient
           parts.unshift(_prefix_path)
         end
         parts.reject!(&:blank?)
-        File.join(*parts)
+        URI.escape(File.join(*parts))
       rescue KeyError
         raise ArgumentError, "Not all prefix parameters specified"
       end
