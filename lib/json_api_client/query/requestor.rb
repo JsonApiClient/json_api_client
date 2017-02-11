@@ -9,7 +9,7 @@ module JsonApiClient
 
       # expects a record
       def create(record)
-        request(:post, klass.path(parameters), {
+        request(:post, klass.path(record.attributes), {
           data: record.as_json_api
         })
       end
