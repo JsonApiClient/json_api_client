@@ -119,7 +119,7 @@ module JsonApiClient
         parts = [resource_path]
         if params && _prefix_path.present?
           path_params = params.delete(:path) || params
-          parts.unshift(_prefix_path % path_params.symbolize_keys)
+          parts.unshift(_set_prefix_path(path_params.symbolize_keys))
         else
           parts.unshift(_prefix_path)
         end
@@ -264,6 +264,10 @@ module JsonApiClient
 
       def _prefix_path
         _belongs_to_associations.map(&:to_prefix_path).join("/")
+      end
+
+      def _set_prefix_path(attrs)
+        _belongs_to_associations.map { |a| a.set_prefix_path(attrs) }.join("/")
       end
 
       def _new_scope
