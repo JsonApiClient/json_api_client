@@ -35,6 +35,12 @@ class CreationTest < MiniTest::Test
           id: "1",
           attributes: {
               title: "Rails is Omakase"
+          },
+          links: {
+            self: "http://example.com/articles/1",
+            other: {
+              href: "http://example.com/other"
+            }
           }
         }
       }.to_json)
@@ -66,6 +72,16 @@ class CreationTest < MiniTest::Test
     assert article.save
     assert article.persisted?
     assert_equal "1", article.id
+  end
+
+  def test_can_create_with_links
+    article = Article.new({
+                              title: "Rails is Omakase"
+                          })
+
+    assert article.save
+    assert article.persisted?
+    assert_equal "http://example.com/articles/1", article.links.self
   end
 
   def test_can_create_with_new_record_with_relationships_and_save

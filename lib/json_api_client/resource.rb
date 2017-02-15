@@ -409,6 +409,7 @@ module JsonApiClient
         mark_as_persisted!
         if updated = last_result_set.first
           self.attributes = updated.attributes
+          self.links.attributes = updated.links.attributes
           self.relationships.attributes = updated.relationships.attributes
           clear_changes_information
         end
