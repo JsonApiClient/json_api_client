@@ -458,6 +458,36 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
+
+### Type Casting
+
+You can define your own types and its casting mechanism for schema.
+
+```ruby
+require 'money'
+class MyMoneyCaster
+  def self.cast(value, default)
+    begin
+      Money.new(1000, "USD")
+    rescue ArgumentError
+      default
+    end
+  end
+end
+   
+JsonApiClient::Schema.register money: MyMoneyCaster
+
+```
+and finally
+
+```ruby
+class Order < JsonApiClient::Resource
+  property :total_amount, type: :money
+end
+
+```
+
+
 ## Changelog
 
 See [changelog](https://github.com/chingor13/json_api_client/blob/master/CHANGELOG.md)
