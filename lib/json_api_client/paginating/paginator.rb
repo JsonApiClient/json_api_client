@@ -1,11 +1,18 @@
 module JsonApiClient
   module Paginating
     class Paginator
+      class_attribute :page_param,
+                      :per_page_param
+
+      self.page_param = "page"
+      self.per_page_param = "per_page"
+
       attr_reader :params, :result_set, :links
+
       def initialize(result_set, data)
         @params = params_for_uri(result_set.uri)
         @result_set = result_set
-        @links = data['links']
+        @links = data["links"]
       end
 
       def next
@@ -28,7 +35,7 @@ module JsonApiClient
         if links["last"]
           uri = result_set.links.link_url_for("last")
           last_params = params_for_uri(uri)
-          last_params.fetch("page") do
+          last_params.fetch(page_param) do
             current_page
           end.to_i
         else
@@ -47,13 +54,13 @@ module JsonApiClient
       end
 
       def per_page
-        params.fetch("per_page") do
+        params.fetch(per_page_param) do
           result_set.length
         end.to_i
       end
 
       def current_page
-        params.fetch("page", 1).to_i
+        params.fetch(page_param, 1).to_i
       end
 
       def out_of_bounds?
