@@ -21,7 +21,7 @@ module JsonApiClient
         end
 
         def set_prefix_path(attrs)
-          attrs.merge!(param => encode_part(attrs[param])) if attrs.key?(param)
+          attrs[param] = encode_part(attrs[param]) if attrs.key?(param)
           to_prefix_path % attrs
         end
       end
