@@ -468,7 +468,7 @@ require 'money'
 class MyMoneyCaster
   def self.cast(value, default)
     begin
-      Money.new(1000, "USD")
+      Money.new(value, "USD")
     rescue ArgumentError
       default
     end
