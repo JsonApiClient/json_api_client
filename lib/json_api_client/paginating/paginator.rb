@@ -28,7 +28,7 @@ module JsonApiClient
         if links["last"]
           uri = result_set.links.link_url_for("last")
           last_params = params_for_uri(uri)
-          last_params.fetch("page") do
+          last_params.fetch("page[number]") do
             current_page
           end.to_i
         else
@@ -47,13 +47,13 @@ module JsonApiClient
       end
 
       def per_page
-        params.fetch("per_page") do
+        params.fetch("page[size]") do
           result_set.length
         end.to_i
       end
 
       def current_page
-        params.fetch("page", 1).to_i
+        params.fetch("page[number]", 1).to_i
       end
 
       def out_of_bounds?
