@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## v1.5.1
+
+- [#236](https://github.com/chingor13/json_api_client/pull/236) - Escape nested route keys
+
 ## v1.5.0
 
 - [#239](https://github.com/chingor13/json_api_client/pull/239) - Configurable pagination params
