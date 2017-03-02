@@ -49,7 +49,7 @@ module JsonApiClient
 
       def resource_path(parameters)
         if resource_id = parameters[klass.primary_key]
-          File.join(klass.path(parameters), encoded(resource_id))
+          File.join(klass.path(parameters), resource_id)
         else
           klass.path(parameters)
         end
