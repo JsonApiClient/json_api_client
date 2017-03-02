@@ -487,16 +487,6 @@ end
 
 ```
 
-### Development
-
-You can get development environment. It requires [vagrant](https://www.vagrantup.com/).
-```bash
-git clone <this_repo>
-cd json_api_client
-vagrant up
-```
-And development environment will be set in virtual machine, ready to run tests. 
-
 
 ## Changelog
 
