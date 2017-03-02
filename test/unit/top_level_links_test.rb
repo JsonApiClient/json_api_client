@@ -74,6 +74,49 @@ class TopLevelLinksTest < MiniTest::Test
     assert_pagination
   end
 
+  def test_can_parse_pagination_links_with_custom_config
+    JsonApiClient::Paginating::Paginator.page_param = "page[number]"
+
+    stub_request(:get, "http://example.com/articles")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "1",
+          attributes: {
+            title: "JSON API paints my bikeshed!"
+          }
+        }],
+        links: {
+          self: "http://example.com/articles",
+          next: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
+          prev: nil,
+          first: "http://example.com/articles",
+          last: "http://example.com/articles?#{{page: {number: 6}}.to_query}"
+        }
+      }.to_json)
+    stub_request(:get, "http://example.com/articles?#{{page: {number: 2}}.to_query}")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "2",
+          attributes: {
+            title: "This is tha BOMB"
+          }
+        }],
+        links: {
+          self: "http://example.com/articles?#{{page: {number: 2}}.to_query}",
+          next: "http://example.com/articles?#{{page: {number: 3}}.to_query}",
+          prev: "http://example.com/articles",
+          first: "http://example.com/articles",
+          last: "http://example.com/articles?#{{page: {number: 6}}.to_query}"
+        }
+      }.to_json)
+
+    assert_pagination
+
+    JsonApiClient::Paginating::Paginator.page_param = "page"
+  end
+
   def test_can_parse_pagination_links_when_no_next_page
     stub_request(:get, "http://example.com/articles")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
