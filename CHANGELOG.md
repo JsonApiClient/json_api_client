@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## v1.5.0
+
+- [#239](https://github.com/chingor13/json_api_client/pull/239) - Configurable pagination params
+- [#238](https://github.com/chingor13/json_api_client/pull/238) - Parse links after creating a resource
+- [#230](https://github.com/chingor13/json_api_client/pull/230) - Unformat error source parameters via key formatter.
 - [#228](https://github.com/chingor13/json_api_client/pull/228) - All schema types to be pluggable.
 
 ## v1.4.0
