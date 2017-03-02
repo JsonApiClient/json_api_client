@@ -496,6 +496,7 @@ class AssociationTest < MiniTest::Test
     end
     assert_equal("foos/%{foo_id}/specifieds", Specified.path)
     assert_equal("foos/1/specifieds", Specified.path({foo_id: 1}))
+    assert_equal("foos/%D0%99%D0%A6%D0%A3%D0%9A%D0%95%D0%9D/specifieds", Specified.path({foo_id: 'ЙЦУКЕН'}))
   end
 
   def test_find_belongs_to

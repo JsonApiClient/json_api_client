@@ -2,6 +2,7 @@ module JsonApiClient
   module Query
     class Requestor
       extend Forwardable
+      include Helpers::URI
 
       def initialize(klass)
         @klass = klass
@@ -49,14 +50,10 @@ module JsonApiClient
 
       def resource_path(parameters)
         if resource_id = parameters[klass.primary_key]
-          File.join(klass.path(parameters), encoded(resource_id))
+          File.join(klass.path(parameters), encode_part(resource_id))
         else
           klass.path(parameters)
         end
-      end
-
-      def encoded(part)
-        Addressable::URI.encode_component(part, Addressable::URI::CharacterClasses::UNRESERVED)
       end
 
       def request(type, path, params)
