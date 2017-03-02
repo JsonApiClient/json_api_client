@@ -20,6 +20,8 @@ module JsonApiClient
       def handle_status(code, env)
         case code
         when 200..399
+        when 400
+          raise Errors::BadRequest, env
         when 401
           raise Errors::NotAuthorized, env
         when 403
@@ -29,7 +31,7 @@ module JsonApiClient
         when 409
           raise Errors::Conflict, env
         when 400..499
-          # some other error
+          raise Errors::UnexpectedStatus.new(code, env[:url])
         when 500..599
           raise Errors::ServerError, env
         else

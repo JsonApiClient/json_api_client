@@ -7,6 +7,12 @@ module JsonApiClient
       end
     end
 
+    class BadRequest < ApiError
+      def message
+        "Bad request"
+      end
+    end
+
     class ClientError < ApiError
     end
 
