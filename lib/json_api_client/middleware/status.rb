@@ -15,6 +15,15 @@ module JsonApiClient
         raise Errors::ConnectionError, environment
       end
 
+      def self.raise_on(*codes)
+        statuses = codes.map { |code| code.is_a?(Range) ? code.to_a : code }
+        @error_status_codes = statuses.flatten.compact
+      end
+
+      def self.error_status_codes
+        @error_status_codes ||= []
+      end
+
       protected
 
       def handle_status(code, env)
@@ -29,7 +38,9 @@ module JsonApiClient
         when 409
           raise Errors::Conflict, env
         when 400..499
-          # some other error
+          if self.class.error_status_codes.include?(code)
+            raise Errors::ApiError, env
+          end
         when 500..599
           raise Errors::ServerError, env
         else

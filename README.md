@@ -407,6 +407,18 @@ module MyApi
 end
 ```
 
+### Specifying exception status codes
+
+The `JsonApiClient::Middleware::Status` middleware will raise an exception on the following status codes: 401, 403, 404, 409, and 500 to 599. You can specify additional status codes on top of this, and the middleware will raise a `JsonApiClient::Errors::ApiError` exception.
+
+```ruby
+# Raise on unprocessable entity
+JsonApiClient::Middleware::Status.raise_on(422)
+
+# Raise on multiple status codes
+JsonApiClient::Middleware::Status.raise_on(400, 422..499)
+```
+
 ### Custom Parser
 
 You can configure your API client to use a custom parser that implements the `parse` class method.  It should return a `JsonApiClient::ResultSet` instance. You can use it by setting the parser attribute on your model:
