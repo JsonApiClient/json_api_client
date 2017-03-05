@@ -561,4 +561,78 @@ class AssociationTest < MiniTest::Test
     Specified.create(foo_id: 1)
   end
 
+  def test_load_nil_has_one_through_related_link
+    stub_request(:get, "http://example.com/properties/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: [
+                           {
+                               id: 1,
+                               attributes: {
+                                   address: "123 Main St."
+                               },
+                               relationships: {
+                                   owner: {
+                                       links: {
+                                         related: "http://example.com/properties/1/relationships/owner"
+                                       }
+                                   }
+                               }
+                           }
+                       ]
+                   }.to_json)
+
+    stub_request(:get, "http://example.com/properties/1/relationships/owner")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       links: {
+                           related: "http://example.com/properties/1/relationships/owner"
+                       },
+                       data: nil
+                   }.to_json)
+
+    property = Property.find(1).first
+    assert_equal nil, property.owner
+  end
+
+  def test_load_empty_has_many_through_related_link
+    stub_request(:get, "http://example.com/owners/1")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       data: {
+                               id: 1,
+                               attributes: {
+                                   name: "Jeff Ching",
+                               },
+                               relationships: {
+                                   properties: {
+                                       links: {
+                                           related: "http://example.com/owners/1/relationships/properties"
+                                       }
+                                   }
+                               }
+                           }
+                   }.to_json)
+
+    stub_request(:get, "http://example.com/owners/1/relationships/properties")
+        .to_return(headers: {
+                       content_type: "application/vnd.api+json"
+                   },
+                   body: {
+                       links: {
+                           related: "http://example.com/owners/1/relationships/properties"
+                       },
+                       data: []
+                   }.to_json)
+
+    owner = Owner.find(1).first
+    assert_equal [], owner.properties
+  end
+
 end
