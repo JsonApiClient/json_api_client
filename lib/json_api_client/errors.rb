@@ -10,6 +10,9 @@ module JsonApiClient
     class ClientError < ApiError
     end
 
+    class BadRequest < ClientError
+    end
+
     class AccessDenied < ClientError
     end
 
