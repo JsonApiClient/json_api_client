@@ -132,4 +132,41 @@ class QueryBuilderTest < MiniTest::Test
     Article.select(:title, :body).to_a
   end
 
+  def test_can_select_nested_fields_using_hashes
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: :author}, :tags).to_a
+  end
+
+
+  def test_can_select_nested_fields_using_hashes_of_arrays
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: [:author, :text]}, :tags).to_a
+  end
+
+  def test_can_select_nested_fields_using_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: ['author', 'text']}, :tags).to_a
+  end
+
+  def test_can_select_nested_fields_using_comma_separated_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: 'author,text'}, :tags).to_a
+  end
+
 end
