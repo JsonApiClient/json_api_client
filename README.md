@@ -213,6 +213,10 @@ article.title
 # should not have returned the created_at
 article.created_at
 # => raise NoMethodError
+
+# or you can use fieldsets from multiple resources
+# makes request to /articles?fields[articles]=title,body&fields[comments]=tag
+article = Article.select("title", "body",{comments: 'tag'}).first
 ```
 
 ## Sorting
@@ -485,7 +489,7 @@ class MyMoneyCaster
     end
   end
 end
-   
+
 JsonApiClient::Schema.register money: MyMoneyCaster
 
 ```
