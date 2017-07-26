@@ -263,11 +263,19 @@ module JsonApiClient
       end
 
       def _prefix_path
-        _belongs_to_associations.map(&:to_prefix_path).join("/")
+        paths = _belongs_to_associations.map do |a|
+          a.to_prefix_path(route_formatter)
+        end
+
+        paths.join("/")
       end
 
       def _set_prefix_path(attrs)
-        _belongs_to_associations.map { |a| a.set_prefix_path(attrs) }.join("/")
+        paths = _belongs_to_associations.map do |a|
+          a.set_prefix_path(attrs, route_formatter) 
+        end
+
+        paths.join("/")
       end
 
       def _new_scope
