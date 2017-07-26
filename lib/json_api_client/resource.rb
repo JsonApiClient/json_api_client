@@ -310,7 +310,7 @@ module JsonApiClient
           set_attribute(association.attr_name, association.parse(params[association.attr_name.to_s]))
         end
       end
-      self.attributes = params.merge(self.class.default_attributes)
+      self.attributes = params.reverse_merge(self.class.default_attributes)
       self.class.schema.each_property do |property|
         attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?
       end
