@@ -44,6 +44,12 @@ module JsonApiClient
       end
     end
 
+    class Gone < ServerError
+      def message
+        "Resource gone"
+      end
+    end
+
     class UnexpectedStatus < ServerError
       attr_reader :code, :uri
       def initialize(code, uri)

@@ -28,6 +28,8 @@ module JsonApiClient
           raise Errors::NotFound, env[:url]
         when 409
           raise Errors::Conflict, env
+        when 410
+          raise Errors::Gone, env
         when 400..499
           raise Errors::BadRequest, env
         when 500..599
