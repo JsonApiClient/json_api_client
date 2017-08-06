@@ -167,7 +167,7 @@ module JsonApiClient
       end
 
       # Default attributes that every instance of this resource should be
-      # intialized with. Optionally, override this method in a subclass.
+      # initialized with. Optionally, override this method in a subclass.
       #
       # @return [Hash] Default attributes
       def default_attributes
@@ -272,7 +272,7 @@ module JsonApiClient
 
       def _set_prefix_path(attrs)
         paths = _belongs_to_associations.map do |a|
-          a.set_prefix_path(attrs, route_formatter) 
+          a.set_prefix_path(attrs, route_formatter)
         end
 
         paths.join("/")
@@ -305,7 +305,7 @@ module JsonApiClient
       @persisted = nil
       self.links = self.class.linker.new(params.delete("links") || {})
       self.relationships = self.class.relationship_linker.new(self.class, params.delete("relationships") || {})
-      self.attributes = params.merge(self.class.default_attributes)
+      self.attributes = self.class.default_attributes.merge(params)
 
       self.class.schema.each_property do |property|
         attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?

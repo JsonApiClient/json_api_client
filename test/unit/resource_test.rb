@@ -89,4 +89,10 @@ class ResourceTest < MiniTest::Test
     assert_equal(article.attributes['author']['type'], 'authors')
     assert_equal(article.attributes['author']['id'], 1)
   end
+
+  def test_default_params_overrideable
+    article = Article.new(type: 'Story')
+    assert_equal(article.type, 'Story')
+  end
+
 end
