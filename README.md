@@ -502,6 +502,16 @@ end
 
 ```
 
+## Contributing
+
+Contributions are welcome! Please fork this repo and send a pull request. Your pull request should have:
+
+* a description about what's broken or what the desired functionality is
+* a test illustrating the bug or new feature
+* the code to fix the bug
+
+Ideally, the PR has 2 commits - the first showing the failed test and the second with the fix - although this is not
+required. The commits will be squashed into master once accepted.
 
 ## Changelog
 
