@@ -47,12 +47,12 @@ module JsonApiClient
       end
 
       def page(number)
-        @pagination_params[:number] = number
+        @pagination_params[ klass.paginator.page_param ] = number
         self
       end
 
       def per(size)
-        @pagination_params[:size] = size
+        @pagination_params[ klass.paginator.per_page_param ] = size
         self
       end
 
