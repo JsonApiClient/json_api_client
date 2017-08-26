@@ -412,9 +412,9 @@ module JsonApiClient
       if last_result_set.has_errors?
         last_result_set.errors.each do |error|
           if error.source_parameter
-            errors.add(self.class.key_formatter.unformat(error.source_parameter), error.title || error.detail)
+            errors.add(self.class.key_formatter.unformat(error.source_parameter), message_for(error))
           else
-            errors.add(:base, error.title || error.detail)
+            errors.add(:base, message_for(error))
           end
         end
         false
@@ -428,6 +428,14 @@ module JsonApiClient
           clear_changes_information
         end
         true
+      end
+    end
+
+    def message_for(error)
+      if error.title && error.detail
+        "#{error.title} - #{error.detail}"
+      else
+        error.title || error.detail
       end
     end
 
