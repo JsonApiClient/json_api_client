@@ -411,11 +411,7 @@ module JsonApiClient
 
       if last_result_set.has_errors?
         last_result_set.errors.each do |error|
-          if error.source_parameter
-            errors.add(self.class.key_formatter.unformat(error.source_parameter), error.title || error.detail)
-          else
-            errors.add(:base, error.title || error.detail)
-          end
+          add_error(error)
         end
         false
       else
@@ -449,6 +445,14 @@ module JsonApiClient
     end
 
     protected
+
+    def add_error(error)
+      if error.source_parameter
+        errors.add(self.class.key_formatter.unformat(error.source_parameter), error.title || error.detail)
+      else
+        errors.add(:base, error.title || error.detail)
+      end
+    end
 
     def method_missing(method, *args)
       association = association_for(method)
