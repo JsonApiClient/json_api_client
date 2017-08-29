@@ -289,7 +289,7 @@ class AssociationTest < MiniTest::Test
   end
 
   def test_load_has_many_with_multiword_resource_name
-    stub_request(:get, "http://example.com/prefixed_owners")
+    stub_request(:get, "http://example.com/prefixed_owners?include=prefixed_properties")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {
@@ -339,7 +339,7 @@ class AssociationTest < MiniTest::Test
           }
         ]
       }.to_json)
-    owners = PrefixedOwner.all
+    owners = PrefixedOwner.includes(:prefixed_properties).all
     jeff = owners[0]
     assert_equal("Jeff Ching", jeff.name)
     assert_equal(2, jeff.prefixed_properties.length)
@@ -351,7 +351,7 @@ class AssociationTest < MiniTest::Test
     with_altered_config(PrefixedOwner, :json_key_format => :camelized_key,
       :route_format => :dasherized_route) do
 
-      stub_request(:get, "http://example.com/prefixed-owners")
+      stub_request(:get, "http://example.com/prefixed-owners?include=prefixed-properties")
         .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
           data: [
             {
@@ -401,7 +401,7 @@ class AssociationTest < MiniTest::Test
             }
           ]
         }.to_json)
-      owners = PrefixedOwner.all
+      owners = PrefixedOwner.includes("prefixed-properties").all
       jeff = owners[0]
       assert_equal("Jeff Ching", jeff.name)
       assert_equal(2, jeff.prefixed_properties.length)
