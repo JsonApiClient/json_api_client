@@ -2,11 +2,12 @@ module JsonApiClient
   module Query
     class Builder
 
-      attr_reader :klass
+      attr_reader :klass, :requestor
       delegate :key_formatter, to: :klass
 
-      def initialize(klass)
+      def initialize(klass, requestor = nil)
         @klass = klass
+        @requestor = requestor || klass.requestor
         @primary_key = nil
         @pagination_params = {}
         @path_params = {}
@@ -97,7 +98,7 @@ module JsonApiClient
           @primary_key = args
         end
 
-        klass.requestor.get(params)
+        requestor.get(params)
       end
 
       def method_missing(method_name, *args, &block)

@@ -10,8 +10,8 @@ module JsonApiClient
       end
 
       class Association < BaseAssociation
-        def from_result_set(result_set)
-          result_set.first
+        def data(url)
+          query_builder(url).first
         end
       end
     end

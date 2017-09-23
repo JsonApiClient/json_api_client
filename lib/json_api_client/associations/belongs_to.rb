@@ -24,6 +24,10 @@ module JsonApiClient
           attrs[param] = encode_part(attrs[param]) if attrs.key?(param)
           to_prefix_path(formatter) % attrs
         end
+
+        def data(url)
+          query_builder(url).first
+        end
       end
     end
   end
