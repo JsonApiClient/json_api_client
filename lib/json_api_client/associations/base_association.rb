@@ -14,15 +14,12 @@ module JsonApiClient
         end)
       end
 
-      def query_builder(url)
-        association_class.query_builder.new(
-          association_class,
-          association_class.requestor_class.new(association_class, url)
-        )
+      def data(url)
+        from_result_set(association_class.requestor.linked(url))
       end
 
-      def data(url)
-        query_builder(url)
+      def from_result_set(result_set)
+        result_set.to_a
       end
     end
   end

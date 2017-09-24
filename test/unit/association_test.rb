@@ -224,8 +224,12 @@ class AssociationTest < MiniTest::Test
         ]
       }.to_json)
     owner = Owner.find(1).first
-    properties = owner.properties
-    assert_equal(Array, properties.class)
+    properties_query_builder = owner.properties
+    properties = properties_query_builder.to_a
+    assert_equal(JsonApiClient::Query::Builder, properties_query_builder.class)
+    assert_equal(Property, properties_query_builder.klass)
+    assert_equal(JsonApiClient::Query::Requestor, properties_query_builder.requestor.class)
+    assert_equal(JsonApiClient::ResultSet, properties.class)
     assert_equal("314 150th Ave", properties.last.address)
   end
 
