@@ -43,18 +43,23 @@ class DestroyingTest < MiniTest::Test
     assert(user.persisted?)
 
     stub_request(:delete, "http://example.com/users/1")
-      .to_return(headers: {content_type: "application/json"}, body: {
+      .to_return(headers: { content_type: "application/json" }, body: {
         data: [],
-        errors: [{
-          status: 400,
-          errors: [
-            {title: "Some failure message"}
-          ]
-        }]
+        errors: [
+          {
+            status: 400,
+            title: "Some failure message",
+            source: {
+              pointer: "/data/attributes/email_address"
+            }
+          }
+        ]
       }.to_json)
 
     assert_equal(false, user.destroy, "failed deletion should return falsy value")
     assert_equal(true, user.persisted?, "user should still be persisted because destroy failed")
+    assert(user.errors.present?)
+    assert_equal("Some failure message", user.errors.messages[:email_address].first, "user should contain the errors describing the failure")
   end
 
   def test_callbacks
