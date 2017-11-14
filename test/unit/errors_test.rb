@@ -65,6 +65,15 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
+  def test_gone
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 410, body: "gone")
+
+    assert_raises JsonApiClient::Errors::Gone do
+      User.all
+    end
+  end
+
   def test_bad_request
     stub_request(:get, "http://example.com/users")
       .to_return(headers: {content_type: "text/plain"}, status: 400, body: "bad request")
