@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## v1.5.3
+
+- [#266](https://github.com/chingor13/json_api_client/pull/266) - Fix default attributes being overridden
+- [#267](https://github.com/chingor13/json_api_client/pull/267) - Fix custom pagination params
+- [#271](https://github.com/chingor13/json_api_client/pull/271) - Fix assert_nil warnings
+- [#275](https://github.com/chingor13/json_api_client/pull/275) - Add error messages when destroy fails
+- [#277](https://github.com/chingor13/json_api_client/pull/277) - Correct handling of error source/pointer
+
 ## v1.5.2
 
 - [#264](https://github.com/chingor13/json_api_client/pull/264) - Enable sparse fieldsets for nested models
