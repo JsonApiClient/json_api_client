@@ -502,11 +502,8 @@ module JsonApiClient
 
     def fill_errors
       last_result_set.errors.each do |error|
-        if error.source_parameter
-          errors.add(self.class.key_formatter.unformat(error.source_parameter), error.title || error.detail)
-        else
-          errors.add(:base, error.title || error.detail)
-        end
+        key = self.class.key_formatter.unformat(error.error_key)
+        errors.add(key, error.error_msg)
       end
     end
   end
