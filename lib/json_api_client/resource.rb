@@ -410,10 +410,7 @@ module JsonApiClient
       end
 
       if last_result_set.has_errors?
-        last_result_set.errors.each do |error|
-          key = self.class.key_formatter.unformat(error.error_key)
-          errors.add(key, error.error_msg)
-        end
+        fill_errors
         false
       else
         self.errors.clear if self.errors
@@ -433,11 +430,12 @@ module JsonApiClient
     # @return [Boolean] Whether or not the destroy succeeded
     def destroy
       self.last_result_set = self.class.requestor.destroy(self)
-      if !last_result_set.has_errors?
+      if last_result_set.has_errors?
+        fill_errors
+        false
+      else
         self.attributes.clear
         true
-      else
-        false
       end
     end
 
@@ -500,6 +498,13 @@ module JsonApiClient
 
     def relationships_for_serialization
       relationships.as_json_api
+    end
+
+    def fill_errors
+      last_result_set.errors.each do |error|
+        key = self.class.key_formatter.unformat(error.error_key)
+        errors.add(key, error.error_msg)
+      end
     end
   end
 end
