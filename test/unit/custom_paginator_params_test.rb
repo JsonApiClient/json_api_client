@@ -3,9 +3,8 @@ require 'test_helper'
 class CustomPaginatorTest < MiniTest::Test
 
   class CustomPaginator < JsonApiClient::Paginating::Paginator
-    def total_entries
-      42
-    end
+    self.page_param = 'pagina'
+    self.per_page_param = 'limit'
   end
 
   class Book < JsonApiClient::Resource
@@ -13,15 +12,14 @@ class CustomPaginatorTest < MiniTest::Test
     self.paginator = CustomPaginator
   end
 
-  def test_can_override
+  def test_can_override_query_param_names
     stub_request(:get, "http://example.com/books")
+      .with(query: {page: {pagina: 3, limit: 6}})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
 
-    books = Book.all
-    assert_equal 42, books.total_count
-    assert_equal 42, books.total_entries
+    Book.paginate(page: 3, per_page: 6).to_a
   end
 
 end

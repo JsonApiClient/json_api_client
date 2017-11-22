@@ -31,7 +31,7 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_can_paginate
     stub_request(:get, "http://example.com/articles")
-      .with(query: {page: {number: 3, size: 6}})
+      .with(query: {page: {page: 3, per_page: 6}})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
