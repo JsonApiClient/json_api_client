@@ -156,7 +156,9 @@ module JsonApiClient
       #
       # @return [Hash] Headers
       def custom_headers
-        _header_store.to_h
+        return _header_store.to_h if superclass == Object
+
+        superclass.custom_headers.merge(_header_store.to_h)
       end
 
       # Returns the requestor for this resource class
