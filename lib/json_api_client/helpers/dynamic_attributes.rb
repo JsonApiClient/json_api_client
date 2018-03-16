@@ -40,11 +40,7 @@ module JsonApiClient
       def method_missing(method, *args, &block)
         return attributes[method] if has_attribute?(method)
 
-        normalized_method = if key_formatter
-                              key_formatter.unformat(method.to_s)
-                            else
-                              method.to_s
-                            end
+        normalized_method = safe_key_formatter.unformat(method.to_s)
 
         if normalized_method =~ /^(.*)=$/
           set_attribute($1, args.first)
@@ -61,8 +57,18 @@ module JsonApiClient
         attributes[name] = value
       end
 
+      def safe_key_formatter
+        @safe_key_formatter ||= (key_formatter || DefaultKeyFormatter.new)
+      end
+
       def key_formatter
         self.class.respond_to?(:key_formatter) && self.class.key_formatter
+      end
+
+      class DefaultKeyFormatter
+        def unformat(method)
+          method.to_s
+        end
       end
 
     end
