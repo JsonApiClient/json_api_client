@@ -24,7 +24,7 @@ module JsonApiClient
       end
 
       def respond_to_missing?(method, include_private = false)
-        if has_attribute?(method) || (method.to_s =~ /^(.*)=$/)
+        if has_attribute?(method) || method.to_s.end_with?('=')
           true
         else
           super
@@ -42,8 +42,8 @@ module JsonApiClient
 
         normalized_method = safe_key_formatter.unformat(method.to_s)
 
-        if normalized_method =~ /^(.*)=$/
-          set_attribute($1, args.first)
+        if normalized_method.end_with?('=')
+          set_attribute(normalized_method[0..-2], args.first)
         else
           super
         end
