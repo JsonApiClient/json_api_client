@@ -38,7 +38,14 @@ module JsonApiClient
       protected
 
       def method_missing(method, *args, &block)
-        return attributes[method] if has_attribute?(method)
+        if has_attribute?(method)
+          self.class.class_eval do
+            define_method(method) do
+              attributes[method]
+            end
+          end
+          return send(method)
+        end
 
         normalized_method = safe_key_formatter.unformat(method.to_s)
 
