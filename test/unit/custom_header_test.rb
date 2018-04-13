@@ -59,6 +59,24 @@ class CustomHeaderTest < MiniTest::Test
     end
   end
 
+  def test_custom_headers_are_inherited
+    stub_request(:get, "http://example.com/custom_header_resources/1")
+      .with(headers: {"X-My-Header" => "asdf"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "1",
+          attributes: {
+            title: "Rails is Omakase"
+          }
+        }
+      }.to_json)
+
+    JsonApiClient::Resource.with_headers(x_my_header: "asdf") do
+      CustomHeaderResource.find(1)
+    end
+  end
+
   def test_multiple_threads
     thread_count = 10
 
