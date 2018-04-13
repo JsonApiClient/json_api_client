@@ -73,13 +73,13 @@ class ResourceTest < MiniTest::Test
     end
 
     with_altered_config(Article, :json_key_format => :underscored_key) do
-      article = Article.new("foo-bar" => "baz")
+      article = Article.new("foo-bam" => "baz")
       # Does not recognize dasherized attributes, fall back to hash syntax
-      refute article.respond_to? :foo_bar
-      assert_equal("baz", article.send("foo-bar"))
-      assert_equal("baz", article.send(:"foo-bar"))
-      assert_equal("baz", article["foo-bar"])
-      assert_equal("baz", article[:"foo-bar"])
+      refute article.respond_to? :foo_bam
+      assert_equal("baz", article.send("foo-bam"))
+      assert_equal("baz", article.send(:"foo-bam"))
+      assert_equal("baz", article["foo-bam"])
+      assert_equal("baz", article[:"foo-bam"])
     end
   end
 
