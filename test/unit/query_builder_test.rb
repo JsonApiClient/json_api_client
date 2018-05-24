@@ -169,4 +169,29 @@ class QueryBuilderTest < MiniTest::Test
     Article.select({comments: 'author,text'}, :tags).to_a
   end
 
+  def test_can_specify_array_filter_value
+    stub_request(:get, "http://example.com/articles?filter%5Bauthor.id%5D%5B0%5D=foo&filter%5Bauthor.id%5D%5B1%5D=bar")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => ['foo', 'bar']).to_a
+  end
+
+  def test_can_specify_empty_array_filter_value
+    stub_request(:get, "http://example.com/articles?filter%5Bauthor.id%5D%5B0%5D")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => []).to_a
+  end
+
+  def test_can_specify_empty_string_filter_value
+    stub_request(:get, "http://example.com/articles")
+        .with(query: {filter: {:'author.id' => ''}})
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => '').to_a
+  end
+
 end
