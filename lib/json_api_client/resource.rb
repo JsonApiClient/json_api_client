@@ -494,8 +494,15 @@ module JsonApiClient
       end
     end
 
+    def non_serializing_attributes
+      [
+        self.class.read_only_attributes,
+        self.class.prefix_params.map(&:to_s)
+      ].flatten
+    end
+
     def attributes_for_serialization
-      attributes.except(*self.class.read_only_attributes).slice(*changed)
+      attributes.except(*non_serializing_attributes).slice(*changed)
     end
 
     def relationships_for_serialization
