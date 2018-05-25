@@ -15,7 +15,8 @@ module JsonApiClient
 
     attr_accessor :last_result_set,
                   :links,
-                  :relationships
+                  :relationships,
+                  :request_params
     class_attribute :site,
                     :primary_key,
                     :parser,
@@ -31,6 +32,8 @@ module JsonApiClient
                     :associations,
                     :json_key_format,
                     :route_format,
+                    :request_params_class,
+                    :keep_request_params,
                     instance_accessor: false
     self.primary_key          = :id
     self.parser               = Parsers::Parser
@@ -43,6 +46,8 @@ module JsonApiClient
     self.read_only_attributes = [:id, :type, :links, :meta, :relationships]
     self.requestor_class      = Query::Requestor
     self.associations         = []
+    self.request_params_class = RequestParams
+    self.keep_request_params = false
 
     #:underscored_key, :camelized_key, :dasherized_key, or custom
     self.json_key_format = :underscored_key
@@ -318,6 +323,7 @@ module JsonApiClient
           set_attribute(association.attr_name, params[association.attr_name.to_s])
         end
       end
+      self.request_params = self.class.request_params_class.new(self.class)
     end
 
     # Set the current attributes and try to save them
@@ -416,12 +422,14 @@ module JsonApiClient
         false
       else
         self.errors.clear if self.errors
+        self.request_params.clear unless self.class.keep_request_params
         mark_as_persisted!
         if updated = last_result_set.first
           self.attributes = updated.attributes
           self.links.attributes = updated.links.attributes
           self.relationships.attributes = updated.relationships.attributes
           clear_changes_information
+          self.relationships.clear_changes_information
         end
         true
       end
@@ -443,6 +451,31 @@ module JsonApiClient
 
     def inspect
       "#<#{self.class.name}:@attributes=#{attributes.inspect}>"
+    end
+
+    def request_includes(*includes)
+      self.request_params.add_includes(includes)
+      self
+    end
+
+    def reset_request_includes!
+      self.request_params.reset_includes!
+      self
+    end
+
+    def request_select(*fields)
+      fields_by_type = fields.extract_options!
+      fields_by_type[type.to_sym] = fields if fields.any?
+      fields_by_type.each do |field_type, field_names|
+        self.request_params.set_fields(field_type, field_names)
+      end
+      self
+    end
+
+    def reset_request_select!(*resource_types)
+      resource_types = self.request_params.field_types if resource_types.empty?
+      resource_types.each { |resource_type| self.request_params.remove_fields(resource_type) }
+      self
     end
 
     protected

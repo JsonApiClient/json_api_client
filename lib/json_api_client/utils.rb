@@ -24,5 +24,24 @@ module JsonApiClient
       raise NameError, "uninitialized constant #{candidates.first}"
     end
 
+    def self.parse_includes(klass, *tables)
+      tables.map do |table|
+        case table
+        when Hash
+          table.map do |k, v|
+            parse_includes(klass, *v).map do |sub|
+              "#{k}.#{sub}"
+            end
+          end
+        when Array
+          table.map do |v|
+            parse_includes(klass, *v)
+          end
+        else
+          klass.key_formatter.format(table)
+        end
+      end.flatten
+    end
+
   end
 end

@@ -159,22 +159,7 @@ module JsonApiClient
       end
 
       def parse_related_links(*tables)
-        tables.map do |table|
-          case table
-          when Hash
-            table.map do |k, v|
-              parse_related_links(*v).map do |sub|
-                "#{k}.#{sub}"
-              end
-            end
-          when Array
-            table.map do |v|
-              parse_related_links(*v)
-            end
-          else
-            key_formatter.format(table)
-          end
-        end.flatten
+        Utils.parse_includes(klass, *tables)
       end
 
       def parse_orders(*args)
