@@ -246,6 +246,10 @@ articles = Article.page(2).per(30).to_a
 
 # also makes request to /articles?page=2&per_page=30
 articles = Article.paginate(page: 2, per_page: 30).to_a
+
+# keep in mind that page number can be nil - in that case default number will be applied
+# also makes request to /articles?page=1&per_page=30
+articles = Article.paginate(page: nil, per_page: 30).to_a
 ```
 
 *Note: The mapping of pagination parameters is done by the `query_builder` which is [customizable](#custom-paginator).*
