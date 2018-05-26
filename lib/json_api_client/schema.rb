@@ -67,11 +67,11 @@ module JsonApiClient
       #      end
       #   end
       #
-      #   JsonApiClient::Schema::Types.register money: MyMoneyCaster
+      #   JsonApiClient::Schema::TypeFactory.register money: MyMoneyCaster
       #
       # You can setup several at once:
       #
-      #   JsonApiClient::Schema::Types.register money: MyMoneyCaster,
+      #   JsonApiClient::Schema::TypeFactory.register money: MyMoneyCaster,
       #                                         date: MyJsonDateTypeCaster
       #
       #
