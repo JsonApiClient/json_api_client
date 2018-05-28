@@ -196,6 +196,23 @@ results = Article.includes(:author, :comments => :author).find(1)
 
 # should not have to make additional requests to the server
 authors = results.map(&:author)
+
+# makes POST request to /articles?include=author,comments.author
+article = Article.new(title: 'New one').request_includes(:author, :comments => :author)
+article.save
+
+# makes PATCH request to /articles/1?include=author,comments.author
+article = Article.find(1)
+article.title = 'Changed'
+article.request_includes(:author, :comments => :author)
+article.save
+
+# request includes will be cleared if response is successful
+# to avoid this `keep_request_params` class attribute can be used
+Article.keep_request_params = true
+
+# to clear request_includes use
+article.reset_request_includes!
 ```
 
 ## Sparse Fieldsets
@@ -217,6 +234,24 @@ article.created_at
 # or you can use fieldsets from multiple resources
 # makes request to /articles?fields[articles]=title,body&fields[comments]=tag
 article = Article.select("title", "body",{comments: 'tag'}).first
+
+# makes POST request to /articles?fields[articles]=title,body&fields[comments]=tag
+article = Article.new(title: 'New one').request_select(:title, :body, comments: 'tag')
+article.save
+
+# makes PATCH request to /articles/1?fields[articles]=title,body&fields[comments]=tag
+article = Article.find(1)
+article.title = 'Changed'
+article.request_select(:title, :body, comments: 'tag')
+article.save
+
+# request fields will be cleared if response is successful
+# to avoid this `keep_request_params` class attribute can be used
+Article.keep_request_params = true
+
+# to clear request fields use
+article.reset_request_select!(:comments) # to clear for comments
+article.reset_request_select! # to clear for all fields
 ```
 
 ## Sorting
