@@ -4,8 +4,9 @@ module JsonApiClient
       extend Forwardable
       include Helpers::URI
 
-      def initialize(klass)
+      def initialize(klass, path = nil)
         @klass = klass
+        @path = path
       end
 
       # expects a record
@@ -48,14 +49,15 @@ module JsonApiClient
 
       protected
 
-      attr_reader :klass
+      attr_reader :klass, :path
       def_delegators :klass, :connection
 
       def resource_path(parameters)
+        base_path = path || klass.path(parameters)
         if resource_id = parameters[klass.primary_key]
-          File.join(klass.path(parameters), encode_part(resource_id))
+          File.join(base_path, encode_part(resource_id))
         else
-          klass.path(parameters)
+          base_path
         end
       end
 
