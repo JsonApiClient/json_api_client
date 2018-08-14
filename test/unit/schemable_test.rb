@@ -56,8 +56,8 @@ class SchemableTest < MiniTest::Test
     assert_equal 'foo', resource['a']
     assert_equal false, resource.b
     assert_equal false, resource['b']
-    assert_equal nil, resource.c
-    assert_equal nil, resource.d
+    assert_nil resource.c
+    assert_nil resource.d
   end
 
   def test_find_property_definition
@@ -90,7 +90,7 @@ class SchemableTest < MiniTest::Test
 
     MultipleSchema.schema.each_property do |property|
       assert_equal :string, property.type
-      assert_equal nil, property.default
+      assert_nil property.default
     end
   end
 

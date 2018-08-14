@@ -24,7 +24,7 @@ module JsonApiClient
       end
 
       def respond_to_missing?(method, include_private = false)
-        if (method.to_s =~ /^(.*)=$/) || has_attribute?(method)
+        if has_attribute?(method) || method.to_s.end_with?('=')
           true
         else
           super
@@ -38,16 +38,19 @@ module JsonApiClient
       protected
 
       def method_missing(method, *args, &block)
-        normalized_method = if key_formatter
-                              key_formatter.unformat(method.to_s)
-                            else
-                              method.to_s
-                            end
+        if has_attribute?(method)
+          self.class.class_eval do
+            define_method(method) do
+              attributes[method]
+            end
+          end
+          return send(method)
+        end
 
-        if normalized_method =~ /^(.*)=$/
-          set_attribute($1, args.first)
-        elsif has_attribute?(method)
-          attributes[method]
+        normalized_method = safe_key_formatter.unformat(method.to_s)
+
+        if normalized_method.end_with?('=')
+          set_attribute(normalized_method[0..-2], args.first)
         else
           super
         end
@@ -61,8 +64,18 @@ module JsonApiClient
         attributes[name] = value
       end
 
+      def safe_key_formatter
+        @safe_key_formatter ||= (key_formatter || DefaultKeyFormatter.new)
+      end
+
       def key_formatter
         self.class.respond_to?(:key_formatter) && self.class.key_formatter
+      end
+
+      class DefaultKeyFormatter
+        def unformat(method)
+          method.to_s
+        end
       end
 
     end

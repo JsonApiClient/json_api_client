@@ -23,6 +23,24 @@ class CustomHeaderTest < MiniTest::Test
     end
   end
 
+  def test_can_set_custom_accept_headers
+    stub_request(:get, "http://example.com/custom_header_resources/1")
+      .with(headers: {"Accept" => "application/vnd.api+json,application/vnd.api+json;version=2"})
+      .to_return(headers: {accept: "application/vnd.api+json,application/vnd.api+json;version=2", content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "1",
+          attributes: {
+            title: "My Blooming Test!"
+          }
+        }
+      }.to_json)
+
+    CustomHeaderResource.with_headers(accept: "application/vnd.api+json,application/vnd.api+json;version=2") do
+      CustomHeaderResource.find(1)
+    end
+  end
+
   def test_class_method_headers
     stub_request(:post, "http://example.com/custom_header_resources")
       .with(headers: {"X-My-Header" => "asdf"})
@@ -38,6 +56,24 @@ class CustomHeaderTest < MiniTest::Test
 
     CustomHeaderResource.with_headers(x_my_header: "asdf") do
       CustomHeaderResource.create(foo: "bar")
+    end
+  end
+
+  def test_custom_headers_are_inherited
+    stub_request(:get, "http://example.com/custom_header_resources/1")
+      .with(headers: {"X-My-Header" => "asdf"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "1",
+          attributes: {
+            title: "Rails is Omakase"
+          }
+        }
+      }.to_json)
+
+    JsonApiClient::Resource.with_headers(x_my_header: "asdf") do
+      CustomHeaderResource.find(1)
     end
   end
 

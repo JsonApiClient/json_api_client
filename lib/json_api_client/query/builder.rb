@@ -35,11 +35,7 @@ module JsonApiClient
       end
 
       def select(*fields)
-        fields = Array(fields).flatten
-        fields = fields.map { |i| i.to_s.split(",") }.flatten
-
-        @fields += fields.map(&:strip)
-
+        @fields += parse_fields(*fields)
         self
       end
 
@@ -51,12 +47,12 @@ module JsonApiClient
       end
 
       def page(number)
-        @pagination_params[:number] = number
+        @pagination_params[ klass.paginator.page_param ] = number || 1
         self
       end
 
       def per(size)
-        @pagination_params[:size] = size
+        @pagination_params[ klass.paginator.per_page_param ] = size
         self
       end
 
@@ -143,26 +139,27 @@ module JsonApiClient
       end
 
       def select_params
-        @fields.empty? ? {} : {fields: {klass.table_name => @fields.join(",")}}
+        if @fields.empty?
+          {}
+        else
+          field_result = Hash.new { |h,k| h[k] = [] }
+          @fields.each do |field|
+            if field.is_a? Hash
+              field.each do |k,v|
+                field_result[k.to_s] << v
+                field_result[k.to_s] = field_result[k.to_s].flatten
+              end
+            else
+              field_result[klass.table_name] << field
+            end
+          end
+          field_result.each { |k,v| field_result[k] = v.join(',') }
+          {fields: field_result}
+        end
       end
 
       def parse_related_links(*tables)
-        tables.map do |table|
-          case table
-          when Hash
-            table.map do |k, v|
-              parse_related_links(*v).map do |sub|
-                "#{k}.#{sub}"
-              end
-            end
-          when Array
-            table.map do |v|
-              parse_related_links(*v)
-            end
-          else
-            key_formatter.format(table)
-          end
-        end.flatten
+        Utils.parse_includes(klass, *tables)
       end
 
       def parse_orders(*args)
@@ -175,6 +172,21 @@ module JsonApiClient
             end
           else
             "#{arg}"
+          end
+        end.flatten
+      end
+
+      def parse_fields(*fields)
+        fields = fields.split(',') if fields.is_a? String
+        fields.map do |field|
+          case field
+          when Hash
+            field.each do |k,v|
+              field[k] = parse_fields(v)
+            end
+            field
+          else
+            Array(field).flatten.map { |i| i.to_s.split(",") }.flatten.map(&:strip)
           end
         end.flatten
       end

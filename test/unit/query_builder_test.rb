@@ -31,11 +31,37 @@ class QueryBuilderTest < MiniTest::Test
 
   def test_can_paginate
     stub_request(:get, "http://example.com/articles")
-      .with(query: {page: {number: 3, size: 6}})
+      .with(query: {page: {page: 3, per_page: 6}})
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: []
       }.to_json)
     Article.paginate(page: 3, per_page: 6).to_a
+  end
+
+  def test_pagination_default_number
+    JsonApiClient::Paginating::Paginator.page_param = :number
+    stub_request(:get, "http://example.com/articles?#{{page: {number: 1}}.to_query}")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [{
+                       type: "articles",
+                       id: "1",
+                       attributes: {
+                           title: "JSON API paints my bikeshed!"
+                       }
+                   }],
+            links: {
+                self:  "http://example.com/articles?#{{page: {number: 1}}.to_query}",
+                next:  "http://example.com/articles?#{{page: {number: 2}}.to_query}",
+                prev:  nil,
+                first: "http://example.com/articles?#{{page: {number: 1}}.to_query}",
+                last:  "http://example.com/articles?#{{page: {number: 6}}.to_query}"
+            }
+        }.to_json)
+
+    articles = Article.page(nil)
+    assert_equal 1, articles.current_page
+  ensure
+    JsonApiClient::Paginating::Paginator.page_param = :page
   end
 
   def test_can_sort_asc
@@ -130,6 +156,68 @@ class QueryBuilderTest < MiniTest::Test
         data: []
       }.to_json)
     Article.select(:title, :body).to_a
+  end
+
+  def test_can_select_nested_fields_using_hashes
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: :author}, :tags).to_a
+  end
+
+
+  def test_can_select_nested_fields_using_hashes_of_arrays
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: [:author, :text]}, :tags).to_a
+  end
+
+  def test_can_select_nested_fields_using_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: ['author', 'text']}, :tags).to_a
+  end
+
+  def test_can_select_nested_fields_using_comma_separated_strings
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {fields: {articles: 'tags', comments: 'author,text'}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+    Article.select({comments: 'author,text'}, :tags).to_a
+  end
+
+  def test_can_specify_array_filter_value
+    stub_request(:get, "http://example.com/articles?filter%5Bauthor.id%5D%5B0%5D=foo&filter%5Bauthor.id%5D%5B1%5D=bar")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => ['foo', 'bar']).to_a
+  end
+
+  def test_can_specify_empty_array_filter_value
+    stub_request(:get, "http://example.com/articles?filter%5Bauthor.id%5D%5B0%5D")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => []).to_a
+  end
+
+  def test_can_specify_empty_string_filter_value
+    stub_request(:get, "http://example.com/articles")
+        .with(query: {filter: {:'author.id' => ''}})
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: []
+        }.to_json)
+    Article.where(:'author.id' => '').to_a
   end
 
 end

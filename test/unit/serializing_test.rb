@@ -6,6 +6,10 @@ class SerializingTest < MiniTest::Test
     self.read_only_attributes += ['foo']
   end
 
+  class NestedResource < TestResource
+    belongs_to :bar
+  end
+
   class CustomSerializerAttributes < TestResource
 
     protected
@@ -317,4 +321,19 @@ class SerializingTest < MiniTest::Test
       assert_equal expected, article.as_json_api['relationships']
     end
   end
+
+  def test_ensure_nested_path_params_not_serialized
+    resource = NestedResource.new(foo: 'bar', id: 1, bar_id: 99)
+
+    expected = {
+      'id' => 1,
+      'type' => "nested_resources",
+      'attributes' => {
+        'foo' => 'bar'
+      }
+    }
+
+    assert_equal expected, resource.as_json_api
+  end
+
 end

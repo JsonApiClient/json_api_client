@@ -253,7 +253,7 @@ class TopLevelLinksTest < MiniTest::Test
     assert_equal 0, articles.offset
     assert_equal 1, articles.total_entries
     assert_equal 1, articles.limit_value
-    assert_equal nil, articles.next_page
+    assert_nil articles.next_page
     assert_equal 1, articles.per_page
     assert_equal false, articles.out_of_bounds?
 

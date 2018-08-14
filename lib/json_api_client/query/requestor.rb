@@ -11,36 +11,39 @@ module JsonApiClient
       # expects a record
       def create(record)
         request(:post, klass.path(record.attributes), {
-          data: record.as_json_api
+            body: { data: record.as_json_api },
+            params: record.request_params.to_params
         })
       end
 
       def update(record)
         request(:patch, resource_path(record.attributes), {
-          data: record.as_json_api
+            body: { data: record.as_json_api },
+            params: record.request_params.to_params
         })
       end
 
       def get(params = {})
         path = resource_path(params)
         params.delete(klass.primary_key)
-        request(:get, path, params)
+        request(:get, path, params: params)
       end
 
       def destroy(record)
-        request(:delete, resource_path(record.attributes), {})
+        request(:delete, resource_path(record.attributes))
       end
 
       def linked(path)
-        request(:get, path, {})
+        request(:get, path)
       end
 
       def custom(method_name, options, params)
         path = resource_path(params)
         params.delete(klass.primary_key)
         path = File.join(path, method_name.to_s)
-
-        request(options.fetch(:request_method, :get), path, params)
+        request_method = options.fetch(:request_method, :get).to_sym
+        query_params, body_params = [:get, :delete].include?(request_method) ? [params, nil] : [nil, params]
+        request(request_method, path, params: query_params, body: body_params)
       end
 
       protected
@@ -56,8 +59,9 @@ module JsonApiClient
         end
       end
 
-      def request(type, path, params)
-        klass.parser.parse(klass, connection.run(type, path, params, klass.custom_headers))
+      def request(type, path, params: nil, body: nil)
+        response = connection.run(type, path, params: params, body: body, headers: klass.custom_headers)
+        klass.parser.parse(klass, response)
       end
 
     end

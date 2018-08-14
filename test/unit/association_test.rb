@@ -31,7 +31,33 @@ module Namespaced
   end
 end
 
+class Formatted < TestResource
+  def self.key_formatter
+    JsonApiClient::DasherizedKeyFormatter
+  end
+
+  def self.route_formatter
+    JsonApiClient::DasherizedRouteFormatter
+  end
+end
+
+class MultiWordParent < Formatted
+end
+
+class MultiWordChild < Formatted
+  belongs_to :multi_word_parent
+end
+
 class AssociationTest < MiniTest::Test
+
+  def test_belongs_to_urls_are_formatted
+    request = stub_request(:get, "http://example.com/multi-word-parents/1/multi-word-children")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    MultiWordChild.where(multi_word_parent_id: 1).to_a
+
+    assert_requested(request)
+  end
 
   def test_load_has_one
     stub_request(:get, "http://example.com/properties/1")
@@ -263,7 +289,7 @@ class AssociationTest < MiniTest::Test
   end
 
   def test_load_has_many_with_multiword_resource_name
-    stub_request(:get, "http://example.com/prefixed_owners")
+    stub_request(:get, "http://example.com/prefixed_owners?include=prefixed_properties")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
           {
@@ -313,7 +339,7 @@ class AssociationTest < MiniTest::Test
           }
         ]
       }.to_json)
-    owners = PrefixedOwner.all
+    owners = PrefixedOwner.includes(:prefixed_properties).all
     jeff = owners[0]
     assert_equal("Jeff Ching", jeff.name)
     assert_equal(2, jeff.prefixed_properties.length)
@@ -325,7 +351,7 @@ class AssociationTest < MiniTest::Test
     with_altered_config(PrefixedOwner, :json_key_format => :camelized_key,
       :route_format => :dasherized_route) do
 
-      stub_request(:get, "http://example.com/prefixed-owners")
+      stub_request(:get, "http://example.com/prefixed-owners?include=prefixed-properties")
         .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
           data: [
             {
@@ -375,7 +401,7 @@ class AssociationTest < MiniTest::Test
             }
           ]
         }.to_json)
-      owners = PrefixedOwner.all
+      owners = PrefixedOwner.includes("prefixed-properties").all
       jeff = owners[0]
       assert_equal("Jeff Ching", jeff.name)
       assert_equal(2, jeff.prefixed_properties.length)

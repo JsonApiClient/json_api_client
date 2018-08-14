@@ -53,7 +53,7 @@ class ParserTest < MiniTest::Test
     article = Article.find(1).first
     author = article.author
 
-    assert_equal nil, author
+    assert_nil author
   end
 
 end

@@ -196,6 +196,23 @@ results = Article.includes(:author, :comments => :author).find(1)
 
 # should not have to make additional requests to the server
 authors = results.map(&:author)
+
+# makes POST request to /articles?include=author,comments.author
+article = Article.new(title: 'New one').request_includes(:author, :comments => :author)
+article.save
+
+# makes PATCH request to /articles/1?include=author,comments.author
+article = Article.find(1)
+article.title = 'Changed'
+article.request_includes(:author, :comments => :author)
+article.save
+
+# request includes will be cleared if response is successful
+# to avoid this `keep_request_params` class attribute can be used
+Article.keep_request_params = true
+
+# to clear request_includes use
+article.reset_request_includes!
 ```
 
 ## Sparse Fieldsets
@@ -213,6 +230,28 @@ article.title
 # should not have returned the created_at
 article.created_at
 # => raise NoMethodError
+
+# or you can use fieldsets from multiple resources
+# makes request to /articles?fields[articles]=title,body&fields[comments]=tag
+article = Article.select("title", "body",{comments: 'tag'}).first
+
+# makes POST request to /articles?fields[articles]=title,body&fields[comments]=tag
+article = Article.new(title: 'New one').request_select(:title, :body, comments: 'tag')
+article.save
+
+# makes PATCH request to /articles/1?fields[articles]=title,body&fields[comments]=tag
+article = Article.find(1)
+article.title = 'Changed'
+article.request_select(:title, :body, comments: 'tag')
+article.save
+
+# request fields will be cleared if response is successful
+# to avoid this `keep_request_params` class attribute can be used
+Article.keep_request_params = true
+
+# to clear request fields use
+article.reset_request_select!(:comments) # to clear for comments
+article.reset_request_select! # to clear for all fields
 ```
 
 ## Sorting
@@ -242,6 +281,10 @@ articles = Article.page(2).per(30).to_a
 
 # also makes request to /articles?page=2&per_page=30
 articles = Article.paginate(page: 2, per_page: 30).to_a
+
+# keep in mind that page number can be nil - in that case default number will be applied
+# also makes request to /articles?page=1&per_page=30
+articles = Article.paginate(page: nil, per_page: 30).to_a
 ```
 
 *Note: The mapping of pagination parameters is done by the `query_builder` which is [customizable](#custom-paginator).*
@@ -485,7 +528,7 @@ class MyMoneyCaster
     end
   end
 end
-   
+
 JsonApiClient::Schema.register money: MyMoneyCaster
 
 ```
@@ -498,6 +541,16 @@ end
 
 ```
 
+## Contributing
+
+Contributions are welcome! Please fork this repo and send a pull request. Your pull request should have:
+
+* a description about what's broken or what the desired functionality is
+* a test illustrating the bug or new feature
+* the code to fix the bug
+
+Ideally, the PR has 2 commits - the first showing the failed test and the second with the fix - although this is not
+required. The commits will be squashed into master once accepted.
 
 ## Changelog
 

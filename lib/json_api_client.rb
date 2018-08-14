@@ -21,6 +21,7 @@ module JsonApiClient
   autoload :Paginating, 'json_api_client/paginating'
   autoload :Parsers, 'json_api_client/parsers'
   autoload :Query, 'json_api_client/query'
+  autoload :RequestParams, 'json_api_client/request_params'
   autoload :Resource, 'json_api_client/resource'
   autoload :ResultSet, 'json_api_client/result_set'
   autoload :Schema, 'json_api_client/schema'

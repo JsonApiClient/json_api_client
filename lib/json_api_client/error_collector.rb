@@ -33,18 +33,27 @@ module JsonApiClient
       end
 
       def source_parameter
-        source.fetch(:parameter) do
-          source[:pointer] ?
-            source[:pointer].split("/").last :
-            nil
-        end
+        source[:parameter]
       end
 
       def source_pointer
-        source.fetch(:pointer) do
-          source[:parameter] ?
-            "/data/attributes/#{source[:parameter]}" :
-            nil
+        source[:pointer]
+      end
+
+      def error_key
+        if source_pointer && source_pointer != "/data"
+          source_pointer.split("/").last
+        else
+          "base"
+        end
+      end
+
+      def error_msg
+        msg = title || detail || "invalid"
+        if source_parameter
+          "#{source_parameter} #{msg}"
+        else
+          msg
         end
       end
 
@@ -74,7 +83,7 @@ module JsonApiClient
 
     def [](source)
       map do |error|
-        error.source_parameter == source
+        error.error_key == source
       end
     end
 
