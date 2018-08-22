@@ -58,7 +58,7 @@ class AssociationTest < MiniTest::Test
     assert_requested(request)
   end
 
-  def test_load_has_one_without_include
+  def test_load_has_one
     stub_request(:get, "http://example.com/properties/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: [
@@ -73,20 +73,17 @@ class AssociationTest < MiniTest::Test
               }
             }
           }
-        ]
-
-      }.to_json)
-    stub_request(:get, "http://example.com/owners/1")
-      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        data: [
+        ],
+        included: [
           {
             id: 1,
-            type: "owner",
+            type: 'owner',
             attributes: {
-              name: "Jeff Ching"
+              name: 'Jeff Ching'
             }
           }
         ]
+
       }.to_json)
     property = Property.find(1).first
     assert_equal(Owner, property.owner.class)
@@ -124,7 +121,6 @@ class AssociationTest < MiniTest::Test
 
              }.to_json)
     property = Property.includes(:owner).find(1).first
-    assert_equal(Owner, property.owner.class)
     assert_equal("Jeff Ching", property.owner.name)
   end
 

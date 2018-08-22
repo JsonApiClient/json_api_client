@@ -18,20 +18,17 @@ module JsonApiClient
     end
 
     def data_for(method_name, definition)
-      # this method only returns an array. It's up to the caller to decide if it's going to return
-      # just the first element if it's a has_one relationship. 
       # If data is defined, pull the record from the included data
-      defined_data = definition["data"]
-      return nil unless defined_data
-      [defined_data].flatten.map do |link_def|
-        # should return a resource record of some type for this linked document
-        # even if there's no matching record included.
-        if data[link_def["type"]] 
-          data[link_def["type"]][link_def["id"]]
-        else
-          # if there's no matching record in included then go and get it given the data
-          link_def["type"].classify.constantize.find(link_def["id"]).first
+      return nil unless data = definition["data"]
+
+      if data.is_a?(Array)
+        # has_many link
+        data.map do |link_def|
+          record_for(link_def)
         end
+      else
+        # has_one link
+        record_for(data)
       end
     end
 
@@ -39,5 +36,11 @@ module JsonApiClient
       data.has_key?(name.to_s)
     end
 
+    private
+
+    # should return a resource record of some type for this linked document
+    def record_for(link_def)
+      data[link_def["type"]][link_def["id"]]
+    end
   end
 end

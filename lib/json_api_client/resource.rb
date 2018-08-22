@@ -488,17 +488,10 @@ module JsonApiClient
       return nil unless relationship_definitions = relationships[method]
 
       # look in included data
-       if relationship_definitions.key?("data")
-         # included.data_for returns an array, if the association is a has_one, then pick the first, otherise return the whole array
-         if association.is_a?(JsonApiClient::Associations::HasOne::Association)
-          return last_result_set.included.data_for(method, relationship_definitions).try(:first)
-         else
-          return last_result_set.included.data_for(method, relationship_definitions)
-         end
-       end
+      if relationship_definitions.key?("data")
+        return last_result_set.included.data_for(method, relationship_definitions)
+      end
 
-      # I'm very puzzled by this as we have association = association_for(method) in the first line of this method
-       # is it intened to be 'if association == association_for(method)'
       if association = association_for(method)
         # look for a defined relationship url
         if relationship_definitions["links"] && url = relationship_definitions["links"]["related"]
