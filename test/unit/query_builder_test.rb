@@ -220,4 +220,19 @@ class QueryBuilderTest < MiniTest::Test
     Article.where(:'author.id' => '').to_a
   end
 
+  def test_scopes_are_nondestructive
+    first_stub = stub_request(:get, "http://example.com/articles?page[page]=1&page[per_page]=1")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    all_stub = stub_request(:get, "http://example.com/articles")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    scope = Article.where()
+
+    scope.first
+    scope.all
+
+    assert_requested first_stub, times: 1
+    assert_requested all_stub, times: 1
+  end
 end
