@@ -7,7 +7,7 @@ module JsonApiClient
 
       def initialize(klass, opts = {})
         @klass             = klass
-        @primary_key       = nil
+        @primary_key       = opts.fetch( :primary_key, nil )
         @pagination_params = opts.fetch( :pagination_params, {} )
         @path_params       = opts.fetch( :path_params, {} )
         @additional_params = opts.fetch( :additional_params, {} )
@@ -87,12 +87,12 @@ module JsonApiClient
       def find(args = {})
         case args
         when Hash
-          where(args)
+          scope = where(args)
         else
-          @primary_key = args
+          scope = _new_scope( primary_key: args )
         end
 
-        klass.requestor.get(params)
+        klass.requestor.get(scope.params)
       end
 
       def method_missing(method_name, *args, &block)
@@ -103,6 +103,7 @@ module JsonApiClient
 
       def _new_scope( opts = {} )
         self.class.new( @klass,
+             primary_key:       opts.fetch( :primary_key, @primary_key ),
              pagination_params: @pagination_params.merge( opts.fetch( :pagination_params, {} ) ),
              path_params:       @path_params.merge( opts.fetch( :path_params, {} ) ),
              additional_params: @additional_params.merge( opts.fetch( :additional_params, {} ) ),

@@ -243,12 +243,17 @@ class QueryBuilderTest < MiniTest::Test
     all_stub = stub_request(:get, "http://example.com/articles")
         .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
 
+    find_stub = stub_request(:get, "http://example.com/articles/6")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
     scope = Article.where()
 
     scope.find( "author.id" => "foo" )
+    scope.find(6)
     scope.all
 
     assert_requested first_stub, times: 1
     assert_requested all_stub, times: 1
+    assert_requested find_stub, times: 1
   end
 end
