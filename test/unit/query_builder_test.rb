@@ -235,4 +235,20 @@ class QueryBuilderTest < MiniTest::Test
     assert_requested first_stub, times: 1
     assert_requested all_stub, times: 1
   end
+
+  def test_find_with_args
+    first_stub = stub_request(:get, "http://example.com/articles?filter[author.id]=foo")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    all_stub = stub_request(:get, "http://example.com/articles")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    scope = Article.where()
+
+    scope.find( "author.id" => "foo" )
+    scope.all
+
+    assert_requested first_stub, times: 1
+    assert_requested all_stub, times: 1
+  end
 end
