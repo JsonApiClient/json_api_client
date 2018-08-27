@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## v1.6.0
+
+- [#281](https://github.com/JsonApiClient/json_api_client/pull/281) - Optimize dynamic attribute deref
+- [#280](https://github.com/JsonApiClient/json_api_client/pull/280) - Fix custom headers inheritance
+- [#287](https://github.com/JsonApiClient/json_api_client/pull/287) - Allow pagination params to be `nil`
+- [#284](https://github.com/JsonApiClient/json_api_client/pull/284) - Fix filter to not filter out `[]` values
+- [#285](https://github.com/JsonApiClient/json_api_client/pull/285) - Add include params for create/update
+- [#293](https://github.com/JsonApiClient/json_api_client/pull/293) - Fix side-effects in scopes
+
 ## v1.5.3
 
 - [#266](https://github.com/chingor13/json_api_client/pull/266) - Fix default attributes being overridden
