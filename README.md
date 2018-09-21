@@ -399,7 +399,7 @@ class NullConnection
   def initialize(*args)
   end
 
-  def run(request_method, path, params = {}, headers = {})
+  def run(request_method, path, params: nil, headers: {}, body: nil)
   end
 
   def use(*args); end
