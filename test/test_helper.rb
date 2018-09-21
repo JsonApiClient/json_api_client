@@ -3,7 +3,7 @@ SimpleCov.start
 Bundler.require(:default, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 require 'pp'
 
 # shim for ActiveSupport 4.0.x requiring minitest 4.2
