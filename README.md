@@ -493,8 +493,8 @@ You can customize how your resources find pagination information from the respon
 If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
 
 ```ruby
-JsonApiClient::Paginating::Paginator.page_param = "page[number]"
-JsonApiClient::Paginating::Paginator.per_page_param = "page[size]"
+JsonApiClient::Paginating::Paginator.page_param = "number"
+JsonApiClient::Paginating::Paginator.per_page_param = "size"
 ```
 
 Please note that this is a global configuration, so library authors should create a custom paginator that inherits `JsonApiClient::Paginating::Paginator` and configure the custom paginator to avoid modifying global config.
