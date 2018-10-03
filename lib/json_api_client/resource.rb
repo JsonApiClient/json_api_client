@@ -34,6 +34,7 @@ module JsonApiClient
                     :route_format,
                     :request_params_class,
                     :keep_request_params,
+                    :search_included_in_result_set,
                     instance_accessor: false
     class_attribute :add_defaults_to_changes,
                     instance_writer: false
@@ -50,6 +51,7 @@ module JsonApiClient
     self.request_params_class = RequestParams
     self.keep_request_params = false
     self.add_defaults_to_changes = false
+    self.search_included_in_result_set = false
 
     #:underscored_key, :camelized_key, :dasherized_key, or custom
     self.json_key_format = :underscored_key

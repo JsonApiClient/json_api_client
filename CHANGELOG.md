@@ -4,6 +4,8 @@
 
 - [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
 
+- [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
+
 ## 1.7.0
 
 - [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
