@@ -35,6 +35,8 @@ module JsonApiClient
                     :request_params_class,
                     :keep_request_params,
                     instance_accessor: false
+    class_attribute :add_defaults_to_changes,
+                    instance_writer: false
     self.primary_key          = :id
     self.parser               = Parsers::Parser
     self.paginator            = Paginating::Paginator
@@ -48,6 +50,7 @@ module JsonApiClient
     self.associations         = []
     self.request_params_class = RequestParams
     self.keep_request_params = false
+    self.add_defaults_to_changes = false
 
     #:underscored_key, :camelized_key, :dasherized_key, or custom
     self.json_key_format = :underscored_key
@@ -315,9 +318,7 @@ module JsonApiClient
       self.relationships = self.class.relationship_linker.new(self.class, params.delete(:relationships) || {})
       self.attributes = self.class.default_attributes.merge(params)
 
-      self.class.schema.each_property do |property|
-        attributes[property.name] = property.default unless attributes.has_key?(property.name) || property.default.nil?
-      end
+      setup_default_properties
 
       self.class.associations.each do |association|
         if params.has_key?(association.attr_name.to_s)
@@ -480,6 +481,15 @@ module JsonApiClient
     end
 
     protected
+
+    def setup_default_properties
+      self.class.schema.each_property do |property|
+        unless attributes.has_key?(property.name) || property.default.nil?
+          attribute_will_change!(property.name) if add_defaults_to_changes
+          attributes[property.name] = property.default
+        end
+      end
+    end
 
     def method_missing(method, *args)
       association = association_for(method)
