@@ -12,6 +12,7 @@ module JsonApiClient
 
     include Helpers::DynamicAttributes
     include Helpers::Dirty
+    include Helpers::Associatable
 
     attr_accessor :last_result_set,
                   :links,
@@ -29,7 +30,6 @@ module JsonApiClient
                     :relationship_linker,
                     :read_only_attributes,
                     :requestor_class,
-                    :associations,
                     :json_key_format,
                     :route_format,
                     :request_params_class,
@@ -47,7 +47,6 @@ module JsonApiClient
     self.relationship_linker  = Relationships::Relations
     self.read_only_attributes = [:id, :type, :links, :meta, :relationships]
     self.requestor_class      = Query::Requestor
-    self.associations         = []
     self.request_params_class = RequestParams
     self.keep_request_params = false
     self.add_defaults_to_changes = false
@@ -57,10 +56,6 @@ module JsonApiClient
 
     #:underscored_route, :camelized_route, :dasherized_route, or custom
     self.route_format = :underscored_route
-
-    include Associations::BelongsTo
-    include Associations::HasMany
-    include Associations::HasOne
 
     class << self
       extend Forwardable
@@ -253,6 +248,12 @@ module JsonApiClient
       # @option options [Symbol] :default The default value for the property
       def property(name, options = {})
         schema.add(name, options)
+        define_method(name) do
+          attributes[name]
+        end
+        define_method("#{name}=") do |value|
+          set_attribute(name, value)
+        end
       end
 
       # Declare multiple properties with the same optional options
@@ -430,8 +431,10 @@ module JsonApiClient
           self.attributes = updated.attributes
           self.links.attributes = updated.links.attributes
           self.relationships.attributes = updated.relationships.attributes
+          self.relationships.last_result_set = last_result_set
           clear_changes_information
           self.relationships.clear_changes_information
+          _clear_cached_relationships
         end
         true
       end
@@ -447,6 +450,9 @@ module JsonApiClient
         false
       else
         self.attributes.clear
+        self.relationships.attributes.clear
+        self.relationships.last_result_set = nil
+        _clear_cached_relationships
         true
       end
     end
@@ -491,25 +497,34 @@ module JsonApiClient
       end
     end
 
-    def method_missing(method, *args)
-      association = association_for(method)
+    def relationship_definition_for(name)
+      relationships[name] if relationships && relationships.has_attribute?(name)
+    end
 
-      return super unless association || (relationships && relationships.has_attribute?(method))
+    def included_data_for(name, relationship_definition)
+      last_result_set.included.data_for(name, relationship_definition)
+    end
 
-      return nil unless relationship_definitions = relationships[method]
-
+    def relationship_data_for(name, relationship_definition)
       # look in included data
-      if relationship_definitions.key?("data")
-        return last_result_set.included.data_for(method, relationship_definitions)
+      if relationship_definition.key?("data")
+        return included_data_for(name, relationship_definition)
       end
 
-      if association = association_for(method)
-        # look for a defined relationship url
-        if relationship_definitions["links"] && url = relationship_definitions["links"]["related"]
-          return association.data(url)
-        end
+      url = relationship_definition["links"]["related"]
+      if relationship_definition["links"] && url
+        return association_for(name).data(url)
       end
+
       nil
+    end
+
+    def method_missing(method, *args)
+      relationship_definition = relationship_definition_for(method)
+
+      return super unless relationship_definition
+
+      relationship_data_for(method, relationship_definition)
     end
 
     def respond_to_missing?(symbol, include_all = false)

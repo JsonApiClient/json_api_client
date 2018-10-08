@@ -1,15 +1,6 @@
 module JsonApiClient
   module Associations
     module BelongsTo
-      extend ActiveSupport::Concern
-
-      module ClassMethods
-        def belongs_to(attr_name, options = {})
-          # self.associations = self.associations + [HasOne::Association.new(attr_name, self, options)]
-          self.associations += [BelongsTo::Association.new(attr_name, self, options)]
-        end
-      end
-
       class Association < BaseAssociation
         include Helpers::URI
         def param
