@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## v1.6.1
+
+- [#297](https://githup.com/JsonApiClient/json_api_client/pull/297) - Fix test_helper
+- [#298](https://githup.com/JsonApiClient/json_api_client/pull/298) - README update: arguments for custom connections run method
+- [#306](https://githup.com/JsonApiClient/json_api_client/pull/306) - README update: pagination override examples
+- [#307](https://githup.com/JsonApiClient/json_api_client/pull/307) - Symbolize params keys on model initialize
+- [#304](https://githup.com/JsonApiClient/json_api_client/pull/304) - Optional add default to changes
+- [#300](https://githup.com/JsonApiClient/json_api_client/pull/300) - Define methods for properties and associations getter/setter
+
 ## v1.6.0
 
 - [#281](https://github.com/JsonApiClient/json_api_client/pull/281) - Optimize dynamic attribute deref
