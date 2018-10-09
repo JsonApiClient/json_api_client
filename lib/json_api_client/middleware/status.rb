@@ -29,7 +29,7 @@ module JsonApiClient
         when 409
           raise Errors::Conflict, env
         when 400..499
-          # some other error
+          raise Errors::ClientError, env
         when 500..599
           raise Errors::ServerError, env
         else
