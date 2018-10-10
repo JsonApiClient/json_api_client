@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#311](https://githup.com/JsonApiClient/json_api_client/pull/311) - Raise JsonApiClient::Errors::ClientError for unhandled 4xx responses
+
 ## v1.6.1
 
 - [#297](https://githup.com/JsonApiClient/json_api_client/pull/297) - Fix test_helper
