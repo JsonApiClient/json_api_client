@@ -4,7 +4,7 @@
 
 ## v1.6.3
 
-- [#211](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
+- [#312](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
 
 ## v1.6.2
 
