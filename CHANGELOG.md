@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## v1.6.3
+
+- [#211](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
+
 ## v1.6.2
 
 - [#311](https://githup.com/JsonApiClient/json_api_client/pull/311) - Raise JsonApiClient::Errors::ClientError for unhandled 4xx responses
