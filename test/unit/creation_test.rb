@@ -69,8 +69,10 @@ class CreationTest < MiniTest::Test
                               title: "Rails is Omakase"
                           })
 
+    assert article.new_record?
     assert article.save
     assert article.persisted?
+    assert_equal(false, article.new_record?)
     assert_equal "1", article.id
   end
 
