@@ -463,7 +463,6 @@ module JsonApiClient
         false
       else
         mark_as_destroyed!
-        self.relationships.attributes.clear
         self.relationships.last_result_set = nil
         _clear_cached_relationships
         true
