@@ -318,7 +318,8 @@ module JsonApiClient
       @destroyed = nil
       self.links = self.class.linker.new(params.delete(:links) || {})
       self.relationships = self.class.relationship_linker.new(self.class, params.delete(:relationships) || {})
-      self.attributes = self.class.default_attributes.merge(params)
+      self.attributes = self.class.default_attributes.merge params.except(*self.class.prefix_params)
+      self.__belongs_to_params = params.slice(*self.class.prefix_params)
 
       setup_default_properties
 
@@ -465,6 +466,7 @@ module JsonApiClient
         mark_as_destroyed!
         self.relationships.last_result_set = nil
         _clear_cached_relationships
+        _clear_belongs_to_params
         true
       end
     end
@@ -496,6 +498,10 @@ module JsonApiClient
       resource_types = self.request_params.field_types if resource_types.empty?
       resource_types.each { |resource_type| self.request_params.remove_fields(resource_type) }
       self
+    end
+
+    def path_attributes
+      _belongs_to_params.merge attributes.slice('id').symbolize_keys
     end
 
     protected
@@ -566,10 +572,7 @@ module JsonApiClient
     end
 
     def non_serializing_attributes
-      [
-        self.class.read_only_attributes,
-        self.class.prefix_params.map(&:to_s)
-      ].flatten
+      self.class.read_only_attributes
     end
 
     def attributes_for_serialization

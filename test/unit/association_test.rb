@@ -13,6 +13,10 @@ class Specified < TestResource
   has_many :bars, class_name: "Owner"
 end
 
+class Shallowed < TestResource
+  belongs_to :foo, class_name: "Property", shallow_path: true
+end
+
 class PrefixedOwner < TestResource
   has_many :prefixed_properties
 end
@@ -630,6 +634,14 @@ class AssociationTest < MiniTest::Test
     assert_equal("foos/%D0%99%D0%A6%D0%A3%D0%9A%D0%95%D0%9D/specifieds", Specified.path({foo_id: 'ЙЦУКЕН'}))
   end
 
+  def test_belongs_to_shallowed_path
+    assert_equal([:foo_id], Shallowed.prefix_params)
+    assert_equal "shalloweds", Shallowed.path({})
+    assert_equal("foos/%{foo_id}/shalloweds", Shallowed.path)
+    assert_equal("foos/1/shalloweds", Shallowed.path({foo_id: 1}))
+    assert_equal("foos/%D0%99%D0%A6%D0%A3%D0%9A%D0%95%D0%9D/shalloweds", Shallowed.path({foo_id: 'ЙЦУКЕН'}))
+  end
+
   def test_find_belongs_to
     stub_request(:get, "http://example.com/foos/1/specifieds")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -640,6 +652,30 @@ class AssociationTest < MiniTest::Test
 
     specifieds = Specified.where(foo_id: 1).all
     assert_equal(1, specifieds.length)
+  end
+
+  def test_find_belongs_to_shallowed
+    stub_request(:get, "http://example.com/foos/1/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                { id: 1, type: "shalloweds", attributes: { name: "nested" } }
+            ]
+        }.to_json)
+
+    stub_request(:get, "http://example.com/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                { id: 1, type: "shalloweds", attributes: { name: "global" } }
+            ]
+        }.to_json)
+
+    nested_records = Shallowed.where(foo_id: 1).all
+    assert_equal(1, nested_records.length)
+    assert_equal("nested", nested_records.first.name)
+
+    global_records = Shallowed.all
+    assert_equal(1, global_records.length)
+    assert_equal("global", global_records.first.name)
   end
 
   def test_can_handle_creating
@@ -655,6 +691,28 @@ class AssociationTest < MiniTest::Test
       :foo_id => 10,
       :name => "Blah"
     })
+  end
+
+  def test_can_handle_creating_shallowed
+    stub_request(:post, "http://example.com/foos/10/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: { id: 12, type: "shalloweds", attributes: { name: "nested" } }
+        }.to_json)
+
+    stub_request(:post, "http://example.com/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: { id: 13, type: "shalloweds", attributes: { name: "global" } }
+        }.to_json)
+
+    Shallowed.create({
+                         :id => 12,
+                         :foo_id => 10,
+                         :name => "nested"
+                     })
+    Shallowed.create({
+                         :id => 13,
+                         :name => "global"
+                     })
   end
 
   def test_find_belongs_to_params_unchanged
@@ -690,6 +748,21 @@ class AssociationTest < MiniTest::Test
       }.to_json)
 
     Specified.create(foo_id: 1)
+  end
+
+  def test_nested_create_from_scope
+    stub_request(:post, "http://example.com/foos/1/specifieds")
+        .to_return(headers: {
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                id: 1,
+                name: "Jeff Ching",
+                bars: [{id: 1, attributes: {address: "123 Main St."}}]
+            }
+        }.to_json)
+
+    Specified.where(foo_id: 1).create
   end
 
 end

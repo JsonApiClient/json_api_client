@@ -1,3 +1,5 @@
+require 'active_support/all'
+
 module JsonApiClient
   module Query
     class Builder
@@ -64,8 +66,12 @@ module JsonApiClient
         paginate(page: 1, per_page: 1).pages.last.to_a.last
       end
 
-      def build
-        klass.new(params)
+      def build(attrs = {})
+        klass.new @path_params.merge(attrs.symbolize_keys)
+      end
+
+      def create(attrs = {})
+        klass.create @path_params.merge(attrs.symbolize_keys)
       end
 
       def params
