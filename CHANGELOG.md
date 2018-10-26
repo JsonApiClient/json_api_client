@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v1.6.4
+- [#314](https://github.com/JsonApiClient/json_api_client/pull/314) - Mimic ActiveRecord behavior when destroying a resource:
+  * Add `destroyed?` method
+  * Do not clear resource attributes
+  * Return `false` on `persisted?` after being destroyed
+  * Return `false` on `new_record?` after being destroyed
+
 ## v1.6.3
 
 - [#312](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`

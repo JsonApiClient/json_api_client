@@ -39,13 +39,28 @@ MyApi::Article.where(author_id: 1).all
 MyApi::Person.where(name: "foo").order(created_at: :desc).includes(:preferences, :cars).all
 
 u = MyApi::Person.new(first_name: "bar", last_name: "foo")
+u.new_record?
+# => true
 u.save
+
+u.new_record?
+# => false
 
 u = MyApi::Person.find(1).first
 u.update_attributes(
   a: "b",
   c: "d"
 )
+
+u.persisted? 
+# => true
+
+u.destroy
+
+u.destroyed? 
+# => true
+u.persisted? 
+# => false
 
 u = MyApi::Person.create(
   a: "b",
