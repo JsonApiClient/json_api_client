@@ -315,6 +315,7 @@ module JsonApiClient
     def initialize(params = {})
       params = params.symbolize_keys
       @persisted = nil
+      @destroyed = nil
       self.links = self.class.linker.new(params.delete(:links) || {})
       self.relationships = self.class.relationship_linker.new(self.class, params.delete(:relationships) || {})
       self.attributes = self.class.default_attributes.merge(params)
@@ -355,14 +356,26 @@ module JsonApiClient
     #
     # @return [Boolean]
     def persisted?
-      !!@persisted && has_attribute?(self.class.primary_key)
+      !!@persisted && !destroyed? && has_attribute?(self.class.primary_key)
+    end
+
+    # Mark the record as destroyed
+    def mark_as_destroyed!
+      @destroyed = true
+    end
+
+    # Whether or not this record has been destroyed to the database previously
+    #
+    # @return [Boolean]
+    def destroyed?
+      !!@destroyed
     end
 
     # Returns true if this is a new record (never persisted to the database)
     #
     # @return [Boolean]
     def new_record?
-      !persisted?
+      !persisted? && !destroyed?
     end
 
     # When we represent this resource as a relationship, we do so with id & type
@@ -449,8 +462,7 @@ module JsonApiClient
         fill_errors
         false
       else
-        self.attributes.clear
-        self.relationships.attributes.clear
+        mark_as_destroyed!
         self.relationships.last_result_set = nil
         _clear_cached_relationships
         true
