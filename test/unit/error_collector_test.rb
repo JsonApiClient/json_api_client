@@ -215,6 +215,48 @@ class ErrorCollectorTest < MiniTest::Test
     assert_equal "include", error.source_parameter
   end
 
+  describe 'custom error_msg_key' do
+    class CustomErrorArticle < TestResource
+      def error_message_for(error)
+        error.detail
+      end
+    end
+
+    def test_can_handle_custom_parameter_error
+      stub_request(:post, "http://example.com/custom_error_articles")
+          .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+              data: {
+                  type: "custom_error_articles",
+                  attributes: {
+                      title: "Rails is Omakase",
+                      email_address: "bar"
+                  }
+              }
+          }.to_json)
+          .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+              errors: [
+                  {
+                      id: "1234-abcd",
+                      status: "400",
+                      code: "1337",
+                      title: "bar is required",
+                      detail: "bar include is required for creation",
+                      source: {
+                          parameter: "include"
+                      }
+                  }
+              ]
+          }.to_json)
+
+      article = CustomErrorArticle.create({
+                                   title: "Rails is Omakase",
+                                   email_address: "bar"
+                               })
+
+      assert_equal ["bar include is required for creation"], article.errors[:base]
+    end
+  end
+
   def test_can_handle_explicit_null_error_values
       stub_request(:post, "http://example.com/articles")
         .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
