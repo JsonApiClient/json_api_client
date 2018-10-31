@@ -18,62 +18,80 @@ class CreationTest < MiniTest::Test
   class Author < TestResource
   end
 
-  def setup
-    super
-    stub_request(:post, "http://example.com/articles")
-      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
-        data: {
-          type: "articles",
-          attributes: {
-            title: "Rails is Omakase"
-          }
-        }
-      }.to_json)
-      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
-        data: {
-          type: "articles",
-          id: "1",
-          attributes: {
+  describe 'default stub' do
+    def setup
+      stub_request(:post, "http://example.com/articles")
+        .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+          data: {
+            type: "articles",
+            attributes: {
               title: "Rails is Omakase"
-          },
-          links: {
-            self: "http://example.com/articles/1",
-            other: {
-              href: "http://example.com/other"
             }
           }
-        }
-      }.to_json)
-  end
+        }.to_json)
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+          data: {
+            type: "articles",
+            id: "1",
+            attributes: {
+                title: "Rails is Omakase"
+            },
+            links: {
+              self: "http://example.com/articles/1",
+              other: {
+                href: "http://example.com/other"
+              }
+            }
+          }
+        }.to_json)
+    end
 
-  def test_can_create_with_class_method
-    article = Article.create({
-                                 title: "Rails is Omakase"
-                             })
+    def test_can_create_with_class_method
+      article = Article.create({
+                                   title: "Rails is Omakase"
+                               })
 
-    assert article.persisted?, article.inspect
-    assert_equal "1", article.id
-    assert_equal "Rails is Omakase", article.title
-  end
+      assert article.persisted?, article.inspect
+      assert_equal "1", article.id
+      assert_equal "Rails is Omakase", article.title
+    end
 
-  def test_changed_attributes_empty_after_create_with_class_method
-    article = Article.create({
-                                 title: "Rails is Omakase"
-                             })
+    def test_changed_attributes_empty_after_create_with_class_method
+      article = Article.create({
+                                   title: "Rails is Omakase"
+                               })
 
-    assert_empty article.changed_attributes
-  end
+      assert_empty article.changed_attributes
+    end
 
-  def test_can_create_with_new_record_and_save
-    article = Article.new({
-                              title: "Rails is Omakase"
-                          })
+    def test_can_create_with_new_record_and_save
+      article = Article.new({
+                                title: "Rails is Omakase"
+                            })
 
-    assert article.new_record?
-    assert article.save
-    assert article.persisted?
-    assert_equal(false, article.new_record?)
-    assert_equal "1", article.id
+      assert article.new_record?
+      assert article.save
+      assert article.persisted?
+      assert_equal(false, article.new_record?)
+      assert_equal "1", article.id
+    end
+
+    def test_can_create_with_links
+      article = Article.new({
+                                title: "Rails is Omakase"
+                            })
+
+      assert article.save
+      assert article.persisted?
+      assert_equal "http://example.com/articles/1", article.links.self
+    end
+
+    def test_changed_attributes_empty_after_create_with_new_record_and_save
+      article = Article.new({title: "Rails is Omakase"})
+
+      article.save
+      assert_empty article.changed_attributes
+    end
   end
 
   def test_can_create_with_includes_and_fields
@@ -136,16 +154,6 @@ class CreationTest < MiniTest::Test
     assert_equal 1, article.comments.size
     assert_equal "2", article.comments.first.id
     assert_equal "it is isn't it ?", article.comments.first.body
-  end
-
-  def test_can_create_with_links
-    article = Article.new({
-                              title: "Rails is Omakase"
-                          })
-
-    assert article.save
-    assert article.persisted?
-    assert_equal "http://example.com/articles/1", article.links.self
   end
 
   def test_can_create_with_new_record_with_relationships_and_save
@@ -233,13 +241,6 @@ class CreationTest < MiniTest::Test
     assert author.save
   end
 
-  def test_changed_attributes_empty_after_create_with_new_record_and_save
-    article = Article.new({title: "Rails is Omakase"})
-
-    article.save
-    assert_empty article.changed_attributes
-  end
-
   def test_callbacks_on_update
     stub_request(:post, "http://example.com/callback_tests")
       .with(headers: {
@@ -278,18 +279,18 @@ class CreationTest < MiniTest::Test
         .with(headers: {content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json'}, body: {
             data: {
                 type: 'articles',
-                attributes: {
-                    title: 'Rails is Omakase'
-                },
                 relationships: {
                     comments: {
                         data: [
                             {
-                                id: '2',
-                                type: 'comments'
+                                type: 'comments',
+                                id: 2
                             }
                         ]
                     }
+                },
+                attributes: {
+                    title: 'Rails is Omakase'
                 }
             }
         }.to_json)
