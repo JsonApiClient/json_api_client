@@ -8,6 +8,9 @@ class UpdatingTest < MiniTest::Test
     end
   end
 
+  class Editor < TestResource
+  end
+
   class CallbackTest < TestResource
     include JsonApiClient::Helpers::Callbacks
     before_update do
@@ -955,6 +958,137 @@ class UpdatingTest < MiniTest::Test
     assert_equal "it is isn't it ?", article.comments.first.body
   ensure
     Article.keep_request_params = false
+  end
+
+  def test_fetch_with_relationships_and_update_attribute
+    stub_request(:get, "http://example.com/authors/1?include=editor")
+        .to_return(headers: {
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                type: "authors",
+                id: "1",
+                attributes: {
+                    name: "John Doe"
+                },
+                relationships: {
+                    editor: {
+                        links: {
+                            self: "/articles/1/links/editor",
+                            related: "/articles/1/editor"
+                        },
+                        data: {id: "2", type: "editors"}
+                    }
+                }
+            }
+        }.to_json)
+
+    authors = Author.includes(:editor).find(1)
+    author = authors.first
+
+    stub_request(:patch, "http://example.com/authors/1")
+        .with(headers: {
+            content_type: "application/vnd.api+json",
+            accept: "application/vnd.api+json"
+        }, body: {
+            data: {
+                id: "1",
+                type: "authors",
+                attributes: {
+                    name: "Jane Doe"
+                }
+            }
+        }.to_json)
+        .to_return(headers: {
+            status: 200,
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                type: "authors",
+                id: "1",
+                relationships: {
+                    editor: {
+                        links: {
+                            self: "/articles/1/links/editor",
+                            related: "/articles/1/editor"
+                        }
+                    }
+                },
+                attributes: {
+                    name: "Jane Doe"
+                }
+            }
+        }.to_json)
+
+    author.name = "Jane Doe"
+    assert author.save
+  end
+
+  def test_fetch_with_relationships_and_update_relationships
+    stub_request(:get, "http://example.com/authors/1?include=editor")
+        .to_return(headers: {
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                type: "authors",
+                id: "1",
+                attributes: {
+                    name: "John Doe"
+                },
+                relationships: {
+                    editor: {
+                        links: {
+                            self: "/articles/1/links/editor",
+                            related: "/articles/1/editor"
+                        },
+                        data: {id: "2", type: "editors"}
+                    }
+                }
+            }
+        }.to_json)
+
+    authors = Author.includes(:editor).find(1)
+    author = authors.first
+
+    stub_request(:patch, "http://example.com/authors/1")
+        .with(headers: {
+            content_type: "application/vnd.api+json",
+            accept: "application/vnd.api+json"
+        }, body: {
+            data: {
+                id: "1",
+                type: "authors",
+                relationships: {
+                    editor: {
+                        data: {type: "editors", id: "3"}
+                    }
+                },
+                attributes: {}
+            }
+        }.to_json)
+        .to_return(headers: {
+            status: 200,
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                type: "authors",
+                id: "1",
+                relationships: {
+                    editor: {
+                        links: {
+                            self: "/articles/1/links/editor",
+                            related: "/articles/1/editor"
+                        }
+                    }
+                },
+                attributes: {
+                    name: "John Doe"
+                }
+            }
+        }.to_json)
+
+    author.relationships.editor = Editor.new(id: '3')
+    assert author.save
   end
 
 end
