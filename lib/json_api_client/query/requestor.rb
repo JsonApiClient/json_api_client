@@ -10,14 +10,14 @@ module JsonApiClient
 
       # expects a record
       def create(record)
-        request(:post, klass.path(record.attributes), {
+        request(:post, klass.path(record.path_attributes), {
             body: { data: record.as_json_api },
             params: record.request_params.to_params
         })
       end
 
       def update(record)
-        request(:patch, resource_path(record.attributes), {
+        request(:patch, resource_path(record.path_attributes), {
             body: { data: record.as_json_api },
             params: record.request_params.to_params
         })
@@ -30,7 +30,7 @@ module JsonApiClient
       end
 
       def destroy(record)
-        request(:delete, resource_path(record.attributes))
+        request(:delete, resource_path(record.path_attributes))
       end
 
       def linked(path)

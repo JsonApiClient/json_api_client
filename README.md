@@ -157,13 +157,17 @@ articles.links.related
 
 You can force nested resource paths for your models by using a `belongs_to` association.
 
-**Note: Using belongs_to is only necessary for setting a nested path.**
+**Note: Using belongs_to is only necessary for setting a nested path unless you provide `shallow_path: true` option.**
 
 ```ruby
 module MyApi
   class Account < JsonApiClient::Resource
     belongs_to :user
   end
+  
+  class Customer < JsonApiClient::Resource
+      belongs_to :user, shallow_path: true
+    end
 end
 
 # try to find without the nested parameter
@@ -172,6 +176,28 @@ MyApi::Account.find(1)
 
 # makes request to /users/2/accounts/1
 MyApi::Account.where(user_id: 2).find(1)
+# => returns ResultSet
+
+# makes request to /customers/1
+MyApi::Customer.find(1)
+# => returns ResultSet
+
+# makes request to /users/2/customers/1
+MyApi::Customer.where(user_id: 2).find(1)
+# => returns ResultSet
+```
+
+you can also override param name for `belongs_to` association
+
+```ruby
+module MyApi
+  class Account < JsonApiClient::Resource
+    belongs_to :user, param: :customer_id
+  end
+end
+
+# makes request to /users/2/accounts/1
+MyApi::Account.where(customer_id: 2).find(1)
 # => returns ResultSet
 ```
 
