@@ -18,8 +18,7 @@ class CreationTest < MiniTest::Test
   class Author < TestResource
   end
 
-  def setup
-    super
+  def stub_simple_creation
     stub_request(:post, "http://example.com/articles")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
         data: {
@@ -47,6 +46,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_can_create_with_class_method
+    stub_simple_creation
     article = Article.create({
                                  title: "Rails is Omakase"
                              })
@@ -57,6 +57,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_changed_attributes_empty_after_create_with_class_method
+    stub_simple_creation
     article = Article.create({
                                  title: "Rails is Omakase"
                              })
@@ -65,6 +66,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_can_create_with_new_record_and_save
+    stub_simple_creation
     article = Article.new({
                               title: "Rails is Omakase"
                           })
@@ -139,6 +141,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_can_create_with_links
+    stub_simple_creation
     article = Article.new({
                               title: "Rails is Omakase"
                           })
@@ -234,6 +237,7 @@ class CreationTest < MiniTest::Test
   end
 
   def test_changed_attributes_empty_after_create_with_new_record_and_save
+    stub_simple_creation
     article = Article.new({title: "Rails is Omakase"})
 
     article.save
@@ -278,18 +282,18 @@ class CreationTest < MiniTest::Test
         .with(headers: {content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json'}, body: {
             data: {
                 type: 'articles',
-                attributes: {
-                    title: 'Rails is Omakase'
-                },
                 relationships: {
                     comments: {
                         data: [
                             {
-                                id: '2',
-                                type: 'comments'
+                                type: 'comments',
+                                id: '2'
                             }
                         ]
                     }
+                },
+                attributes: {
+                    title: 'Rails is Omakase'
                 }
             }
         }.to_json)
@@ -303,7 +307,7 @@ class CreationTest < MiniTest::Test
             }
         }.to_json)
 
-    article = Article.new(title: 'Rails is Omakase', relationships: {comments: [Comment.new(id: 2)]})
+    article = Article.new(title: 'Rails is Omakase', relationships: {comments: [Comment.new(id: '2')]})
 
     assert article.save
     assert article.persisted?
