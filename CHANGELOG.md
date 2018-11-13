@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
+  * fix relationships passing to `new` and `create` methods
+  * fix false positive tests on create
+  * refactor tests on create/update to prevent false same positive tests in future
+  
+- [#315](https://github.com/JsonApiClient/json_api_client/pull/315) - add shallow_path feature to belongs_to
+ * add `shallow_path` options to belongs_to to use model w/ and w/o nesting in parent resource
+
 ## v1.6.4
 - [#314](https://github.com/JsonApiClient/json_api_client/pull/314) - Mimic ActiveRecord behavior when destroying a resource:
   * Add `destroyed?` method
