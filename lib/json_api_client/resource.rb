@@ -98,6 +98,7 @@ module JsonApiClient
         new(params).tap do |resource|
           resource.mark_as_persisted!
           resource.clear_changes_information
+          resource.relationships.clear_changes_information
         end
       end
 

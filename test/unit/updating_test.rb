@@ -23,8 +23,7 @@ class UpdatingTest < MiniTest::Test
     end
   end
 
-  def setup
-    super
+  def stub_simple_fetch
     stub_request(:get, "http://example.com/articles/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
         data: {
@@ -38,6 +37,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_found_record
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -69,6 +69,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_changed_attributes_blank_after_update
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -109,6 +110,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_found_record_in_bulk
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -141,6 +143,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_found_record_in_builk_using_update_method
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -173,6 +176,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_single_relationship
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -216,6 +220,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_single_relationship_via_setter
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -259,6 +264,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_single_relationship_with_all_attributes_dirty
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -311,6 +317,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_has_many_relationships
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -360,6 +367,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_has_many_relationships_via_setter
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -409,6 +417,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_has_many_relationships_with_all_attributes_dirty
+    stub_simple_fetch
     articles = Article.find(1)
     article = articles.first
 
@@ -757,6 +766,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_with_includes_and_fields
+    stub_simple_fetch
     stub_request(:patch, "http://example.com/articles/1")
         .with(
             headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"},
@@ -844,6 +854,7 @@ class UpdatingTest < MiniTest::Test
   end
 
   def test_can_update_with_includes_and_fields_with_keep_request_params
+    stub_simple_fetch
     stub_request(:patch, "http://example.com/articles/1")
         .with(
             headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"},
