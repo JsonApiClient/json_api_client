@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.7.0
+
 - [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
   * fix relationships passing to `new` and `create` methods
   * fix false positive tests on create
