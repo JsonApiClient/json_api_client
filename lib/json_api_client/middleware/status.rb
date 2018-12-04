@@ -11,8 +11,8 @@ module JsonApiClient
             handle_status(code, env)
           end
         end
-      rescue Faraday::ConnectionFailed, Faraday::TimeoutError
-        raise Errors::ConnectionError, environment
+      rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        raise Errors::ConnectionError.new environment, e.to_s
       end
 
       protected
