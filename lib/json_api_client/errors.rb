@@ -2,7 +2,8 @@ module JsonApiClient
   module Errors
     class ApiError < StandardError
       attr_reader :env
-      def initialize(env)
+      def initialize(env, msg = nil)
+        super msg
         @env = env
       end
     end
@@ -20,14 +21,14 @@ module JsonApiClient
     end
 
     class ServerError < ApiError
-      def message
-        "Internal server error"
+      def initialize(env, msg = 'Internal server error')
+        super env, msg
       end
     end
 
     class Conflict < ServerError
-      def message
-        "Resource already exists"
+      def initialize(env, msg = 'Resource already exists')
+        super env, msg
       end
     end
 
@@ -51,6 +52,5 @@ module JsonApiClient
         "Unexpected response status: #{code} from: #{uri.to_s}"
       end
     end
-
   end
 end

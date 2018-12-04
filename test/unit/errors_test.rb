@@ -4,11 +4,13 @@ class ErrorsTest < MiniTest::Test
 
   def test_connection_errors
     stub_request(:get, "http://example.com/users")
-      .to_raise(Faraday::ConnectionFailed)
+      .to_raise(Faraday::ConnectionFailed.new("specific message"))
 
-    assert_raises JsonApiClient::Errors::ConnectionError do
+    err = assert_raises JsonApiClient::Errors::ConnectionError do
       User.all
     end
+
+    assert_match /specific message/, err.message
   end
 
   def test_timeout_errors
