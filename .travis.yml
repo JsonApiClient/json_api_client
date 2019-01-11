@@ -26,4 +26,4 @@ matrix:
 # We need to install latest version of bundler, because one in travis
 # image is too old to recognize platform => :mri_22 in Gemfile.
 before_install:
-  - gem install bundler
+  - gem install bundler || gem install bundler -v 1.17.3
