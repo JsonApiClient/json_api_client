@@ -1,6 +1,11 @@
 module JsonApiClient
   module Middleware
     class Status < Faraday::Middleware
+      def initialize(app, options)
+        super(app)
+        @options = options
+      end
+
       def call(environment)
         @app.call(environment).on_complete do |env|
           handle_status(env[:status], env)
@@ -15,9 +20,16 @@ module JsonApiClient
         raise Errors::ConnectionError.new environment, e.to_s
       end
 
-      protected
+      private
+
+      def custom_handler_for(code)
+        @options.fetch(:custom_handlers, {})[code]
+      end
 
       def handle_status(code, env)
+        custom_handler = custom_handler_for(code)
+        return custom_handler.call(env) if custom_handler.present?
+
         case code
         when 200..399
         when 401
