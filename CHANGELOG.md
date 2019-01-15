@@ -10,6 +10,10 @@
 
 - [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
 
+- [#326](https://github.com/JsonApiClient/json_api_client/pull/326) - correct changes after initialize resource
+  * remove type from changes on initialize
+  * ensure that query builder doesn't propagate query values to resource attributes via #build method
+
 ## 1.7.0
 
 - [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create

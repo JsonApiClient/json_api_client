@@ -256,4 +256,27 @@ class QueryBuilderTest < MiniTest::Test
     assert_requested all_stub, times: 1
     assert_requested find_stub, times: 1
   end
+
+  def test_build_does_not_propagate_values
+    query = Article.where(name: 'John').
+        includes(:author).
+        order(id: :desc).
+        select(:id, :name).
+        page(1).
+        per(20).
+        with_params(sort: "foo")
+
+    record = query.build
+    assert_equal [], record.changed
+    assert_equal [], record.relationships.changed
+  end
+
+  def test_build_propagate_only_path_params
+    query = ArticleNested.where(author_id: '123', name: 'John')
+    record = query.build
+    assert_equal [], record.changed
+    assert_equal({author_id: '123'}, record.__belongs_to_params)
+    assert_equal '123', record.author_id
+    assert_equal [], record.relationships.changed
+  end
 end
