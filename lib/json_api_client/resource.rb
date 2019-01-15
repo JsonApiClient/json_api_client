@@ -35,6 +35,7 @@ module JsonApiClient
                     :request_params_class,
                     :keep_request_params,
                     :search_included_in_result_set,
+                    :custom_type_to_class,
                     instance_accessor: false
     class_attribute :add_defaults_to_changes,
                     instance_writer: false
@@ -52,6 +53,7 @@ module JsonApiClient
     self.keep_request_params = false
     self.add_defaults_to_changes = false
     self.search_included_in_result_set = false
+    self.custom_type_to_class = {}
 
     #:underscored_key, :camelized_key, :dasherized_key, or custom
     self.json_key_format = :underscored_key
@@ -62,6 +64,11 @@ module JsonApiClient
     class << self
       extend Forwardable
       def_delegators :_new_scope, :where, :order, :includes, :select, :all, :paginate, :page, :with_params, :first, :find, :last
+
+      def resolve_custom_type(type_name, class_name)
+        classified_type = key_formatter.unformat(type_name.to_s).singularize.classify
+        self.custom_type_to_class = custom_type_to_class.merge(classified_type => class_name.to_s)
+      end
 
       # The table name for this resource. i.e. Article -> articles, Person -> people
       #

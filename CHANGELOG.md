@@ -8,6 +8,8 @@
 
 - [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
 
+- [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
+
 ## 1.7.0
 
 - [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
