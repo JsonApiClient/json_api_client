@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
+
 ## 1.7.0
 
 - [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
