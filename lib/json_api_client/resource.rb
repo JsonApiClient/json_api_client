@@ -584,10 +584,14 @@ module JsonApiClient
       relationships.as_json_api
     end
 
+    def error_message_for(error)
+      error.error_msg
+    end
+
     def fill_errors
       last_result_set.errors.each do |error|
         key = self.class.key_formatter.unformat(error.error_key)
-        errors.add(key, error.error_msg)
+        errors.add(key, error_message_for(error))
       end
     end
   end
