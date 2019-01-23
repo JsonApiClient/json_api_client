@@ -35,6 +35,21 @@ class UserPreference < TestResource
   self.primary_key = :user_id
 end
 
+class DocumentUser < TestResource
+  resolve_custom_type 'document--files', 'DocumentFile'
+end
+
+class DocumentStore < TestResource
+  resolve_custom_type 'document--files', 'DocumentFile'
+  has_many :files, class_name: 'DocumentFile'
+end
+
+class DocumentFile < TestResource
+  def self.resource_name
+    'document--files'
+  end
+end
+
 def with_altered_config(resource_class, changes)
   # remember and overwrite config
   old_config_values = {}

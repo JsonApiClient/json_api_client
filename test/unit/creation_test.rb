@@ -314,4 +314,31 @@ class CreationTest < MiniTest::Test
     assert_equal "1", article.id
   end
 
+  def test_create_with_custom_type
+    stub_request(:post, 'http://example.com/document--files')
+        .with(headers: {content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json'}, body: {
+            data: {
+                type: 'document--files',
+                attributes: {
+                    url: 'http://example.com/downloads/1.pdf'
+                }
+            }
+        }.to_json)
+        .to_return(headers: {content_type: 'application/vnd.api+json'}, body: {
+            data: {
+                type: 'document--files',
+                id: '1',
+                attributes: {
+                    url: 'http://example.com/downloads/1.pdf'
+                }
+            }
+        }.to_json)
+
+    file = DocumentFile.new(url: 'http://example.com/downloads/1.pdf')
+
+    assert file.save
+    assert file.persisted?
+    assert_equal '1', file.id
+  end
+
 end

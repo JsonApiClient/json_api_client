@@ -553,6 +553,22 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
+### Custom type
+
+If your model must be named differently from classified type of resource you can easily customize it.
+It will work both for defined and not defined relationships
+
+```ruby
+class MyApi::Base < JsonApiClient::Resource
+  resolve_custom_type 'document--files', 'File'
+end
+
+class MyApi::File < MyApi::Base
+  def self.resource_name
+    'document--files'
+  end
+end
+```
 
 ### Type Casting
 
