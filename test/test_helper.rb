@@ -22,6 +22,12 @@ class Article < TestResource
   has_one :author
 end
 
+class ArticleNested < TestResource
+  belongs_to :author, shallow_path: true
+  has_many :comments
+  has_one :author
+end
+
 class Person < TestResource
 end
 
