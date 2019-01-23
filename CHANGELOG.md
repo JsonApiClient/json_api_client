@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.8.0
+
 - [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
 
 - [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
