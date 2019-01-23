@@ -36,6 +36,33 @@ class DestroyingTest < MiniTest::Test
     assert_equal(1, user.id)
   end
 
+  def test_destroy_custom_primary_key
+    stub_request(:get, "http://example.com/user_preferences/105")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {attributes: { user_id: 105, name: "Jeff Ching", email_address: "ching.jeff@gmail.com"}}
+        ]
+      }.to_json)
+
+    $print_load = true
+    user_prefrence = UserPreference.find(105).first
+    assert(user_prefrence.persisted?)
+    $print_load = false
+    assert_equal(false, user_prefrence.new_record?)
+    assert_equal(false, user_prefrence.destroyed?)
+
+    stub_request(:delete, "http://example.com/user_preferences/105")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    assert(user_prefrence.destroy, "successful deletion should return truish value")
+    assert_equal(false, user_prefrence.persisted?)
+    assert_equal(false, user_prefrence.new_record?)
+    assert(user_prefrence.destroyed?)
+    assert_equal(105, user_prefrence.user_id)
+  end
+
   def test_destroy_no_content
     stub_request(:delete, "http://example.com/users/6")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: nil)
