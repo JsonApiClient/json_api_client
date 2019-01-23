@@ -394,7 +394,7 @@ module JsonApiClient
     #
     # @return [Hash] Representation of this object as JSONAPI object
     def as_json_api(*)
-      attributes.slice(:id, :type).tap do |h|
+      attributes.slice(self.class.primary_key, :type).tap do |h|
         relationships_for_serialization.tap do |r|
           h[:relationships] = self.class.key_formatter.format_keys(r) unless r.empty?
         end
@@ -403,11 +403,11 @@ module JsonApiClient
     end
 
     def as_json(*)
-      attributes.slice(:id, :type).tap do |h|
+      attributes.slice(self.class.primary_key, :type).tap do |h|
         relationships.as_json.tap do |r|
           h[:relationships] = r unless r.empty?
         end
-        h[:attributes] = attributes.except(:id, :type).as_json
+        h[:attributes] = attributes.except(self.class.primary_key, :type).as_json
       end
     end
 
@@ -504,7 +504,7 @@ module JsonApiClient
     end
 
     def path_attributes
-      _belongs_to_params.merge attributes.slice('id').symbolize_keys
+      _belongs_to_params.merge attributes.slice( self.class.primary_key ).symbolize_keys
     end
 
     protected
