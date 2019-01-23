@@ -74,6 +74,10 @@ class UserAccount < TestResource
   property :balance
 end
 
+class Employee < TestResource
+  has_one :chief, klass: 'Employee'
+end
+
 class AssociationTest < MiniTest::Test
 
   def test_default_properties_no_changes
@@ -763,6 +767,106 @@ class AssociationTest < MiniTest::Test
         }.to_json)
 
     Specified.where(foo_id: 1).create
+  end
+
+  def test_load_include_from_dataset
+    stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
+        .to_return(
+            headers: {
+                content_type: 'application/vnd.api+json'
+            }, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'employees',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '2', type: 'employees'}
+                        }
+                    }
+                },
+                {
+                    id: '2',
+                    attributes: {
+                        name: 'Jane Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '3', type: 'employees'}
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '3',
+                    type: 'employees',
+                    attributes: {
+                        name: 'Richard Reed'
+                    }
+                }
+            ]
+        }.to_json)
+    Employee.search_included_in_result_set = true
+    records = Employee.includes(:chief).per(2).to_a
+    assert_equal(2, records.size)
+    assert_equal('1', records.first.id)
+    assert_equal('2', records.second.id)
+    assert_equal('3', records.second.chief.id)
+    assert_equal('2', records.first.chief.id)
+  end
+
+  def test_does_not_load_include_from_dataset
+    stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
+        .to_return(
+            headers: {
+                content_type: 'application/vnd.api+json'
+            }, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'employees',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '2', type: 'employees'}
+                        }
+                    }
+                },
+                {
+                    id: '2',
+                    attributes: {
+                        name: 'Jane Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '3', type: 'employees'}
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '3',
+                    type: 'employees',
+                    attributes: {
+                        name: 'Richard Reed'
+                    }
+                }
+            ]
+        }.to_json)
+    Employee.search_included_in_result_set = false
+    records = Employee.includes(:chief).per(2).to_a
+    assert_equal(2, records.size)
+    assert_equal('1', records.first.id)
+    assert_equal('2', records.second.id)
+    assert_equal('3', records.second.chief.id)
+    assert_nil(records.first.chief)
   end
 
 end

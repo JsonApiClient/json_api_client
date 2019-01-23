@@ -4,15 +4,18 @@ module JsonApiClient
 
     def initialize(result_set, data)
       record_class = result_set.record_class
-      grouped_data = data.group_by{|datum| datum["type"]}
-      @data = grouped_data.inject({}) do |h, (type, records)|
+      included_set = data.map do |datum|
+        type = datum["type"]
         klass = Utils.compute_type(record_class, record_class.key_formatter.unformat(type).singularize.classify)
-        h[type] = records.map do |datum|
-          params = klass.parser.parameters_from_resource(datum)
-          resource = klass.load(params)
-          resource.last_result_set = result_set
-          resource
-        end.index_by(&:id)
+        params = klass.parser.parameters_from_resource(datum)
+        resource = klass.load(params)
+        resource.last_result_set = result_set
+        resource
+      end
+
+      included_set.concat(result_set) if record_class.search_included_in_result_set
+      @data = included_set.group_by(&:type).inject({}) do |h, (type, resources)|
+        h[type] = resources.index_by(&:id)
         h
       end
     end
