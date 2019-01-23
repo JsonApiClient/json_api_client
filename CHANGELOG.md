@@ -2,17 +2,17 @@
 
 ## Unreleased
 
-## 1.8.0
-
-- [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
-
-- [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
-
 - [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
 
 - [#326](https://github.com/JsonApiClient/json_api_client/pull/326) - correct changes after initialize resource
   * remove type from changes on initialize
   * ensure that query builder doesn't propagate query values to resource attributes via #build method
+
+## 1.8.0
+
+- [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
+
+- [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
 
 ## 1.7.0
 
