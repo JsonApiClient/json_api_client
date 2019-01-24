@@ -37,6 +37,30 @@ end
 class User < TestResource
 end
 
+class ApiBadRequestHandler
+  def self.call(_env)
+    # do not raise exception
+  end
+end
+
+class CustomUnauthorizedError < StandardError
+  attr_reader :env
+
+  def initialize(env)
+    @env = env
+    super('not authorized')
+  end
+end
+
+class UserWithCustomStatusHandler < TestResource
+  self.connection_options = {
+      status_handlers: {
+          400 => ApiBadRequestHandler,
+          401 => ->(env) { raise CustomUnauthorizedError, env }
+      }
+  }
+end
+
 class UserPreference < TestResource
   self.primary_key = :user_id
 end

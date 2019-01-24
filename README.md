@@ -474,6 +474,44 @@ module MyApi
 end
 ```
 
+##### Custom status handler
+
+You can change handling of response status using `connection_options`. For example you can override 400 status handling. 
+By default it raises `JsonApiClient::Errors::ClientError` but you can skip exception if you want to process errors from the server.
+You need to provide a `proc` which should call `throw(:handled)` default handler for this status should be skipped.
+```ruby
+class ApiBadRequestHandler
+  def self.call(_env)
+    # do not raise exception
+  end
+end
+
+class CustomUnauthorizedError < StandardError
+  attr_reader :env
+
+  def initialize(env)
+    @env = env
+    super('not authorized')
+  end
+end
+
+MyApi::Base.connection_options[:status_handlers] = {
+    400 => ApiBadRequestHandler,
+    401 => ->(env) { raise CustomUnauthorizedError, env }
+}
+
+module MyApi
+  class User < Base
+    # will use the customized status_handlers
+  end
+end
+
+user = MyApi::User.create(name: 'foo')
+# server responds with { errors: [ { detail: 'bad request' } ] }
+user.errors.messages # { base: ['bad request'] }
+# on 401 it will raise CustomUnauthorizedError instead of JsonApiClient::Errors::NotAuthorized
+```
+
 ##### Specifying an HTTP Proxy
 
 All resources have a class method ```connection_options``` used to pass options to the JsonApiClient::Connection initializer.

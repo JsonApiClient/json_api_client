@@ -8,6 +8,9 @@
   * remove type from changes on initialize
   * ensure that query builder doesn't propagate query values to resource attributes via #build method
 
+- [#324](https://github.com/JsonApiClient/json_api_client/pull/324) - add possibility to override status handling
+  * add status_handlers to JsonApiClient::Resource.connection_options
+
 ## 1.8.0
 
 - [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
