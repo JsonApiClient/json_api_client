@@ -11,6 +11,8 @@
 - [#324](https://github.com/JsonApiClient/json_api_client/pull/324) - add possibility to override status handling
   * add status_handlers to JsonApiClient::Resource.connection_options
 
+- [#330](https://github.com/JsonApiClient/json_api_client/pull/330) - deletion use overridden primary key
+
 ## 1.8.0
 
 - [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
