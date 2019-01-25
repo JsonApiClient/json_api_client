@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.9.0
+
 - [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
 
 - [#326](https://github.com/JsonApiClient/json_api_client/pull/326) - correct changes after initialize resource
