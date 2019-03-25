@@ -367,7 +367,7 @@ class CreationTest < MiniTest::Test
         .to_return(headers: {content_type: 'application/vnd.api+json'}, body: {
             data: {
                 type: 'skill_levels',
-                id: '1',
+                id: '2',
                 attributes: {
                     title: 'pro'
                 }
@@ -383,7 +383,7 @@ class CreationTest < MiniTest::Test
     # test that object is cached and not recreated each time
     assert_equal user.skill_level.object_id, user.skill_level.object_id
 
-    user.relationships.skill_level = SkillLevel.find(2).first
+    user.skill_level = SkillLevel.find(2).first
     assert_equal '2', user.skill_level.id
   end
 

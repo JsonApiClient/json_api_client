@@ -537,7 +537,11 @@ module JsonApiClient
     def relationship_data_for(name, relationship_definition)
       # look in included data
       if relationship_definition.key?("data")
-        return included_data_for(name, relationship_definition)
+        if relationships.attribute_changed?(name)
+          return relation_objects_for(name, relationship_definition)
+        else
+          return included_data_for(name, relationship_definition)
+        end
       end
 
       url = relationship_definition["links"]["related"]
@@ -546,6 +550,13 @@ module JsonApiClient
       end
 
       nil
+    end
+
+    def relation_objects_for(name, relationship_definition)
+      data = relationship_definition["data"]
+      assoc = association_for(name)
+      return if data.nil? || assoc.nil?
+      assoc.load_records(data)
     end
 
     def method_missing(method, *args)

@@ -21,6 +21,13 @@ module JsonApiClient
       def from_result_set(result_set)
         result_set.to_a
       end
+
+      def load_records(data)
+        data.map do |d|
+          record_class = Utils.compute_type(klass, d["type"].classify)
+          record_class.load id: d["id"]
+        end
+      end
     end
   end
 end
