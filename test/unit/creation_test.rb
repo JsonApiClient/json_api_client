@@ -18,6 +18,16 @@ class CreationTest < MiniTest::Test
   class Author < TestResource
   end
 
+  class User < TestResource
+    has_one :skill_level
+
+    properties :first_name, type: :string
+  end
+
+  class SkillLevel < TestResource
+    property :title, type: :string
+  end
+
   def stub_simple_creation
     stub_request(:post, "http://example.com/articles")
       .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
@@ -339,6 +349,42 @@ class CreationTest < MiniTest::Test
     assert file.save
     assert file.persisted?
     assert_equal '1', file.id
+  end
+
+  def test_access_loaded_relationship_instance
+    stub_request(:get, 'http://example.com/skill_levels/1')
+        .to_return(headers: {content_type: 'application/vnd.api+json'}, body: {
+            data: {
+                type: 'skill_levels',
+                id: '1',
+                attributes: {
+                    title: 'newbie'
+                }
+            }
+        }.to_json)
+
+    stub_request(:get, 'http://example.com/skill_levels/2')
+        .to_return(headers: {content_type: 'application/vnd.api+json'}, body: {
+            data: {
+                type: 'skill_levels',
+                id: '2',
+                attributes: {
+                    title: 'pro'
+                }
+            }
+        }.to_json)
+
+    skill_level = SkillLevel.find(1).first
+    user = User.new(first_name: 'Joe', relationships: { skill_level: skill_level })
+
+    assert_equal ({'data'=>{'type'=>'skill_levels', 'id'=>'1'}}), user.relationships.skill_level
+    assert_kind_of SkillLevel, user.skill_level
+    assert_equal '1', user.skill_level.id
+    # test that object is cached and not recreated each time
+    assert_equal user.skill_level.object_id, user.skill_level.object_id
+
+    user.skill_level = SkillLevel.find(2).first
+    assert_equal '2', user.skill_level.id
   end
 
 end
