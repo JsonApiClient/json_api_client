@@ -312,4 +312,24 @@ class QueryBuilderTest < MiniTest::Test
     assert_equal '123', record.author_id
     assert_equal [], record.relationships.changed
   end
+
+  def test_build_hash_sum
+    a = ArticleNested.where(author_id: '123', name: 'John')
+    b = ArticleNested.where(author_id: '123', name: 'John')
+    c = ArticleNested.where(author_id: '123')
+    d = Article.where(author_id: '123', name: 'John')
+    assert(a.hash == b.hash)
+    assert_equal(false, a.hash == c.hash)
+    assert_equal(false, a.hash == d.hash)
+  end
+
+  def test_build_eql
+    a = ArticleNested.where(author_id: '123', name: 'John')
+    b = ArticleNested.where(author_id: '123', name: 'John')
+    c = ArticleNested.where(author_id: '123')
+    d = Article.where(author_id: '123', name: 'John')
+    assert(a == b)
+    assert_equal(false, a == c)
+    assert_equal(false, a == d)
+  end
 end

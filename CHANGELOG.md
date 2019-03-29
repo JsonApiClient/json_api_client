@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#338](https://github.com/JsonApiClient/json_api_client/pull/338) - implement hash and eql? for builder class
+
 ## 1.13.0
 
 - [#348](https://github.com/JsonApiClient/json_api_client/pull/348) - add NestedParamPaginator to address inconsistency in handling of pagination query string params (issue [#347](https://github.com/JsonApiClient/json_api_client/issues/347)).

@@ -109,6 +109,20 @@ module JsonApiClient
         to_a.send(method_name, *args, &block)
       end
 
+      def hash
+        [
+          klass,
+          params
+        ].hash
+      end
+
+      def ==(other)
+        return false unless other.is_a?(self.class)
+
+        hash == other.hash
+      end
+      alias_method :eql?, :==
+
       protected
 
       def _fetch
