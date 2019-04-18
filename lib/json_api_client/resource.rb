@@ -539,16 +539,18 @@ module JsonApiClient
       if relationship_definition.key?("data")
         if relationships.attribute_changed?(name)
           return relation_objects_for(name, relationship_definition)
+        elsif relationship_definition["data"].nil?
+          # data is explicitly nil, respect that
+          return
         else
           data = included_data_for(name, relationship_definition)
           return data if data
         end
       end
 
-      url = relationship_definition["links"]["related"]
-      if relationship_definition["links"] && url
-        return association_for(name).data(url)
-      end
+      links = relationship_definition["links"]
+      url = links && links["related"]
+      return association_for(name).data(url) if url
 
       nil
     end
