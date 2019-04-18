@@ -540,7 +540,8 @@ module JsonApiClient
         if relationships.attribute_changed?(name)
           return relation_objects_for(name, relationship_definition)
         else
-          return included_data_for(name, relationship_definition)
+          data = included_data_for(name, relationship_definition)
+          return data if data
         end
       end
 
