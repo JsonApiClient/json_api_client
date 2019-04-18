@@ -296,6 +296,50 @@ class AssociationTest < MiniTest::Test
     assert_equal Owner, owner.class
   end
 
+  def test_has_one_with_data_without_included_fetches_relationship
+    stub_request(:get, "http://example.com/properties/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "addresses",
+            attributes: {
+              address: "123 Main St."
+            },
+            relationships: {
+              owner: {
+                links: {
+                  self: 'http://example.com/properties/1/links/owner',
+                  related: 'http://example.com/owners/1'
+                },
+                data: {
+                  type: "owners",
+                  id: 1
+                }
+              }
+            }
+          }
+        ]
+      }.to_json)
+    stub_request(:get, "http://example.com/owners/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: "owner",
+            attributes: {
+              name: "Jeff Ching"
+            }
+          }
+        ]
+      }.to_json)
+
+    property = Property.find(1).first
+    owner = property.owner
+    assert owner, "expected to be able to fetch relationship if defined and contains basic data but not included"
+    assert_equal Owner, owner.class
+  end
+
   def test_has_many_fetches_relationship
     stub_request(:get, "http://example.com/owners/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
