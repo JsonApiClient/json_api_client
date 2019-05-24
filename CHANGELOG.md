@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#344](https://github.com/JsonApiClient/json_api_client/pull/344) - introduce safe singular resource fetching with `raise_on_blank_find_param` resource setting
+
 ## 1.9.0
 
 - [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
@@ -27,7 +29,7 @@
   * fix relationships passing to `new` and `create` methods
   * fix false positive tests on create
   * refactor tests on create/update to prevent false same positive tests in future
-  
+
 - [#315](https://github.com/JsonApiClient/json_api_client/pull/315) - add shallow_path feature to belongs_to
  * add `shallow_path` options to belongs_to to use model w/ and w/o nesting in parent resource
 
