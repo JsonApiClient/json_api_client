@@ -52,14 +52,14 @@ u.update_attributes(
   c: "d"
 )
 
-u.persisted? 
+u.persisted?
 # => true
 
 u.destroy
 
-u.destroyed? 
+u.destroyed?
 # => true
-u.persisted? 
+u.persisted?
 # => false
 
 u = MyApi::Person.create(
@@ -164,7 +164,7 @@ module MyApi
   class Account < JsonApiClient::Resource
     belongs_to :user
   end
-  
+
   class Customer < JsonApiClient::Resource
       belongs_to :user, shallow_path: true
     end
@@ -476,7 +476,7 @@ end
 
 ##### Custom status handler
 
-You can change handling of response status using `connection_options`. For example you can override 400 status handling. 
+You can change handling of response status using `connection_options`. For example you can override 400 status handling.
 By default it raises `JsonApiClient::Errors::ClientError` but you can skip exception if you want to process errors from the server.
 You need to provide a `proc` which should call `throw(:handled)` default handler for this status should be skipped.
 ```ruby
@@ -634,6 +634,37 @@ class Order < JsonApiClient::Resource
   property :total_amount, type: :money
 end
 
+```
+
+### Safe singular resource fetching
+
+That is a bit curios, but `json_api_client` returns an array from `.find` method, always.
+The history of this fact was discussed [here](https://github.com/JsonApiClient/json_api_client/issues/75)
+
+So, when we searching for a single resource by primary key, we typically write the things like
+
+```ruby
+admin = User.find(id).first
+```
+
+The next thing which we need to notice - `json_api_client` will just interpolate the incoming `.find` param to the end of API URL, just like that:
+
+> http://somehost/api/v1/users/{id}
+
+What will happen if we pass the blank id (nil or empty string) to the `.find` method then?.. Yeah, `json_api_client` will try to call the INDEX API endpoint instead of SHOW one:
+
+> http://somehost/api/v1/users/
+
+Lets sum all together - in case if `id` comes blank (from CGI for instance), we can silently receive the `admin` variable equal to some existing resource, with all the consequences.
+
+Even worse, `admin` variable can equal to *random* resource, depends on ordering applied by INDEX endpoint.
+
+If you prefer to get `JsonApiClient::Errors::NotFound` raised, please define in your base Resource class:
+
+```ruby
+class Resource < JsonApiClient::Resource
+  self.raise_on_blank_find_param = true
+end
 ```
 
 ## Contributing

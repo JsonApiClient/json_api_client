@@ -36,6 +36,7 @@ module JsonApiClient
                     :keep_request_params,
                     :search_included_in_result_set,
                     :custom_type_to_class,
+                    :raise_on_blank_find_param,
                     instance_accessor: false
     class_attribute :add_defaults_to_changes,
                     instance_writer: false
@@ -54,6 +55,7 @@ module JsonApiClient
     self.add_defaults_to_changes = false
     self.search_included_in_result_set = false
     self.custom_type_to_class = {}
+    self.raise_on_blank_find_param = false
 
     #:underscored_key, :camelized_key, :dasherized_key, or custom
     self.json_key_format = :underscored_key
