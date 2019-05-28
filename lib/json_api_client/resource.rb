@@ -40,6 +40,11 @@ module JsonApiClient
                     instance_accessor: false
     class_attribute :add_defaults_to_changes,
                     instance_writer: false
+
+    class_attribute :_immutable,
+                    instance_writer: false,
+                    default: false
+
     self.primary_key          = :id
     self.parser               = Parsers::Parser
     self.paginator            = Paginating::Paginator
@@ -92,6 +97,18 @@ module JsonApiClient
       # @return [String] Resource path
       def type
         table_name
+      end
+
+      # Indicates whether this resource is mutable or immutable;
+      # by default, all resources are mutable.
+      #
+      # @return [Boolean]
+      def immutable(flag = true)
+        self._immutable = flag
+      end
+
+      def inherited(subclass)
+        subclass._immutable = false
       end
 
       # Specifies the relative path that should be used for this resource;
@@ -215,6 +232,11 @@ module JsonApiClient
       # @option [Symbol] :on One of [:collection or :member] to decide whether it's a collect or member method
       # @option [Symbol] :request_method The request method (:get, :post, etc)
       def custom_endpoint(name, options = {})
+        if _immutable
+          request_method = options.fetch(:request_method, :get).to_sym
+          raise JsonApiClient::Errors::ResourceImmutableError if request_method != :get
+        end
+
         if :collection == options.delete(:on)
           collection_endpoint(name, options)
         else
@@ -440,6 +462,7 @@ module JsonApiClient
     # @return [Boolean] Whether or not the save succeeded
     def save
       return false unless valid?
+      raise JsonApiClient::Errors::ResourceImmutableError if _immutable
 
       self.last_result_set = if persisted?
         self.class.requestor.update(self)
@@ -471,6 +494,8 @@ module JsonApiClient
     #
     # @return [Boolean] Whether or not the destroy succeeded
     def destroy
+      raise JsonApiClient::Errors::ResourceImmutableError if _immutable
+
       self.last_result_set = self.class.requestor.destroy(self)
       if last_result_set.has_errors?
         fill_errors
