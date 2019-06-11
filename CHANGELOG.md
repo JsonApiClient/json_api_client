@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.12.0
+
 - [#345](https://github.com/JsonApiClient/json_api_client/pull/345) - track the real HTTP reason of ApiErrors
 
 ## 1.11.0
