@@ -24,3 +24,10 @@ Gemfile.lock
 *.gemfile.lock
 
 /coverage
+
+# IntellJ/RubyMine
+*.iml
+.idea/
+
+# asdf config
+.tool-versions
