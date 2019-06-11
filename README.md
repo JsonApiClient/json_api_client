@@ -2,7 +2,7 @@
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
 
-*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
+*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/JsonApiClient/json_api_client/tree/0.x)*
 
 ## Usage
 
@@ -474,6 +474,14 @@ module MyApi
 end
 ```
 
+##### Server errors handling
+
+Non-success API response will cause the specific `JsonApiClient::Errors::SomeException` raised, depends on responded HTTP status.
+Please refer to [JsonApiClient::Middleware::Status#handle_status](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/middleware/status.rb)
+method for concrete status-to-exception mapping used out of the box.
+
+JsonApiClient will try determine is failed API response JsonApi-compatible, if so - JsonApi error messages will be parsed from response body, and tracked as a part of particular exception message. In additional, `JsonApiClient::Errors::ServerError` exception will keep the actual HTTP status and message within its message.
+
 ##### Custom status handler
 
 You can change handling of response status using `connection_options`. For example you can override 400 status handling.
@@ -569,7 +577,7 @@ end
 
 You can customize how your resources find pagination information from the response.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
 
 ```ruby
 JsonApiClient::Paginating::Paginator.page_param = "number"
@@ -578,7 +586,7 @@ JsonApiClient::Paginating::Paginator.per_page_param = "size"
 
 Please note that this is a global configuration, so library authors should create a custom paginator that inherits `JsonApiClient::Paginating::Paginator` and configure the custom paginator to avoid modifying global config.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
 
 ```ruby
 class MyPaginator
@@ -680,4 +688,4 @@ required. The commits will be squashed into master once accepted.
 
 ## Changelog
 
-See [changelog](https://github.com/chingor13/json_api_client/blob/master/CHANGELOG.md)
+See [changelog](https://github.com/JsonApiClient/json_api_client/blob/master/CHANGELOG.md)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#345](https://github.com/JsonApiClient/json_api_client/pull/345) - track the real HTTP reason of ApiErrors
+
 ## 1.11.0
 
 - [#344](https://github.com/JsonApiClient/json_api_client/pull/344) - introduce safe singular resource fetching with `raise_on_blank_find_param` resource setting
