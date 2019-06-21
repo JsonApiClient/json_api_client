@@ -4,20 +4,30 @@ module JsonApiClient
 
     def initialize(result_set, data)
       record_class = result_set.record_class
-      included_set = data.map do |datum|
-        type = datum["type"]
+      grouped_data = data.group_by{|datum| datum["type"]}
+      grouped_included_set = grouped_data.each_with_object({}) do |(type, records), h|
         klass = Utils.compute_type(record_class, record_class.key_formatter.unformat(type).singularize.classify)
-        params = klass.parser.parameters_from_resource(datum)
-        resource = klass.load(params)
-        resource.last_result_set = result_set
-        resource
+        h[type] = records.map do |record|
+          params = klass.parser.parameters_from_resource(record)
+          klass.load(params).tap do |resource|
+            resource.last_result_set = result_set
+          end
+        end
       end
 
-      included_set.concat(result_set) if record_class.search_included_in_result_set
-      @data = included_set.group_by(&:type).inject({}) do |h, (type, resources)|
-        h[type] = resources.index_by(&:id)
-        h
+      if record_class.search_included_in_result_set
+        # deep_merge overrides the nested Arrays o_O
+        # {a: [1,2]}.deep_merge(a: [3,4]) # => {a: [3,4]}
+        grouped_included_set.merge!(result_set.group_by(&:type)) do |_, resources1, resources2|
+          resources1 + resources2
+        end
       end
+
+      grouped_included_set.each do |type, resources|
+        grouped_included_set[type] = resources.index_by(&:id)
+      end
+
+      @data = grouped_included_set
     end
 
     def data_for(method_name, definition)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#349](https://github.com/JsonApiClient/json_api_client/pull/349) - fix resource including for STI objects
+
 ## 1.12.0
 
 - [#345](https://github.com/JsonApiClient/json_api_client/pull/345) - track the real HTTP reason of ApiErrors
