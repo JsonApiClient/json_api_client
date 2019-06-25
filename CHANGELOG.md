@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.12.2
+
 - [#350](https://github.com/JsonApiClient/json_api_client/pull/350) - fix resource including with blank `relationships` response data
 
 ## 1.12.1
