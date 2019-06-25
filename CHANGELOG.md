@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#350](https://github.com/JsonApiClient/json_api_client/pull/350) - fix resource including with blank `relationships` response data
+
 ## 1.12.1
 
 - [#349](https://github.com/JsonApiClient/json_api_client/pull/349) - fix resource including for STI objects

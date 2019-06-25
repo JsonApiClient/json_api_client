@@ -896,6 +896,28 @@ class AssociationTest < MiniTest::Test
     assert user.file.is_a?(DocumentFile)
   end
 
+  def test_include_with_blank_relationships
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                        }
+                    }
+                }
+            ],
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+    assert_nil user.file
+  end
+
   def test_load_include_from_dataset
     stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
         .to_return(
