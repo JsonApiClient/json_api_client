@@ -854,6 +854,70 @@ class AssociationTest < MiniTest::Test
     assert user.files.first.is_a?(DocumentFile)
   end
 
+  def test_get_with_type_attribute
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                            links: {
+                                self: 'http://example.com/document_users/1/relationships/file',
+                                related: 'http://example.com/document_users/1/file'
+                            },
+                            data: {
+                                id: '2',
+                                type: 'document--files'
+                            }
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '2',
+                    type: 'document--files',
+                    attributes: {
+                        type: 'STIDocumentFile',
+                        url: 'http://example.com/downloads/2.pdf'
+                    }
+                }
+            ]
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+
+    assert_equal 'STIDocumentFile', user.file.type
+    assert user.file.is_a?(DocumentFile)
+  end
+
+  def test_include_with_blank_relationships
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                        }
+                    }
+                }
+            ],
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+    assert_nil user.file
+  end
+
   def test_load_include_from_dataset
     stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
         .to_return(

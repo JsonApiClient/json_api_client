@@ -546,12 +546,10 @@ module JsonApiClient
         end
       end
 
-      url = relationship_definition["links"]["related"]
-      if relationship_definition["links"] && url
-        return association_for(name).data(url)
-      end
+      return unless links = relationship_definition["links"]
+      return unless url = links["related"]
 
-      nil
+      association_for(name).data(url)
     end
 
     def relation_objects_for(name, relationship_definition)
