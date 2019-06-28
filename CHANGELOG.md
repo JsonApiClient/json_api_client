@@ -4,6 +4,10 @@
 
 - [#351](https://github.com/JsonApiClient/json_api_client/pull/351) - Remove rudimental `last_result_set` relationship from serializer
 
+## 1.13.0
+
+- [#348](https://github.com/JsonApiClient/json_api_client/pull/348) - add NestedParamPaginator to address inconsistency in handling of pagination query string params (issue [#347](https://github.com/JsonApiClient/json_api_client/issues/347)).
+
 ## 1.12.2
 
 - [#350](https://github.com/JsonApiClient/json_api_client/pull/350) - fix resource including with blank `relationships` response data

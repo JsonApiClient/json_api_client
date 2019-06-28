@@ -146,7 +146,13 @@ module JsonApiClient
       end
 
       def pagination_params
-        @pagination_params.empty? ? {} : {page: @pagination_params}
+        if klass.paginator.ancestors.include?(Paginating::Paginator)
+          # Original Paginator inconsistently wraps pagination params here. Keeping
+          # default behavior for now so as not to break backward compatibility.
+          @pagination_params.empty? ? {} : {page: @pagination_params}
+        else
+          @pagination_params
+        end
       end
 
       def includes_params

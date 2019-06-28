@@ -599,6 +599,20 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
+### NestedParamPaginator
+
+The default `JsonApiClient::Paginating::Paginator` is not strict about how it handles the param keys ([#347](https://github.com/JsonApiClient/json_api_client/issues/347)). There is a second paginator that more rigorously adheres to the JSON:API pagination recommendation style of `page[page]=1&page[per_page]=10`.
+
+If this second style suits your needs better, it is available as a class override:
+
+```ruby
+class Order < JsonApiClient::Resource
+  self.paginator = JsonApiClient::Paginating::NestedParamPaginator
+end
+```
+
+You can also extend `NestedParamPaginator` in your custom paginators or assign the `page_param` or `per_page_param` as with the default version above.
+
 ### Custom type
 
 If your model must be named differently from classified type of resource you can easily customize it.
