@@ -601,9 +601,9 @@ end
 
 ### NestedParamPaginator
 
-The current default `JsonApiClient::Paginating::Paginator` is inconsistent in the way it handles pagination query string params. The JSON:API spec seems to favor a nested structure like `page[page]=1&page[per_page]=10`. However, the default paginator doesn't always return or enforce that nested structure. See issue [#347](https://github.com/JsonApiClient/json_api_client/issues/347) for more details.
+The default `JsonApiClient::Paginating::Paginator` is not strict about how it handles the param keys ([#347](https://github.com/JsonApiClient/json_api_client/issues/347)). There is a second paginator that more rigorously adheres to the JSON:API pagination recommendation style of `page[page]=1&page[per_page]=10`.
 
-If you'd like a more consistent pagination query string param behavior, assign the `JsonApiClient::Paginating::NestedParamPaginator` to your resource as a custom paginator, like so:
+If this second style suits your needs better, it is available as a class override:
 
 ```ruby
 class Order < JsonApiClient::Resource
