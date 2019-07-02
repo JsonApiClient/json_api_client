@@ -24,6 +24,8 @@
 
 ## 1.10.0
 
+- [#335](https://github.com/JsonApiClient/json_api_client/pull/335) - access to assigned relationship
+
 ## 1.9.0
 
 - [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
