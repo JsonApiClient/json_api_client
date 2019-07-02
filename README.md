@@ -2,7 +2,7 @@
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
 
-*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
+*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/JsonApiClient/json_api_client/tree/0.x)*
 
 ## Usage
 
@@ -52,14 +52,14 @@ u.update_attributes(
   c: "d"
 )
 
-u.persisted? 
+u.persisted?
 # => true
 
 u.destroy
 
-u.destroyed? 
+u.destroyed?
 # => true
-u.persisted? 
+u.persisted?
 # => false
 
 u = MyApi::Person.create(
@@ -164,7 +164,7 @@ module MyApi
   class Account < JsonApiClient::Resource
     belongs_to :user
   end
-  
+
   class Customer < JsonApiClient::Resource
       belongs_to :user, shallow_path: true
     end
@@ -474,9 +474,17 @@ module MyApi
 end
 ```
 
+##### Server errors handling
+
+Non-success API response will cause the specific `JsonApiClient::Errors::SomeException` raised, depends on responded HTTP status.
+Please refer to [JsonApiClient::Middleware::Status#handle_status](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/middleware/status.rb)
+method for concrete status-to-exception mapping used out of the box.
+
+JsonApiClient will try determine is failed API response JsonApi-compatible, if so - JsonApi error messages will be parsed from response body, and tracked as a part of particular exception message. In additional, `JsonApiClient::Errors::ServerError` exception will keep the actual HTTP status and message within its message.
+
 ##### Custom status handler
 
-You can change handling of response status using `connection_options`. For example you can override 400 status handling. 
+You can change handling of response status using `connection_options`. For example you can override 400 status handling.
 By default it raises `JsonApiClient::Errors::ClientError` but you can skip exception if you want to process errors from the server.
 You need to provide a `proc` which should call `throw(:handled)` default handler for this status should be skipped.
 ```ruby
@@ -569,7 +577,7 @@ end
 
 You can customize how your resources find pagination information from the response.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
 
 ```ruby
 JsonApiClient::Paginating::Paginator.page_param = "number"
@@ -578,7 +586,7 @@ JsonApiClient::Paginating::Paginator.per_page_param = "size"
 
 Please note that this is a global configuration, so library authors should create a custom paginator that inherits `JsonApiClient::Paginating::Paginator` and configure the custom paginator to avoid modifying global config.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
 
 ```ruby
 class MyPaginator
@@ -590,6 +598,20 @@ class MyApi::Base < JsonApiClient::Resource
   self.paginator = MyPaginator
 end
 ```
+
+### NestedParamPaginator
+
+The default `JsonApiClient::Paginating::Paginator` is not strict about how it handles the param keys ([#347](https://github.com/JsonApiClient/json_api_client/issues/347)). There is a second paginator that more rigorously adheres to the JSON:API pagination recommendation style of `page[page]=1&page[per_page]=10`.
+
+If this second style suits your needs better, it is available as a class override:
+
+```ruby
+class Order < JsonApiClient::Resource
+  self.paginator = JsonApiClient::Paginating::NestedParamPaginator
+end
+```
+
+You can also extend `NestedParamPaginator` in your custom paginators or assign the `page_param` or `per_page_param` as with the default version above.
 
 ### Custom type
 
@@ -636,6 +658,37 @@ end
 
 ```
 
+### Safe singular resource fetching
+
+That is a bit curios, but `json_api_client` returns an array from `.find` method, always.
+The history of this fact was discussed [here](https://github.com/JsonApiClient/json_api_client/issues/75)
+
+So, when we searching for a single resource by primary key, we typically write the things like
+
+```ruby
+admin = User.find(id).first
+```
+
+The next thing which we need to notice - `json_api_client` will just interpolate the incoming `.find` param to the end of API URL, just like that:
+
+> http://somehost/api/v1/users/{id}
+
+What will happen if we pass the blank id (nil or empty string) to the `.find` method then?.. Yeah, `json_api_client` will try to call the INDEX API endpoint instead of SHOW one:
+
+> http://somehost/api/v1/users/
+
+Lets sum all together - in case if `id` comes blank (from CGI for instance), we can silently receive the `admin` variable equal to some existing resource, with all the consequences.
+
+Even worse, `admin` variable can equal to *random* resource, depends on ordering applied by INDEX endpoint.
+
+If you prefer to get `JsonApiClient::Errors::NotFound` raised, please define in your base Resource class:
+
+```ruby
+class Resource < JsonApiClient::Resource
+  self.raise_on_blank_find_param = true
+end
+```
+
 ## Contributing
 
 Contributions are welcome! Please fork this repo and send a pull request. Your pull request should have:
@@ -649,4 +702,4 @@ required. The commits will be squashed into master once accepted.
 
 ## Changelog
 
-See [changelog](https://github.com/chingor13/json_api_client/blob/master/CHANGELOG.md)
+See [changelog](https://github.com/JsonApiClient/json_api_client/blob/master/CHANGELOG.md)

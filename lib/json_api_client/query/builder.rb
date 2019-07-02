@@ -86,11 +86,15 @@ module JsonApiClient
       end
 
       def to_a
-        @to_a ||= find
+        @to_a ||= _fetch
       end
       alias all to_a
 
       def find(args = {})
+        if klass.raise_on_blank_find_param && args.blank?
+          raise Errors::NotFound, 'blank .find param'
+        end
+
         case args
         when Hash
           scope = where(args)
@@ -98,11 +102,17 @@ module JsonApiClient
           scope = _new_scope( primary_key: args )
         end
 
-        klass.requestor.get(scope.params)
+        scope._fetch
       end
 
       def method_missing(method_name, *args, &block)
         to_a.send(method_name, *args, &block)
+      end
+
+      protected
+
+      def _fetch
+        klass.requestor.get(params)
       end
 
       private
@@ -136,7 +146,13 @@ module JsonApiClient
       end
 
       def pagination_params
-        @pagination_params.empty? ? {} : {page: @pagination_params}
+        if klass.paginator.ancestors.include?(Paginating::Paginator)
+          # Original Paginator inconsistently wraps pagination params here. Keeping
+          # default behavior for now so as not to break backward compatibility.
+          @pagination_params.empty? ? {} : {page: @pagination_params}
+        else
+          @pagination_params
+        end
       end
 
       def includes_params

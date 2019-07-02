@@ -11,7 +11,7 @@ class StatusTest < MiniTest::Test
         }
       }.to_json)
 
-    assert_raises JsonApiClient::Errors::ServerError do
+    assert_raises JsonApiClient::Errors::InternalServerError do
       User.find(1)
     end
   end
@@ -24,7 +24,7 @@ class StatusTest < MiniTest::Test
       status: 500,
       body: "something irrelevant")
 
-    assert_raises JsonApiClient::Errors::ServerError do
+    assert_raises JsonApiClient::Errors::InternalServerError do
       User.find(1)
     end
   end

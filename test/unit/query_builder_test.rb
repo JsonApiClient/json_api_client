@@ -257,6 +257,39 @@ class QueryBuilderTest < MiniTest::Test
     assert_requested find_stub, times: 1
   end
 
+  def test_find_with_blank_args
+    blank_params = [nil, '', {}]
+
+    with_altered_config(Article, :raise_on_blank_find_param => true) do
+      blank_params.each do |blank_param|
+        assert_raises JsonApiClient::Errors::NotFound do
+          Article.find(blank_param)
+        end
+      end
+    end
+
+    # `.find('')` hits the INDEX URL with trailing slash, the others without one..
+    collection_stub = stub_request(:get, %r{\Ahttp://example.com/articles/?\z})
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+    blank_params.each do |blank_param|
+      Article.find(blank_param)
+    end
+
+    assert_requested collection_stub, times: 3
+  end
+
+  def test_all_on_blank_raising_resource
+    with_altered_config(Article, :raise_on_blank_find_param => true) do
+      all_stub = stub_request(:get, "http://example.com/articles")
+          .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
+
+      Article.all
+
+      assert_requested all_stub, times: 1
+    end
+  end
+
   def test_build_does_not_propagate_values
     query = Article.where(name: 'John').
         includes(:author).

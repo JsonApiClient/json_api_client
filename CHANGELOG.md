@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 1.13.0
+
+- [#348](https://github.com/JsonApiClient/json_api_client/pull/348) - add NestedParamPaginator to address inconsistency in handling of pagination query string params (issue [#347](https://github.com/JsonApiClient/json_api_client/issues/347)).
+
+## 1.12.2
+
+- [#350](https://github.com/JsonApiClient/json_api_client/pull/350) - fix resource including with blank `relationships` response data
+
+## 1.12.1
+
+- [#349](https://github.com/JsonApiClient/json_api_client/pull/349) - fix resource including for STI objects
+
+## 1.12.0
+
+- [#345](https://github.com/JsonApiClient/json_api_client/pull/345) - track the real HTTP reason of ApiErrors
+
+## 1.11.0
+
+- [#344](https://github.com/JsonApiClient/json_api_client/pull/344) - introduce safe singular resource fetching with `raise_on_blank_find_param` resource setting
+
 ## 1.10.0
 
 - [#335](https://github.com/JsonApiClient/json_api_client/pull/335) - access to assigned relationship
@@ -31,7 +51,7 @@
   * fix relationships passing to `new` and `create` methods
   * fix false positive tests on create
   * refactor tests on create/update to prevent false same positive tests in future
-  
+
 - [#315](https://github.com/JsonApiClient/json_api_client/pull/315) - add shallow_path feature to belongs_to
  * add `shallow_path` options to belongs_to to use model w/ and w/o nesting in parent resource
 

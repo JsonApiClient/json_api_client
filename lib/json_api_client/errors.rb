@@ -1,10 +1,31 @@
+require 'rack'
+
 module JsonApiClient
   module Errors
     class ApiError < StandardError
       attr_reader :env
+
       def initialize(env, msg = nil)
-        super msg
         @env = env
+        # Try to fetch json_api errors from response
+        msg = track_json_api_errors(msg)
+
+        super msg
+      end
+
+      private
+
+      # Try to fetch json_api errors from response
+      def track_json_api_errors(msg)
+        return msg unless env.try(:body).kind_of?(Hash) || env.body.key?('errors')
+
+        errors_msg = env.body['errors'].map { |e| e['title'] }.compact.join('; ').presence
+        return msg unless errors_msg
+
+        msg.nil? ? errors_msg : "#{msg} (#{errors_msg})"
+        # Just to be sure that it is back compatible
+      rescue StandardError
+        msg
       end
     end
 
@@ -21,7 +42,13 @@ module JsonApiClient
     end
 
     class ServerError < ApiError
-      def initialize(env, msg = 'Internal server error')
+      def initialize(env, msg = nil)
+        msg ||= begin
+          status = env.status
+          message = ::Rack::Utils::HTTP_STATUS_CODES[status]
+          "#{status} #{message}"
+        end
+
         super env, msg
       end
     end
@@ -36,10 +63,13 @@ module JsonApiClient
       attr_reader :uri
       def initialize(uri)
         @uri = uri
+
+        msg = "Couldn't find resource at: #{uri.to_s}"
+        super nil, msg
       end
-      def message
-        "Couldn't find resource at: #{uri.to_s}"
-      end
+    end
+
+    class InternalServerError < ServerError
     end
 
     class UnexpectedStatus < ServerError
@@ -47,9 +77,9 @@ module JsonApiClient
       def initialize(code, uri)
         @code = code
         @uri = uri
-      end
-      def message
-        "Unexpected response status: #{code} from: #{uri.to_s}"
+
+        msg = "Unexpected response status: #{code} from: #{uri.to_s}"
+        super nil, msg
       end
     end
   end

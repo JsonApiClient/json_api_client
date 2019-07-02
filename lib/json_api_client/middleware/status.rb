@@ -44,7 +44,9 @@ module JsonApiClient
           # Allow to proceed as resource errors will be populated
         when 400..499
           raise Errors::ClientError, env
-        when 500..599
+        when 500
+          raise Errors::InternalServerError, env
+        when 501..599
           raise Errors::ServerError, env
         else
           raise Errors::UnexpectedStatus.new(code, env[:url])
