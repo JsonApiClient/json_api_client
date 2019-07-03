@@ -52,6 +52,29 @@ class SerializingTest < MiniTest::Test
     assert_equal expected, resource.first.as_json
   end
 
+  def test_as_json_involving_last_result_set
+    expected = {
+      'type' => 'articles',
+      'id' => '1',
+      'attributes' => {
+        'title' => 'Rails is Omakase'
+      }
+    }
+    stub_request(:post, "http://example.com/articles")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [{
+          type: "articles",
+          id: "1",
+          attributes: {
+            title: "Rails is Omakase"
+          }
+        }]
+      }.to_json)
+
+    resource = Article.create
+    assert_equal expected, resource.as_json
+  end
+
   def test_as_json_api
     expected = {
       'type' => 'articles',

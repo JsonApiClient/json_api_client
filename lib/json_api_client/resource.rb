@@ -458,7 +458,6 @@ module JsonApiClient
           self.attributes = updated.attributes
           self.links.attributes = updated.links.attributes
           self.relationships.attributes = updated.relationships.attributes
-          self.relationships.last_result_set = last_result_set
           clear_changes_information
           self.relationships.clear_changes_information
           _clear_cached_relationships
@@ -477,7 +476,6 @@ module JsonApiClient
         false
       else
         mark_as_destroyed!
-        self.relationships.last_result_set = nil
         _clear_cached_relationships
         _clear_belongs_to_params
         true

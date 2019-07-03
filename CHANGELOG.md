@@ -3,6 +3,7 @@
 ## Unreleased
 
 - [#338](https://github.com/JsonApiClient/json_api_client/pull/338) - implement hash and eql? for builder class
+- [#351](https://github.com/JsonApiClient/json_api_client/pull/351) - Remove rudimental `last_result_set` relationship from serializer
 
 ## 1.13.0
 
