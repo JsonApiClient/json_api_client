@@ -36,9 +36,7 @@ module JsonApiClient
 
       if data.is_a?(Array)
         # has_many link
-        data.map do |link_def|
-          record_for(link_def)
-        end
+        data.map(&method(:record_for)).compact
       else
         # has_one link
         record_for(data)
@@ -53,7 +51,8 @@ module JsonApiClient
 
     # should return a resource record of some type for this linked document
     def record_for(link_def)
-      data[link_def["type"]][link_def["id"]]
+      record = data[link_def["type"]]
+      record[link_def["id"]] if record
     end
   end
 end
