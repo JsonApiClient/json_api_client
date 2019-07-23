@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.14.1
+
 - [#353](https://github.com/JsonApiClient/json_api_client/pull/353) - fix to support deserializing resources with relationships without those related resources being included in the response (issue [#352](https://github.com/JsonApiClient/json_api_client/issues/352)).
 
 ## 1.14.0
