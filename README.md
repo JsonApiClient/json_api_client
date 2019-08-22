@@ -166,8 +166,8 @@ module MyApi
   end
 
   class Customer < JsonApiClient::Resource
-      belongs_to :user, shallow_path: true
-    end
+    belongs_to :user, shallow_path: true
+  end
 end
 
 # try to find without the nested parameter
