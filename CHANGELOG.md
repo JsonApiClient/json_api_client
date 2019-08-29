@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.15.0
+
+- [#346](https://github.com/JsonApiClient/json_api_client/pull/346) - add the option to have immutable resources
 - [#357](https://github.com/JsonApiClient/json_api_client/pull/357) - fix missing constant formatter
 
 ## 1.14.1
