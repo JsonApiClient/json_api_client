@@ -32,6 +32,12 @@ module JsonApiClient
     class ClientError < ApiError
     end
 
+    class ResourceImmutableError < StandardError
+      def initialize(msg = 'Resource immutable')
+        super msg
+      end
+    end
+
     class AccessDenied < ClientError
     end
 

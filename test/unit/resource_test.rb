@@ -95,4 +95,14 @@ class ResourceTest < MiniTest::Test
     assert_equal(article.type, 'Story')
   end
 
+  def test_immutable
+    Article.immutable(true)
+    article = Article.new(type: 'Story')
+    assert_raises JsonApiClient::Errors::ResourceImmutableError do
+      article.save
+    end
+  ensure
+    Article.immutable(false)
+  end
+
 end
