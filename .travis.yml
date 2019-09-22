@@ -48,6 +48,12 @@ matrix:
       gemfile: gemfiles/4.1.gemfile
     - rvm: 2.6.0
       gemfile: gemfiles/4.2.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/4.0.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/4.1.gemfile
+    - rvm: ruby-head
+      gemfile: gemfiles/4.2.gemfile
 # We need to install latest version of bundler, because one in travis
 # image is too old to recognize platform => :mri_22 in Gemfile.
 before_install:
