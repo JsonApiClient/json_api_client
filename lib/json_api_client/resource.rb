@@ -109,6 +109,7 @@ module JsonApiClient
 
       def inherited(subclass)
         subclass._immutable = false
+        super
       end
 
       # Specifies the relative path that should be used for this resource;
