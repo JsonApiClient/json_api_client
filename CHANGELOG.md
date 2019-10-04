@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.16.1
+
 - [#361](https://github.com/JsonApiClient/json_api_client/pull/361) - Call super from inherited method so that it will execute parent classes' implementations
 
 ## 1.16.0
