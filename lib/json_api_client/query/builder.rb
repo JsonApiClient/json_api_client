@@ -141,7 +141,9 @@ module JsonApiClient
              filters:           @filters.merge( opts.fetch( :filters, {} ) ),
              includes:          @includes + opts.fetch( :includes, [] ),
              orders:            @orders + opts.fetch( :orders, [] ),
-             fields:            @fields + opts.fetch( :fields, [] ) )
+             fields:            @fields + opts.fetch( :fields, [] ),
+             requestor:         @requestor
+            )
       end
 
       def path_params
