@@ -77,4 +77,26 @@ class FindingTest < MiniTest::Test
     assert_equal ["2", "3"], articles.map(&:id)
   end
 
+  def test_find_by_id_with_custom_type
+    stub_request(:get, "http://example.com/document--files/1")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: {
+                type: "document--files",
+                id: "1",
+                attributes: {
+                    url: 'http://example.com/downloads/1.pdf'
+                }
+            }
+        }.to_json)
+
+    articles = DocumentFile.find(1)
+
+    assert articles.is_a?(JsonApiClient::ResultSet)
+    assert_equal 1, articles.length
+
+    article = articles.first
+    assert_equal '1', article.id
+    assert_equal 'http://example.com/downloads/1.pdf', article.url
+  end
+
 end

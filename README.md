@@ -1,8 +1,8 @@
-# JsonApiClient [![Build Status](https://travis-ci.org/chingor13/json_api_client.png)](https://travis-ci.org/chingor13/json_api_client) [![Code Climate](https://codeclimate.com/github/chingor13/json_api_client.png)](https://codeclimate.com/github/chingor13/json_api_client) [![Code Coverage](https://codeclimate.com/github/chingor13/json_api_client/coverage.png)](https://codeclimate.com/github/chingor13/json_api_client)
+# JsonApiClient [![Build Status](https://travis-ci.org/JsonApiClient/json_api_client.png)](https://travis-ci.org/JsonApiClient/json_api_client) [![Code Climate](https://codeclimate.com/github/JsonApiClient/json_api_client.png)](https://codeclimate.com/github/JsonApiClient/json_api_client) [![Code Coverage](https://codeclimate.com/github/JsonApiClient/json_api_client/coverage.png)](https://codeclimate.com/github/JsonApiClient/json_api_client)
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
 
-*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/chingor13/json_api_client/tree/0.x)*
+*Note: master is currently tracking the 1.0.0 specification. If you're looking for the older code, see [0.x branch](https://github.com/JsonApiClient/json_api_client/tree/0.x)*
 
 ## Usage
 
@@ -39,13 +39,28 @@ MyApi::Article.where(author_id: 1).all
 MyApi::Person.where(name: "foo").order(created_at: :desc).includes(:preferences, :cars).all
 
 u = MyApi::Person.new(first_name: "bar", last_name: "foo")
+u.new_record?
+# => true
 u.save
+
+u.new_record?
+# => false
 
 u = MyApi::Person.find(1).first
 u.update_attributes(
   a: "b",
   c: "d"
 )
+
+u.persisted?
+# => true
+
+u.destroy
+
+u.destroyed?
+# => true
+u.persisted?
+# => false
 
 u = MyApi::Person.create(
   a: "b",
@@ -142,12 +157,16 @@ articles.links.related
 
 You can force nested resource paths for your models by using a `belongs_to` association.
 
-**Note: Using belongs_to is only necessary for setting a nested path.**
+**Note: Using belongs_to is only necessary for setting a nested path unless you provide `shallow_path: true` option.**
 
 ```ruby
 module MyApi
   class Account < JsonApiClient::Resource
     belongs_to :user
+  end
+
+  class Customer < JsonApiClient::Resource
+    belongs_to :user, shallow_path: true
   end
 end
 
@@ -157,6 +176,28 @@ MyApi::Account.find(1)
 
 # makes request to /users/2/accounts/1
 MyApi::Account.where(user_id: 2).find(1)
+# => returns ResultSet
+
+# makes request to /customers/1
+MyApi::Customer.find(1)
+# => returns ResultSet
+
+# makes request to /users/2/customers/1
+MyApi::Customer.where(user_id: 2).find(1)
+# => returns ResultSet
+```
+
+you can also override param name for `belongs_to` association
+
+```ruby
+module MyApi
+  class Account < JsonApiClient::Resource
+    belongs_to :user, param: :customer_id
+  end
+end
+
+# makes request to /users/2/accounts/1
+MyApi::Account.where(customer_id: 2).find(1)
 # => returns ResultSet
 ```
 
@@ -399,7 +440,7 @@ class NullConnection
   def initialize(*args)
   end
 
-  def run(request_method, path, params = {}, headers = {})
+  def run(request_method, path, params: nil, headers: {}, body: nil)
   end
 
   def use(*args); end
@@ -431,6 +472,52 @@ module MyApi
     # will use the customized connection
   end
 end
+```
+
+##### Server errors handling
+
+Non-success API response will cause the specific `JsonApiClient::Errors::SomeException` raised, depends on responded HTTP status.
+Please refer to [JsonApiClient::Middleware::Status#handle_status](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/middleware/status.rb)
+method for concrete status-to-exception mapping used out of the box.
+
+JsonApiClient will try determine is failed API response JsonApi-compatible, if so - JsonApi error messages will be parsed from response body, and tracked as a part of particular exception message. In additional, `JsonApiClient::Errors::ServerError` exception will keep the actual HTTP status and message within its message.
+
+##### Custom status handler
+
+You can change handling of response status using `connection_options`. For example you can override 400 status handling.
+By default it raises `JsonApiClient::Errors::ClientError` but you can skip exception if you want to process errors from the server.
+You need to provide a `proc` which should call `throw(:handled)` default handler for this status should be skipped.
+```ruby
+class ApiBadRequestHandler
+  def self.call(_env)
+    # do not raise exception
+  end
+end
+
+class CustomUnauthorizedError < StandardError
+  attr_reader :env
+
+  def initialize(env)
+    @env = env
+    super('not authorized')
+  end
+end
+
+MyApi::Base.connection_options[:status_handlers] = {
+    400 => ApiBadRequestHandler,
+    401 => ->(env) { raise CustomUnauthorizedError, env }
+}
+
+module MyApi
+  class User < Base
+    # will use the customized status_handlers
+  end
+end
+
+user = MyApi::User.create(name: 'foo')
+# server responds with { errors: [ { detail: 'bad request' } ] }
+user.errors.messages # { base: ['bad request'] }
+# on 401 it will raise CustomUnauthorizedError instead of JsonApiClient::Errors::NotAuthorized
 ```
 
 ##### Specifying an HTTP Proxy
@@ -490,16 +577,16 @@ end
 
 You can customize how your resources find pagination information from the response.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) fits your requirements but you don't use the default `page` and `per_page` params for pagination, you can customise the param keys as follows:
 
 ```ruby
-JsonApiClient::Paginating::Paginator.page_param = "page[number]"
-JsonApiClient::Paginating::Paginator.per_page_param = "page[size]"
+JsonApiClient::Paginating::Paginator.page_param = "number"
+JsonApiClient::Paginating::Paginator.per_page_param = "size"
 ```
 
 Please note that this is a global configuration, so library authors should create a custom paginator that inherits `JsonApiClient::Paginating::Paginator` and configure the custom paginator to avoid modifying global config.
 
-If the [existing paginator](https://github.com/chingor13/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
+If the [existing paginator](https://github.com/JsonApiClient/json_api_client/blob/master/lib/json_api_client/paginating/paginator.rb) does not fit your needs, you can create a custom paginator:
 
 ```ruby
 class MyPaginator
@@ -512,6 +599,36 @@ class MyApi::Base < JsonApiClient::Resource
 end
 ```
 
+### NestedParamPaginator
+
+The default `JsonApiClient::Paginating::Paginator` is not strict about how it handles the param keys ([#347](https://github.com/JsonApiClient/json_api_client/issues/347)). There is a second paginator that more rigorously adheres to the JSON:API pagination recommendation style of `page[page]=1&page[per_page]=10`.
+
+If this second style suits your needs better, it is available as a class override:
+
+```ruby
+class Order < JsonApiClient::Resource
+  self.paginator = JsonApiClient::Paginating::NestedParamPaginator
+end
+```
+
+You can also extend `NestedParamPaginator` in your custom paginators or assign the `page_param` or `per_page_param` as with the default version above.
+
+### Custom type
+
+If your model must be named differently from classified type of resource you can easily customize it.
+It will work both for defined and not defined relationships
+
+```ruby
+class MyApi::Base < JsonApiClient::Resource
+  resolve_custom_type 'document--files', 'File'
+end
+
+class MyApi::File < MyApi::Base
+  def self.resource_name
+    'document--files'
+  end
+end
+```
 
 ### Type Casting
 
@@ -541,6 +658,37 @@ end
 
 ```
 
+### Safe singular resource fetching
+
+That is a bit curios, but `json_api_client` returns an array from `.find` method, always.
+The history of this fact was discussed [here](https://github.com/JsonApiClient/json_api_client/issues/75)
+
+So, when we searching for a single resource by primary key, we typically write the things like
+
+```ruby
+admin = User.find(id).first
+```
+
+The next thing which we need to notice - `json_api_client` will just interpolate the incoming `.find` param to the end of API URL, just like that:
+
+> http://somehost/api/v1/users/{id}
+
+What will happen if we pass the blank id (nil or empty string) to the `.find` method then?.. Yeah, `json_api_client` will try to call the INDEX API endpoint instead of SHOW one:
+
+> http://somehost/api/v1/users/
+
+Lets sum all together - in case if `id` comes blank (from CGI for instance), we can silently receive the `admin` variable equal to some existing resource, with all the consequences.
+
+Even worse, `admin` variable can equal to *random* resource, depends on ordering applied by INDEX endpoint.
+
+If you prefer to get `JsonApiClient::Errors::NotFound` raised, please define in your base Resource class:
+
+```ruby
+class Resource < JsonApiClient::Resource
+  self.raise_on_blank_find_param = true
+end
+```
+
 ## Contributing
 
 Contributions are welcome! Please fork this repo and send a pull request. Your pull request should have:
@@ -554,4 +702,4 @@ required. The commits will be squashed into master once accepted.
 
 ## Changelog
 
-See [changelog](https://github.com/chingor13/json_api_client/blob/master/CHANGELOG.md)
+See [changelog](https://github.com/JsonApiClient/json_api_client/blob/master/CHANGELOG.md)

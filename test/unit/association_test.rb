@@ -13,6 +13,10 @@ class Specified < TestResource
   has_many :bars, class_name: "Owner"
 end
 
+class Shallowed < TestResource
+  belongs_to :foo, class_name: "Property", shallow_path: true
+end
+
 class PrefixedOwner < TestResource
   has_many :prefixed_properties
 end
@@ -46,16 +50,125 @@ end
 
 class MultiWordChild < Formatted
   belongs_to :multi_word_parent
+  self.read_only_attributes = read_only_attributes + [:multi_word_parent_id]
+
+  def self.key_formatter
+    JsonApiClient::DasherizedKeyFormatter
+  end
+
+  def self.route_formatter
+    JsonApiClient::UnderscoredKeyFormatter
+  end
+end
+
+class Account < TestResource
+  property :name
+  property :is_active, default: true
+  property :balance
+end
+
+class UserAccount < TestResource
+  self.add_defaults_to_changes = true
+  property :name
+  property :is_active, default: true
+  property :balance
+end
+
+class Employee < TestResource
+  has_one :chief, klass: 'Employee'
 end
 
 class AssociationTest < MiniTest::Test
+  def test_default_properties_no_changes
+    stub_request(:post, 'http://example.com/accounts').
+        with(headers: { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json' }, body: {
+            data: {
+                type: 'accounts',
+                attributes: {
+                    name: 'foo'
+                }
+            }
+        }.to_json)
+        .to_return(headers: { content_type: 'application/vnd.api+json' }, body: {
+            data: {
+                id: '1',
+                type: 'accounts',
+                attributes: {
+                    name: 'foo',
+                    is_active: false,
+                    balance: '0.0'
+                }
+            }
+        }.to_json)
+    record = Account.new(name: 'foo')
+    assert record.save
+    assert_equal(false, record.is_active)
+    assert_equal('0.0', record.balance)
+  end
+
+  def test_default_properties_changes
+    stub_request(:post, 'http://example.com/user_accounts').
+        with(headers: { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json' }, body: {
+            data: {
+                type: 'user_accounts',
+                attributes: {
+                    name: 'foo',
+                    is_active: true
+                }
+            }
+        }.to_json)
+        .to_return(headers: { content_type: 'application/vnd.api+json' }, body: {
+            data: {
+                id: '1',
+                type: 'user_accounts',
+                attributes: {
+                    name: 'foo',
+                    is_active: true,
+                    balance: '0.0'
+                }
+            }
+        }.to_json)
+    record = UserAccount.new(name: 'foo')
+    assert record.save
+    assert_equal(true, record.is_active)
+    assert_equal('0.0', record.balance)
+  end
+
   def test_belongs_to_urls_are_formatted
-    request = stub_request(:get, "http://example.com/multi-word-parents/1/multi-word-children")
+    request = stub_request(:get, "http://example.com/multi_word_parents/1/multi_word_children")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: { data: [] }.to_json)
 
     MultiWordChild.where(multi_word_parent_id: 1).to_a
 
     assert_requested(request)
+  end
+
+  def test_belongs_to_urls_create_record
+    stub_request(:post, 'http://example.com/multi_word_parents/1/multi_word_children').
+        with(headers: { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json' }, body: {
+            data: {
+                type: 'multi_word_children',
+                attributes: {
+                    foo: 'bar',
+                    'multi-word-field': true
+                }
+            }
+        }.to_json)
+        .to_return(headers: { content_type: 'application/vnd.api+json' }, body: {
+            data: {
+                    id: '2',
+                    type: 'multi_word_children',
+                    attributes: {
+                        foo: 'bar',
+                        'multi-word-field': true
+                    }
+                }
+        }.to_json)
+
+    record = MultiWordChild.new(multi_word_parent_id: 1, foo: 'bar', multi_word_field: true)
+    result = record.save
+    assert result
+    assert_equal('2', record.id)
   end
 
   def test_load_has_one
@@ -528,6 +641,14 @@ class AssociationTest < MiniTest::Test
     assert_equal("foos/%D0%99%D0%A6%D0%A3%D0%9A%D0%95%D0%9D/specifieds", Specified.path({foo_id: 'ЙЦУКЕН'}))
   end
 
+  def test_belongs_to_shallowed_path
+    assert_equal([:foo_id], Shallowed.prefix_params)
+    assert_equal "shalloweds", Shallowed.path({})
+    assert_equal("foos/%{foo_id}/shalloweds", Shallowed.path)
+    assert_equal("foos/1/shalloweds", Shallowed.path({foo_id: 1}))
+    assert_equal("foos/%D0%99%D0%A6%D0%A3%D0%9A%D0%95%D0%9D/shalloweds", Shallowed.path({foo_id: 'ЙЦУКЕН'}))
+  end
+
   def test_find_belongs_to
     stub_request(:get, "http://example.com/foos/1/specifieds")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
@@ -538,6 +659,30 @@ class AssociationTest < MiniTest::Test
 
     specifieds = Specified.where(foo_id: 1).all
     assert_equal(1, specifieds.length)
+  end
+
+  def test_find_belongs_to_shallowed
+    stub_request(:get, "http://example.com/foos/1/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                { id: 1, type: "shalloweds", attributes: { name: "nested" } }
+            ]
+        }.to_json)
+
+    stub_request(:get, "http://example.com/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                { id: 1, type: "shalloweds", attributes: { name: "global" } }
+            ]
+        }.to_json)
+
+    nested_records = Shallowed.where(foo_id: 1).all
+    assert_equal(1, nested_records.length)
+    assert_equal("nested", nested_records.first.name)
+
+    global_records = Shallowed.all
+    assert_equal(1, global_records.length)
+    assert_equal("global", global_records.first.name)
   end
 
   def test_can_handle_creating
@@ -553,6 +698,28 @@ class AssociationTest < MiniTest::Test
       :foo_id => 10,
       :name => "Blah"
     })
+  end
+
+  def test_can_handle_creating_shallowed
+    stub_request(:post, "http://example.com/foos/10/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: { id: 12, type: "shalloweds", attributes: { name: "nested" } }
+        }.to_json)
+
+    stub_request(:post, "http://example.com/shalloweds")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: { id: 13, type: "shalloweds", attributes: { name: "global" } }
+        }.to_json)
+
+    Shallowed.create({
+                         :id => 12,
+                         :foo_id => 10,
+                         :name => "nested"
+                     })
+    Shallowed.create({
+                         :id => 13,
+                         :name => "global"
+                     })
   end
 
   def test_find_belongs_to_params_unchanged
@@ -588,6 +755,270 @@ class AssociationTest < MiniTest::Test
       }.to_json)
 
     Specified.create(foo_id: 1)
+  end
+
+  def test_nested_create_from_scope
+    stub_request(:post, "http://example.com/foos/1/specifieds")
+        .to_return(headers: {
+            content_type: "application/vnd.api+json"
+        }, body: {
+            data: {
+                id: 1,
+                name: "Jeff Ching",
+                bars: [{id: 1, attributes: {address: "123 Main St."}}]
+            }
+        }.to_json)
+
+    Specified.where(foo_id: 1).create
+  end
+
+  def test_get_with_relationship_for_model_with_custom_type
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                            links: {
+                                self: 'http://example.com/document_users/1/relationships/file',
+                                related: 'http://example.com/document_users/1/file'
+                            },
+                            data: {
+                                id: '2',
+                                type: 'document--files'
+                            }
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '2',
+                    type: 'document--files',
+                    attributes: {
+                        url: 'http://example.com/downloads/2.pdf'
+                    }
+                }
+            ]
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+
+    assert_equal 'document--files', user.file.type
+    assert user.file.is_a?(DocumentFile)
+  end
+
+  def test_get_with_defined_relationship_for_model_with_custom_type
+    stub_request(:get, "http://example.com/document_stores/1?include=files")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_stores',
+                    attributes: {
+                        name: 'store #1'
+                    },
+                    relationships: {
+                        files: {
+                            links: {
+                                self: 'http://example.com/document_stores/1/relationships/files',
+                                related: 'http://example.com/document_stores/1/files'
+                            },
+                            data: [
+                                {
+                                    id: '2',
+                                    type: 'document--files'
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '2',
+                    type: 'document--files',
+                    attributes: {
+                        url: 'http://example.com/downloads/2.pdf'
+                    }
+                }
+            ]
+        }.to_json)
+
+    user = DocumentStore.includes('files').find(1).first
+
+    assert_equal 1, user.files.size
+    assert_equal 'document--files', user.files.first.type
+    assert user.files.first.is_a?(DocumentFile)
+  end
+
+  def test_get_with_type_attribute
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                            links: {
+                                self: 'http://example.com/document_users/1/relationships/file',
+                                related: 'http://example.com/document_users/1/file'
+                            },
+                            data: {
+                                id: '2',
+                                type: 'document--files'
+                            }
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '2',
+                    type: 'document--files',
+                    attributes: {
+                        type: 'STIDocumentFile',
+                        url: 'http://example.com/downloads/2.pdf'
+                    }
+                }
+            ]
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+
+    assert_equal 'STIDocumentFile', user.file.type
+    assert user.file.is_a?(DocumentFile)
+  end
+
+  def test_include_with_blank_relationships
+    stub_request(:get, "http://example.com/document_users/1?include=file")
+        .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'document_users',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        file: {
+                        }
+                    }
+                }
+            ],
+        }.to_json)
+
+    user = DocumentUser.includes('file').find(1).first
+    assert_nil user.file
+  end
+
+  def test_load_include_from_dataset
+    stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
+        .to_return(
+            headers: {
+                content_type: 'application/vnd.api+json'
+            }, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'employees',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '2', type: 'employees'}
+                        }
+                    }
+                },
+                {
+                    id: '2',
+                    attributes: {
+                        name: 'Jane Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '3', type: 'employees'}
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '3',
+                    type: 'employees',
+                    attributes: {
+                        name: 'Richard Reed'
+                    }
+                }
+            ]
+        }.to_json)
+    Employee.search_included_in_result_set = true
+    records = Employee.includes(:chief).per(2).to_a
+    assert_equal(2, records.size)
+    assert_equal('1', records.first.id)
+    assert_equal('2', records.second.id)
+    assert_equal('3', records.second.chief.id)
+    assert_equal('2', records.first.chief.id)
+  end
+
+  def test_does_not_load_include_from_dataset
+    stub_request(:get, 'http://example.com/employees?include=chief&page[per_page]=2')
+        .to_return(
+            headers: {
+                content_type: 'application/vnd.api+json'
+            }, body: {
+            data: [
+                {
+                    id: '1',
+                    type: 'employees',
+                    attributes: {
+                        name: 'John Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '2', type: 'employees'}
+                        }
+                    }
+                },
+                {
+                    id: '2',
+                    attributes: {
+                        name: 'Jane Doe'
+                    },
+                    relationships: {
+                        chief: {
+                            data: {id: '3', type: 'employees'}
+                        }
+                    }
+                }
+            ],
+            included: [
+                {
+                    id: '3',
+                    type: 'employees',
+                    attributes: {
+                        name: 'Richard Reed'
+                    }
+                }
+            ]
+        }.to_json)
+    Employee.search_included_in_result_set = false
+    records = Employee.includes(:chief).per(2).to_a
+    assert_equal(2, records.size)
+    assert_equal('1', records.first.id)
+    assert_equal('2', records.second.id)
+    assert_equal('3', records.second.chief.id)
+    assert_nil(records.first.chief)
   end
 
 end

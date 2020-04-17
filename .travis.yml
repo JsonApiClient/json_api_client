@@ -3,6 +3,8 @@ rvm:
   - 2.2.6
   - 2.3.3
   - 2.4.1
+  - 2.5.1
+  - 2.6.0
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=396d4263adb6febf1e6e9b0c0e176fbde35e1a116a3c1ecf8dd4f9384e41979b
@@ -12,9 +14,15 @@ gemfile:
   - gemfiles/4.1.gemfile
   - gemfiles/4.2.gemfile
   - gemfiles/5.0.gemfile
+  - gemfiles/5.2.3.gemfile
+  - gemfiles/6.0.gemfile
 matrix:
   fast_finish: true
   exclude:
+    - rvm: 2.2.6
+      gemfile: gemfiles/6.0.gemfile
+    - rvm: 2.3.3
+      gemfile: gemfiles/6.0.gemfile
     - rvm: 2.4.1
       gemfile: gemfiles/3.2.gemfile
     - rvm: 2.4.1
@@ -23,7 +31,23 @@ matrix:
       gemfile: gemfiles/4.1.gemfile
     - rvm: 2.4.1
       gemfile: gemfiles/4.2.gemfile
+    - rvm: 2.4.1
+      gemfile: gemfiles/6.0.gemfile
+    - rvm: 2.5.1
+      gemfile: gemfiles/3.2.gemfile
+    - rvm: 2.5.1
+      gemfile: gemfiles/4.0.gemfile
+    - rvm: 2.5.1
+      gemfile: gemfiles/4.1.gemfile
+    - rvm: 2.5.1
+      gemfile: gemfiles/4.2.gemfile
+    - rvm: 2.6.0
+      gemfile: gemfiles/4.0.gemfile
+    - rvm: 2.6.0
+      gemfile: gemfiles/4.1.gemfile
+    - rvm: 2.6.0
+      gemfile: gemfiles/4.2.gemfile
 # We need to install latest version of bundler, because one in travis
 # image is too old to recognize platform => :mri_22 in Gemfile.
 before_install:
-  - gem install bundler
+  - gem install bundler || gem install bundler -v 1.17.3

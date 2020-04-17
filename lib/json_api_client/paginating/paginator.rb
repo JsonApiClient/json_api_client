@@ -82,7 +82,7 @@ module JsonApiClient
       def params_for_uri(uri)
         return {} unless uri
         uri = Addressable::URI.parse(uri)
-        uri.query_values || {}
+        ( uri.query_values || {} ).with_indifferent_access
       end
     end
   end

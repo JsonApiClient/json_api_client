@@ -11,7 +11,6 @@ module JsonApiClient
       def initialize(record_class, relations)
         @record_class = record_class
         self.attributes = relations
-        clear_changes_information
       end
 
       def present?
