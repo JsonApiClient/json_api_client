@@ -88,6 +88,6 @@ class CoercionTest < MiniTest::Test
     assert_equal target.integer_me, 2
     assert_equal target.string_me, '1.0'
     assert_equal target.time_me, Time.parse(TIME_STRING)
-    assert_equal target.decimal_me, BigDecimal.new('1.5')
+    assert_equal target.decimal_me, BigDecimal('1.5')
   end
 end
