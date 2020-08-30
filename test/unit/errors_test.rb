@@ -10,7 +10,7 @@ class ErrorsTest < MiniTest::Test
       User.all
     end
 
-    assert_match /specific message/, err.message
+    assert_match(/specific message/, err.message)
   end
 
   def test_timeout_errors
