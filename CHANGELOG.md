@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.17.1
+- [#370](https://github.com/JsonApiClient/json_api_client/pull/370) - bigdecimal 2 support
+
 ## 1.17.0
 
 - [#364](https://github.com/JsonApiClient/json_api_client/pull/364) - Relax faraday and faraday middleware versions
