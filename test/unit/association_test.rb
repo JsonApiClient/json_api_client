@@ -61,6 +61,17 @@ class MultiWordChild < Formatted
   end
 end
 
+class DashedOwner < Formatted
+end
+
+class DashedProperty < Formatted
+  has_one :dashed_owner
+end
+
+class DashedRegion < Formatted
+  has_many :dashed_properties
+end
+
 class Account < TestResource
   property :name
   property :is_active, default: true
@@ -254,6 +265,26 @@ class AssociationTest < MiniTest::Test
 
     property = Property.find(1).first
     assert_nil property.owner, "expected to be able to ask for explicitly declared association even if it's not present"
+  end
+
+  def test_load_has_one_with_dasherized_key_type
+    stub_request(:get, "http://example.com/dashed-owners/1")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: 'dashed-owners',
+            attributes: {
+              name: "Arjuna"
+            }
+          }
+        ],
+      }.to_json)
+    dashed_owner = DashedOwner.find(1).first
+    dashed_property = DashedProperty.new(dashed_owner: dashed_owner)
+
+    assert_equal(DashedOwner, dashed_property.dashed_owner.class)
+    assert_equal(1, dashed_property.dashed_owner.id)
   end
 
   def test_has_one_fetches_relationship
@@ -552,6 +583,27 @@ class AssociationTest < MiniTest::Test
     assert_equal(1, owner.properties.length)
     assert_equal(Property, owner.properties.first.class)
     assert_equal("123 Main St.", owner.properties.first.address)
+  end
+
+  def test_load_has_many_with_dasherized_key_type
+    stub_request(:get, "http://example.com/dashed-properties")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: [
+          {
+            id: 1,
+            type: 'dashed-properties',
+            attributes: {
+              address: "78 Street No. 9, Ludhiana"
+            }
+          }
+        ],
+      }.to_json)
+
+    dashed_properties = DashedProperty.all
+    dashed_region = DashedRegion.new(dashed_properties: dashed_properties)
+
+    assert_equal(1, dashed_region.dashed_properties.count)
+    assert_equal(DashedProperty, dashed_region.dashed_properties[0].class)
   end
 
   def test_respect_included_has_many_relationship_empty_data
