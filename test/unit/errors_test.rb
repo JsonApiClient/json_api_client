@@ -96,6 +96,15 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
+  def test_request_timeout
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 408, body: "request timeout")
+
+    assert_raises JsonApiClient::Errors::RequestTimeout do
+      User.all
+    end
+  end
+
   def test_too_many_requests
     stub_request(:get, "http://example.com/users")
       .to_return(headers: {content_type: "text/plain"}, status: 429, body: "too many requests")

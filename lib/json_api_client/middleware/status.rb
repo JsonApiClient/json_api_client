@@ -38,6 +38,8 @@ module JsonApiClient
           raise Errors::AccessDenied, env
         when 404
           raise Errors::NotFound, env[:url]
+        when 408
+          raise Errors::RequestTimeout, env
         when 409
           raise Errors::Conflict, env
         when 422

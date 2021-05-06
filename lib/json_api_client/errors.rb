@@ -54,6 +54,9 @@ module JsonApiClient
       end
     end
 
+    class RequestTimeout < ClientError
+    end
+
     class Conflict < ClientError
       def initialize(env, msg = 'Resource already exists')
         super env, msg
