@@ -42,10 +42,18 @@ module JsonApiClient
           raise Errors::Conflict, env
         when 422
           # Allow to proceed as resource errors will be populated
+        when 429
+          raise Errors::TooManyRequests, env
         when 400..499
           raise Errors::ClientError, env
         when 500
           raise Errors::InternalServerError, env
+        when 502
+          raise Errors::BadGateway, env
+        when 503
+          raise Errors::ServiceUnavailable, env
+        when 504
+          raise Errors::GatewayTimeout, env
         when 501..599
           raise Errors::ServerError, env
         else
