@@ -49,7 +49,7 @@ module JsonApiClient
       def initialize(uri)
         @uri = uri
 
-        msg = "Couldn't find resource at: #{uri.to_s}"
+        msg = "Resource not found: #{uri.to_s}"
         super nil, msg
       end
     end
