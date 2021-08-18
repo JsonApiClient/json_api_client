@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- (#386)[https://github.com/JsonApiClient/json_api_client/pull/386] - use HashWithIndifferentAccess
+
 ## 1.18.0
 - [#372](https://github.com/JsonApiClient/json_api_client/pull/372) - Fix handling of dashed-types associations correctly
 
