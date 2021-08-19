@@ -96,6 +96,51 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
+  def test_request_timeout
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 408, body: "request timeout")
+
+    assert_raises JsonApiClient::Errors::RequestTimeout do
+      User.all
+    end
+  end
+
+  def test_too_many_requests
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 429, body: "too many requests")
+
+    assert_raises JsonApiClient::Errors::TooManyRequests do
+      User.all
+    end
+  end
+
+  def test_bad_gateway
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 502, body: "bad gateway")
+
+    assert_raises JsonApiClient::Errors::BadGateway do
+      User.all
+    end
+  end
+
+  def test_service_unavailable
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 503, body: "service unavailable")
+
+    assert_raises JsonApiClient::Errors::ServiceUnavailable do
+      User.all
+    end
+  end
+
+  def test_gateway_timeout
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 504, body: "gateway timeout")
+
+    assert_raises JsonApiClient::Errors::GatewayTimeout do
+      User.all
+    end
+  end
+
   def test_errors_are_rescuable_by_default_rescue
     begin
       raise JsonApiClient::Errors::ApiError, "Something bad happened"
