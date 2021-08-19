@@ -152,7 +152,6 @@ module JsonApiClient
         parts = [resource_path]
         if params && _prefix_path.present?
           path_params = params.delete(:path) || params
-
           parts.unshift(_set_prefix_path(path_params.symbolize_keys))
         else
           parts.unshift(_prefix_path)
