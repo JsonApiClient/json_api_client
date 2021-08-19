@@ -348,7 +348,7 @@ module JsonApiClient
     #
     # @param params [Hash] Attributes, links, and relationships
     def initialize(params = {})
-      params = params.symbolize_keys
+      params = params.with_indifferent_access
       @persisted = nil
       @destroyed = nil
       self.links = self.class.linker.new(params.delete(:links) || {})
@@ -538,7 +538,7 @@ module JsonApiClient
     end
 
     def path_attributes
-      _belongs_to_params.merge attributes.slice( self.class.primary_key ).symbolize_keys
+      _belongs_to_params.merge attributes.slice( self.class.primary_key ).with_indifferent_access
     end
 
     protected
