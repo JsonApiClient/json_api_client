@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#389](https://github.com/JsonApiClient/json_api_client/pull/389)-adding create!, update_attributes!, update! methods
+
 ## 1.19.0
 - [#382](https://github.com/JsonApiClient/json_api_client/pull/382) - Add extra error classes to hande server errors.
 
