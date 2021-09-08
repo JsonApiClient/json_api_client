@@ -66,6 +66,23 @@ class CreationTest < MiniTest::Test
     assert_equal "Rails is Omakase", article.title
   end
 
+  def test_failed_create!
+    stub_request(:post, "http://example.com/users")
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        errors: [
+          {
+            status: "400",
+            title: "Error"
+          }
+        ]
+      }.to_json)
+
+    exception = assert_raises JsonApiClient::Errors::RecordNotSaved do
+      User.create!(name: 'Hans')
+    end
+    assert_equal "Record not saved", exception.message
+  end
+
   def test_changed_attributes_empty_after_create_with_class_method
     stub_simple_creation
     article = Article.create({
