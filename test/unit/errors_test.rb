@@ -65,12 +65,12 @@ class ErrorsTest < MiniTest::Test
       .to_return(
         headers: {content_type: "application/vnd.api+json"},
         status: 404,
-        body: {errors: [{title: "Resource not found"}]}.to_json
+        body: {errors: [{title: "Not found"}]}.to_json
       )
 
     exception = assert_raises(JsonApiClient::Errors::NotFound) { User.all }
     assert_equal(
-      'http://example.com/users (Resource not found)',
+      "Couldn't find resource at: http://example.com/users (Not found)",
       exception.message
     )
   end
