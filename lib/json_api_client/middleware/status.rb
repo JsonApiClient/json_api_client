@@ -59,7 +59,7 @@ module JsonApiClient
         when 501..599
           raise Errors::ServerError, env
         else
-          raise Errors::UnexpectedStatus.new(code, env[:url])
+          raise Errors::UnexpectedStatus.new(env, code)
         end
       end
     end

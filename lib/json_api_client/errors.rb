@@ -97,12 +97,12 @@ module JsonApiClient
 
     class UnexpectedStatus < ServerError
       attr_reader :code, :uri
-      def initialize(code, uri)
+      def initialize(env, code)
         @code = code
-        @uri = uri
+        @uri = env[:url]
 
         msg = "Unexpected response status: #{code} from: #{uri.to_s}"
-        super nil, msg
+        super env, msg
       end
     end
 
