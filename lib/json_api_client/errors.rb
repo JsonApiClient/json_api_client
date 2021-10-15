@@ -46,11 +46,13 @@ module JsonApiClient
 
     class NotFound < ClientError
       attr_reader :uri
-      def initialize(uri)
-        @uri = uri
+      def initialize(env, msg = nil)
+        if env && env.respond_to?(:[])
+          @uri = env[:url]
+          msg ||= "Couldn't find resource at: #{uri.to_s}"
+        end
 
-        msg = "Resource not found: #{uri.to_s}"
-        super nil, msg
+        super env, msg
       end
     end
 
