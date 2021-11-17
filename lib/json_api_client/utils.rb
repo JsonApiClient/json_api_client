@@ -2,6 +2,7 @@ module JsonApiClient
   module Utils
 
     def self.compute_type(klass, type_name)
+      return klass.custom_type_to_class.fetch(type_name).constantize if klass.custom_type_to_class.key?(type_name)
       # If the type is prefixed with a scope operator then we assume that
       # the type_name is an absolute reference.
       return type_name.constantize if type_name.match(/^::/)

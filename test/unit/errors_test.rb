@@ -4,11 +4,13 @@ class ErrorsTest < MiniTest::Test
 
   def test_connection_errors
     stub_request(:get, "http://example.com/users")
-      .to_raise(Faraday::ConnectionFailed)
+      .to_raise(Faraday::ConnectionFailed.new("specific message"))
 
-    assert_raises JsonApiClient::Errors::ConnectionError do
+    err = assert_raises JsonApiClient::Errors::ConnectionError do
       User.all
     end
+
+    assert_match /specific message/, err.message
   end
 
   def test_timeout_errors
@@ -20,13 +22,42 @@ class ErrorsTest < MiniTest::Test
     end
   end
 
-  def test_500_errors
+  def test_internal_server_error_with_plain_text_response
     stub_request(:get, "http://example.com/users")
       .to_return(headers: {content_type: "text/plain"}, status: 500, body: "something went wrong")
 
-    assert_raises JsonApiClient::Errors::ServerError do
-      User.all
-    end
+    exception = assert_raises(JsonApiClient::Errors::InternalServerError) { User.all }
+    assert_equal '500 Internal Server Error', exception.message
+  end
+
+  def test_internal_server_error_with_json_api_response
+    stub_request(:get, "http://example.com/users").to_return(
+      headers: {content_type: "application/vnd.api+json"},
+      status: 500,
+      body: {errors: [{title: "Some special error"}]}.to_json
+    )
+
+    exception = assert_raises(JsonApiClient::Errors::InternalServerError) { User.all }
+    assert_equal '500 Internal Server Error (Some special error)', exception.message
+  end
+
+  def test_500_errors_with_plain_text_response
+    stub_request(:get, "http://example.com/users")
+      .to_return(headers: {content_type: "text/plain"}, status: 503, body: "service unavailable")
+
+    exception = assert_raises(JsonApiClient::Errors::ServerError) { User.all }
+    assert_equal '503 Service Unavailable', exception.message
+  end
+
+  def test_500_errors_with_with_json_api_response
+    stub_request(:get, "http://example.com/users").to_return(
+      headers: {content_type: "application/vnd.api+json"},
+      status: 503,
+      body: {errors: [{title: "Timeout error"}]}.to_json
+    )
+
+    exception = assert_raises(JsonApiClient::Errors::ServerError) { User.all }
+    assert_equal '503 Service Unavailable (Timeout error)', exception.message
   end
 
   def test_not_found
@@ -70,15 +101,6 @@ class ErrorsTest < MiniTest::Test
       .to_return(headers: {content_type: "text/plain"}, status: 410, body: "gone")
 
     assert_raises JsonApiClient::Errors::Gone do
-      User.all
-    end
-  end
-
-  def test_bad_request
-    stub_request(:get, "http://example.com/users")
-      .to_return(headers: {content_type: "text/plain"}, status: 400, body: "bad request")
-
-    assert_raises JsonApiClient::Errors::BadRequest do
       User.all
     end
   end

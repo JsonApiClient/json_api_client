@@ -3,7 +3,7 @@ SimpleCov.start
 Bundler.require(:default, :test)
 require 'minitest/autorun'
 require 'webmock/minitest'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 require 'pp'
 
 # shim for ActiveSupport 4.0.x requiring minitest 4.2
@@ -22,6 +22,12 @@ class Article < TestResource
   has_one :author
 end
 
+class ArticleNested < TestResource
+  belongs_to :author, shallow_path: true
+  has_many :comments
+  has_one :author
+end
+
 class Person < TestResource
 end
 
@@ -31,8 +37,47 @@ end
 class User < TestResource
 end
 
+class ApiBadRequestHandler
+  def self.call(_env)
+    # do not raise exception
+  end
+end
+
+class CustomUnauthorizedError < StandardError
+  attr_reader :env
+
+  def initialize(env)
+    @env = env
+    super('not authorized')
+  end
+end
+
+class UserWithCustomStatusHandler < TestResource
+  self.connection_options = {
+      status_handlers: {
+          400 => ApiBadRequestHandler,
+          401 => ->(env) { raise CustomUnauthorizedError, env }
+      }
+  }
+end
+
 class UserPreference < TestResource
   self.primary_key = :user_id
+end
+
+class DocumentUser < TestResource
+  resolve_custom_type 'document--files', 'DocumentFile'
+end
+
+class DocumentStore < TestResource
+  resolve_custom_type 'document--files', 'DocumentFile'
+  has_many :files, class_name: 'DocumentFile'
+end
+
+class DocumentFile < TestResource
+  def self.resource_name
+    'document--files'
+  end
 end
 
 def with_altered_config(resource_class, changes)

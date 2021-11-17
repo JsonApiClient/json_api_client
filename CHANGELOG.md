@@ -2,6 +2,114 @@
 
 ## Unreleased
 
+## 1.16.1
+
+- [#361](https://github.com/JsonApiClient/json_api_client/pull/361) - Call super from inherited method so that it will execute parent classes' implementations
+
+## 1.16.0
+
+- [#359](https://github.com/JsonApiClient/json_api_client/pull/359) - Support gzip content encoding
+
+## 1.15.0
+
+- [#346](https://github.com/JsonApiClient/json_api_client/pull/346) - add the option to have immutable resources
+- [#357](https://github.com/JsonApiClient/json_api_client/pull/357) - fix missing constant formatter
+
+## 1.14.1
+
+- [#353](https://github.com/JsonApiClient/json_api_client/pull/353) - fix to support deserializing resources with relationships without those related resources being included in the response (issue [#352](https://github.com/JsonApiClient/json_api_client/issues/352)).
+
+## 1.14.0
+
+- [#338](https://github.com/JsonApiClient/json_api_client/pull/338) - implement hash and eql? for builder class
+- [#351](https://github.com/JsonApiClient/json_api_client/pull/351) - Remove rudimental `last_result_set` relationship from serializer
+
+## 1.13.0
+
+- [#348](https://github.com/JsonApiClient/json_api_client/pull/348) - add NestedParamPaginator to address inconsistency in handling of pagination query string params (issue [#347](https://github.com/JsonApiClient/json_api_client/issues/347)).
+
+## 1.12.2
+
+- [#350](https://github.com/JsonApiClient/json_api_client/pull/350) - fix resource including with blank `relationships` response data
+
+## 1.12.1
+
+- [#349](https://github.com/JsonApiClient/json_api_client/pull/349) - fix resource including for STI objects
+
+## 1.12.0
+
+- [#345](https://github.com/JsonApiClient/json_api_client/pull/345) - track the real HTTP reason of ApiErrors
+
+## 1.11.0
+
+- [#344](https://github.com/JsonApiClient/json_api_client/pull/344) - introduce safe singular resource fetching with `raise_on_blank_find_param` resource setting
+
+## 1.10.0
+
+- [#335](https://github.com/JsonApiClient/json_api_client/pull/335) - access to assigned relationship
+
+## 1.9.0
+
+- [#328](https://github.com/JsonApiClient/json_api_client/pull/328) - allow custom type for models
+
+- [#326](https://github.com/JsonApiClient/json_api_client/pull/326) - correct changes after initialize resource
+  * remove type from changes on initialize
+  * ensure that query builder doesn't propagate query values to resource attributes via #build method
+
+- [#324](https://github.com/JsonApiClient/json_api_client/pull/324) - add possibility to override status handling
+  * add status_handlers to JsonApiClient::Resource.connection_options
+
+- [#330](https://github.com/JsonApiClient/json_api_client/pull/330) - deletion use overridden primary key
+
+## 1.8.0
+
+- [#316](https://github.com/JsonApiClient/json_api_client/pull/316) - Allow custom error messages
+
+- [#305](https://github.com/JsonApiClient/json_api_client/pull/305) - optional search relationship data in result set
+
+## 1.7.0
+
+- [#320](https://github.com/JsonApiClient/json_api_client/pull/320) - fix passing relationships on create
+  * fix relationships passing to `new` and `create` methods
+  * fix false positive tests on create
+  * refactor tests on create/update to prevent false same positive tests in future
+
+- [#315](https://github.com/JsonApiClient/json_api_client/pull/315) - add shallow_path feature to belongs_to
+ * add `shallow_path` options to belongs_to to use model w/ and w/o nesting in parent resource
+
+## v1.6.4
+- [#314](https://github.com/JsonApiClient/json_api_client/pull/314) - Mimic ActiveRecord behavior when destroying a resource:
+  * Add `destroyed?` method
+  * Do not clear resource attributes
+  * Return `false` on `persisted?` after being destroyed
+  * Return `false` on `new_record?` after being destroyed
+
+## v1.6.3
+
+- [#312](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
+
+## v1.6.2
+
+- [#311](https://githup.com/JsonApiClient/json_api_client/pull/311) - Raise JsonApiClient::Errors::ClientError for unhandled 4xx responses
+
+## v1.6.1
+
+- [#297](https://githup.com/JsonApiClient/json_api_client/pull/297) - Fix test_helper
+- [#298](https://githup.com/JsonApiClient/json_api_client/pull/298) - README update: arguments for custom connections run method
+- [#306](https://githup.com/JsonApiClient/json_api_client/pull/306) - README update: pagination override examples
+- [#307](https://githup.com/JsonApiClient/json_api_client/pull/307) - Symbolize params keys on model initialize
+- [#304](https://githup.com/JsonApiClient/json_api_client/pull/304) - Optional add default to changes
+- [#300](https://githup.com/JsonApiClient/json_api_client/pull/300) - Define methods for properties and associations getter/setter
+
+## v1.6.0
+
+- [#281](https://github.com/JsonApiClient/json_api_client/pull/281) - Optimize dynamic attribute deref
+- [#280](https://github.com/JsonApiClient/json_api_client/pull/280) - Fix custom headers inheritance
+- [#287](https://github.com/JsonApiClient/json_api_client/pull/287) - Allow pagination params to be `nil`
+- [#284](https://github.com/JsonApiClient/json_api_client/pull/284) - Fix filter to not filter out `[]` values
+- [#285](https://github.com/JsonApiClient/json_api_client/pull/285) - Add include params for create/update
+- [#293](https://github.com/JsonApiClient/json_api_client/pull/293) - Fix side-effects in scopes
+
 ## v1.5.3
 
 - [#266](https://github.com/chingor13/json_api_client/pull/266) - Fix default attributes being overridden
