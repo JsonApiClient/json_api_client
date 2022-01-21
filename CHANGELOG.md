@@ -2,13 +2,16 @@
 
 ## Unreleased
 
+## 1.21.0
+- [#395](https://github.com/JsonApiClient/json_api_client/pull/395) - relaxing faraday dependency to anything less than 2.0
+
 ## 1.20.0
-- [#389](https://github.com/JsonApiClient/json_api_client/pull/389)-adding `create!`, `update_attributes!`, `update!` methods
+- [#389](https://github.com/JsonApiClient/json_api_client/pull/389) - adding `create!`, `update_attributes!`, `update!` methods
 
 ## 1.19.0
 - [#382](https://github.com/JsonApiClient/json_api_client/pull/382) - Add extra error classes to hande server errors.
 
-- [#386](https://github.com/JsonApiClient/json_api_client/pull/386)- use HashWithIndifferentAccess
+- [#386](https://github.com/JsonApiClient/json_api_client/pull/386) - use HashWithIndifferentAccess
 
 ## 1.18.0
 - [#372](https://github.com/JsonApiClient/json_api_client/pull/372) - Fix handling of dashed-types associations correctly
