@@ -88,6 +88,7 @@ class ResourceTest < MiniTest::Test
     assert_equal(article.foo, 'bar')
     assert_equal({'type' => 'authors', 'id' => 1}, article.relationships.author)
     assert article.relationships.attribute_changed?(:author)
+    refute article.attributes.has_key?(:author)
   end
 
   def test_default_params_overrideable
