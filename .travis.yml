@@ -5,6 +5,7 @@ rvm:
   - 2.4.1
   - 2.5.1
   - 2.6.0
+  - 2.7.1
 env:
   global:
     - CODECLIMATE_REPO_TOKEN=396d4263adb6febf1e6e9b0c0e176fbde35e1a116a3c1ecf8dd4f9384e41979b
@@ -46,6 +47,14 @@ matrix:
     - rvm: 2.6.0
       gemfile: gemfiles/4.1.gemfile
     - rvm: 2.6.0
+      gemfile: gemfiles/4.2.gemfile
+    - rvm: 2.7.1
+      gemfile: gemfiles/3.2.gemfile
+    - rvm: 2.7.1
+      gemfile: gemfiles/4.0.gemfile
+    - rvm: 2.7.1
+      gemfile: gemfiles/4.1.gemfile
+    - rvm: 2.7.1
       gemfile: gemfiles/4.2.gemfile
 # We need to install latest version of bundler, because one in travis
 # image is too old to recognize platform => :mri_22 in Gemfile.

@@ -29,7 +29,7 @@ module JsonApiClient
 
       class Decimal
         def self.cast(value, _)
-          BigDecimal.new(value)
+          BigDecimal(value)
         end
       end
 
