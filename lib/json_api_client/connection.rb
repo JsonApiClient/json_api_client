@@ -14,7 +14,7 @@ module JsonApiClient
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status, status_middleware_options
         builder.use Middleware::ParseJson
-        builder.use ::FaradayMiddleware::Gzip
+        builder.use ::Faraday::Gzip::Middleware
         builder.adapter(*adapter_options)
       end
       yield(self) if block_given?
