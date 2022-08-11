@@ -89,6 +89,20 @@ class Employee < TestResource
   has_one :chief, klass: 'Employee'
 end
 
+module CrossNamespaceTwo
+  class Nail < TestResource
+    property :size
+  end
+end
+
+module CrossNamespaceOne
+  class Hammer < TestResource
+    property :brand
+
+    has_many :nails, class: CrossNamespaceTwo::Nail
+  end
+end
+
 class AssociationTest < MiniTest::Test
 
   def test_default_properties_no_changes
@@ -1068,6 +1082,64 @@ class AssociationTest < MiniTest::Test
     assert_equal('2', records.second.id)
     assert_equal('3', records.second.chief.id)
     assert_nil(records.first.chief)
+  end
+
+  def test_cross_namespace_resource_references
+    stub_request(:get, 'http://example.com/hammers?include=nails')
+        .to_return(
+            headers: {
+                content_type: 'application/vnd.api+json'
+            }, body: {
+            data: [
+                {
+                  id: '1',
+                  type: 'hammers',
+                  attributes: {
+                      brand: 'Hardware Store'
+                  },
+                  relationships: {
+                    nails: { data: [{id: '2', type: 'nails'}] }
+                  }
+                },
+                {
+                  id: '2',
+                  type: 'hammers',
+                  attributes: {
+                      brand: 'Hardware Store'
+                  },
+                  relationships: {
+                    nails: { data: [{id: '3', type: 'nails'}] }
+                  }
+                }
+            ],
+            included: [
+                {
+                  id: '2',
+                  type: 'nails',
+                  attributes: {
+                      size: 10
+                  }
+                },
+                {
+                  id: '3',
+                  type: 'nails',
+                  attributes: {
+                      size: 8
+                  }
+              }
+            ]
+        }.to_json)
+    
+    records = CrossNamespaceOne::Hammer.includes(:nails).to_a
+
+    assert_equal(2, records.size)
+    assert_equal('1', records.first.id)
+    assert_equal('2', records.second.id)
+    assert_equal('2', records.first.nails.first.id)
+    assert_equal('3', records.second.nails.first.id)
+
+    assert_equal(1, records.first.nails.size)
+    assert_equal(1, records.second.nails.size)
   end
 
 end
