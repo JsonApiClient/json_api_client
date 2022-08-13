@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.22.0
+- [#400](https://github.com/JsonApiClient/json_api_client/pull/400) - Fix for multi-word custom endpoint and route format
+
 ## 1.21.1
 - [#404](https://github.com/JsonApiClient/json_api_client/pull/404) - Expose NotFound json errors
 - [#378](https://github.com/JsonApiClient/json_api_client/pull/378) - Add the ability to create a subclass of JsonApiClient::Resource to have a modified id method
