@@ -60,13 +60,34 @@ class ErrorsTest < MiniTest::Test
     assert_equal '503 Service Unavailable (Timeout error)', exception.message
   end
 
-  def test_not_found
+  def test_not_found_with_json_api_response
     stub_request(:get, "http://example.com/users")
-      .to_return(status: 404, body: "something irrelevant")
+      .to_return(
+        headers: {content_type: "application/vnd.api+json"},
+        status: 404,
+        body: {errors: [{title: "Not found"}]}.to_json
+      )
 
-    assert_raises JsonApiClient::Errors::NotFound do
-      User.all
-    end
+    exception = assert_raises(JsonApiClient::Errors::NotFound) { User.all }
+    assert_equal(
+      "Resource not found: http://example.com/users (Not found)",
+      exception.message
+    )
+  end
+
+  def test_not_found_errors_with_plain_text_response
+    stub_request(:get, "http://example.com/users")
+      .to_return(
+        headers: {content_type: "text/plain"},
+        status: 404,
+        body: "resource not found"
+      )
+
+    exception = assert_raises(JsonApiClient::Errors::NotFound) { User.all }
+    assert_equal(
+      "Resource not found: http://example.com/users",
+      exception.message
+    )
   end
 
   def test_conflict

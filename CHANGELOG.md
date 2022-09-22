@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- [#404](https://github.com/JsonApiClient/json_api_client/pull/404) - Expose NotFound json errors
 
 ## 1.21.0
 - [#395](https://github.com/JsonApiClient/json_api_client/pull/395) - relaxing faraday dependency to anything less than 2.0
