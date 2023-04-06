@@ -122,6 +122,16 @@ class QueryBuilderTest < MiniTest::Test
     Article.with_params(sort: "foo").to_a
   end
 
+  def test_can_merge_nested_additional_params
+    stub_request(:get, "http://example.com/articles")
+      .with(query: {top: {foos: 1, bars: 2}})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: []
+      }.to_json)
+
+    Article.with_params(top: {foos: 1}).with_params(top: {bars: 2}).to_a
+  end
+
   def test_can_select_fields
     stub_request(:get, "http://example.com/articles")
       .with(query: {fields: {articles: 'title,body'}})
