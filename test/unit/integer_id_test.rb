@@ -23,7 +23,8 @@ class Director < BaseResource
 end
 
 class IntegerIdTestAssociationTest < MiniTest::Test
-  def included_document_test_id_from_method_as_integer
+
+  def test_included_document_test_id_from_method_as_integer
     stub_request(:get, 'http://example.com/movies/1?include=actor')
       .to_return(headers: { content_type: 'application/vnd.api+json',
                             accept: 'application/vnd.api+json' },
@@ -69,7 +70,7 @@ class IntegerIdTestAssociationTest < MiniTest::Test
     assert_equal(1, movie.id)
     assert_equal(String, movie.attributes[:id].class)
     assert_equal('1', movie.attributes[:id])
-    assert_equal(Owner, movie.actor.class)
+    assert_equal(Actor, movie.actor.class)
     assert_equal(Integer, movie.actor.id.class)
     assert_equal(1, movie.actor.id)
     assert_equal('1', movie.actor.attributes[:id])
