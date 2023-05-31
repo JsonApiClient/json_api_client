@@ -2,9 +2,6 @@
 
 require 'test_helper'
 
-##
-# Test checks to see if overriding id as integer
-# prserves the ability to lazy load, or
 class BaseResource < JsonApiClient::Resource
   self.site = 'http://example.com/'
   def id
