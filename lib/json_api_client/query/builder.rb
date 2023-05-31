@@ -67,11 +67,11 @@ module JsonApiClient
       end
 
       def build(attrs = {})
-        klass.new @path_params.merge(attrs.symbolize_keys)
+        klass.new @path_params.merge(attrs.with_indifferent_access)
       end
 
       def create(attrs = {})
-        klass.create @path_params.merge(attrs.symbolize_keys)
+        klass.create @path_params.merge(attrs.with_indifferent_access)
       end
 
       def params

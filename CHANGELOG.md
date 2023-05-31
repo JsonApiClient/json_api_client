@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 1.21.0
+- [#395](https://github.com/JsonApiClient/json_api_client/pull/395) - relaxing faraday dependency to anything less than 2.0
+
+## 1.20.0
+- [#389](https://github.com/JsonApiClient/json_api_client/pull/389) - adding `create!`, `update_attributes!`, `update!` methods
+
+## 1.19.0
+- [#382](https://github.com/JsonApiClient/json_api_client/pull/382) - Add extra error classes to hande server errors.
+
+- [#386](https://github.com/JsonApiClient/json_api_client/pull/386) - use HashWithIndifferentAccess
+
 ## 1.18.0
 - [#372](https://github.com/JsonApiClient/json_api_client/pull/372) - Fix handling of dashed-types associations correctly
 
@@ -96,20 +107,20 @@
 
 ## v1.6.3
 
-- [#312](https://githup.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
+- [#312](https://github.com/JsonApiClient/json_api_client/pull/312) - Don't raise on `422`
 
 ## v1.6.2
 
-- [#311](https://githup.com/JsonApiClient/json_api_client/pull/311) - Raise JsonApiClient::Errors::ClientError for unhandled 4xx responses
+- [#311](https://github.com/JsonApiClient/json_api_client/pull/311) - Raise JsonApiClient::Errors::ClientError for unhandled 4xx responses
 
 ## v1.6.1
 
-- [#297](https://githup.com/JsonApiClient/json_api_client/pull/297) - Fix test_helper
-- [#298](https://githup.com/JsonApiClient/json_api_client/pull/298) - README update: arguments for custom connections run method
-- [#306](https://githup.com/JsonApiClient/json_api_client/pull/306) - README update: pagination override examples
-- [#307](https://githup.com/JsonApiClient/json_api_client/pull/307) - Symbolize params keys on model initialize
-- [#304](https://githup.com/JsonApiClient/json_api_client/pull/304) - Optional add default to changes
-- [#300](https://githup.com/JsonApiClient/json_api_client/pull/300) - Define methods for properties and associations getter/setter
+- [#297](https://github.com/JsonApiClient/json_api_client/pull/297) - Fix test_helper
+- [#298](https://github.com/JsonApiClient/json_api_client/pull/298) - README update: arguments for custom connections run method
+- [#306](https://github.com/JsonApiClient/json_api_client/pull/306) - README update: pagination override examples
+- [#307](https://github.com/JsonApiClient/json_api_client/pull/307) - Symbolize params keys on model initialize
+- [#304](https://github.com/JsonApiClient/json_api_client/pull/304) - Optional add default to changes
+- [#300](https://github.com/JsonApiClient/json_api_client/pull/300) - Define methods for properties and associations getter/setter
 
 ## v1.6.0
 
