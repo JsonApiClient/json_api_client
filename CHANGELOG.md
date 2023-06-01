@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#402](https://github.com/JsonApiClient/json_api_client/pull/402) - Remove deprecated faraday_middleware and add faraday-gzip
+
 ## 1.21.0
 - [#395](https://github.com/JsonApiClient/json_api_client/pull/395) - relaxing faraday dependency to anything less than 2.0
 
