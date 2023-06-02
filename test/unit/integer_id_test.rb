@@ -22,6 +22,9 @@ class Director < BaseResource
   has_many :movies
 end
 
+
+NUMERIC_ASSERTION = Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4') ? Fixnum : Integer
+
 class IntegerIdTestAssociationTest < MiniTest::Test
 
   def test_included_document_test_id_from_method_as_integer
@@ -66,12 +69,12 @@ class IntegerIdTestAssociationTest < MiniTest::Test
                    ]
                  }.to_json)
     movie = Movie.includes(:actor).find(1).last
-    assert_equal(Integer, movie.id.class)
+    assert_equal(NUMERIC_ASSERTION, movie.id.class)
     assert_equal(1, movie.id)
     assert_equal(String, movie.attributes[:id].class)
     assert_equal('1', movie.attributes[:id])
     assert_equal(Actor, movie.actor.class)
-    assert_equal(Integer, movie.actor.id.class)
+    assert_equal(NUMERIC_ASSERTION, movie.actor.id.class)
     assert_equal(1, movie.actor.id)
     assert_equal('1', movie.actor.attributes[:id])
     assert_equal(movie.actor_id, movie.actor.id)
@@ -107,7 +110,7 @@ class IntegerIdTestAssociationTest < MiniTest::Test
                    }
                  }.to_json)
     movie = Movie.find(1).last
-    assert_equal(Integer, movie.id.class)
+    assert_equal(NUMERIC_ASSERTION, movie.id.class)
     assert_equal(1, movie.id)
     assert_equal(String, movie.attributes[:id].class)
     assert_equal('1', movie.attributes[:id])
@@ -172,7 +175,7 @@ class IntegerIdTestAssociationTest < MiniTest::Test
                    }
                  }.to_json)
     movie = Movie.find(1).last
-    assert_equal(Integer, movie.id.class)
+    assert_equal(NUMERIC_ASSERTION, movie.id.class)
     assert_equal(1, movie.id)
     assert_equal(String, movie.attributes[:id].class)
     assert_equal('1', movie.attributes[:id])
