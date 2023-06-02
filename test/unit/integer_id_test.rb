@@ -22,7 +22,6 @@ class Director < BaseResource
   has_many :movies
 end
 
-
 NUMERIC_ASSERTION = Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4') ? Fixnum : Integer
 
 class IntegerIdTestAssociationTest < MiniTest::Test
