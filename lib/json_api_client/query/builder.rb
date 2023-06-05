@@ -92,7 +92,7 @@ module JsonApiClient
 
       def find(args = {})
         if klass.raise_on_blank_find_param && args.blank?
-          raise Errors::NotFound, 'blank .find param'
+          raise Errors::NotFound, nil, 'blank .find param'
         end
 
         case args
