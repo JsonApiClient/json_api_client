@@ -308,7 +308,8 @@ class QueryBuilderTest < MiniTest::Test
     query = ArticleNested.where(author_id: '123', name: 'John')
     record = query.build
     assert_equal [], record.changed
-    assert_equal({author_id: '123'}, record.__belongs_to_params)
+    assert_equal(record.__belongs_to_params[:author_id], '123')
+    assert_equal(record.__belongs_to_params['author_id'], '123')
     assert_equal '123', record.author_id
     assert_equal [], record.relationships.changed
   end

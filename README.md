@@ -1,4 +1,4 @@
-# JsonApiClient [![Build Status](https://travis-ci.org/JsonApiClient/json_api_client.png)](https://travis-ci.org/JsonApiClient/json_api_client) [![Code Climate](https://codeclimate.com/github/JsonApiClient/json_api_client.png)](https://codeclimate.com/github/JsonApiClient/json_api_client) [![Code Coverage](https://codeclimate.com/github/JsonApiClient/json_api_client/coverage.png)](https://codeclimate.com/github/JsonApiClient/json_api_client)
+# JsonApiClient [![Build Status](https://travis-ci.org/JsonApiClient/json_api_client.png?branch=master)](https://travis-ci.org/JsonApiClient/json_api_client) [![Code Climate](https://codeclimate.com/github/JsonApiClient/json_api_client.png)](https://codeclimate.com/github/JsonApiClient/json_api_client) [![Code Coverage](https://codeclimate.com/github/JsonApiClient/json_api_client/coverage.png)](https://codeclimate.com/github/JsonApiClient/json_api_client)
 
 This gem is meant to help you build an API client for interacting with REST APIs as laid out by [http://jsonapi.org](http://jsonapi.org). It attempts to give you a query building framework that is easy to understand (it is similar to ActiveRecord scopes).
 

@@ -36,6 +36,36 @@ class UpdatingTest < MiniTest::Test
       }.to_json)
   end
 
+  def test_failed_update!
+    stub_simple_fetch
+    articles = Article.find(1)
+    article = articles.first
+
+    stub_request(:patch, "http://example.com/articles/1")
+      .with(headers: {content_type: "application/vnd.api+json", accept: "application/vnd.api+json"}, body: {
+          data: {
+            id: "1",
+            type: "articles",
+            attributes: {
+              title: "Modified title",
+            }
+          }
+        }.to_json)
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        errors: [
+          {
+            status: "400",
+            title: "Error"
+          }
+        ]
+      }.to_json)
+
+    exception = assert_raises JsonApiClient::Errors::RecordNotSaved do
+      article.update!(title: 'Modified title')
+    end
+    assert_equal "Record not saved", exception.message
+  end
+
   def test_can_update_found_record
     stub_simple_fetch
     articles = Article.find(1)

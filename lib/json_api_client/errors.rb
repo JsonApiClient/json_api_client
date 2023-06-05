@@ -44,6 +44,28 @@ module JsonApiClient
     class NotAuthorized < ClientError
     end
 
+    class NotFound < ClientError
+      attr_reader :uri
+      def initialize(uri)
+        @uri = uri
+
+        msg = "Resource not found: #{uri.to_s}"
+        super nil, msg
+      end
+    end
+
+    class RequestTimeout < ClientError
+    end
+
+    class Conflict < ClientError
+      def initialize(env, msg = 'Resource already exists')
+        super env, msg
+      end
+    end
+
+    class TooManyRequests < ClientError
+    end
+
     class ConnectionError < ApiError
     end
 
@@ -59,23 +81,16 @@ module JsonApiClient
       end
     end
 
-    class Conflict < ServerError
-      def initialize(env, msg = 'Resource already exists')
-        super env, msg
-      end
-    end
-
-    class NotFound < ServerError
-      attr_reader :uri
-      def initialize(uri)
-        @uri = uri
-
-        msg = "Couldn't find resource at: #{uri.to_s}"
-        super nil, msg
-      end
-    end
-
     class InternalServerError < ServerError
+    end
+
+    class BadGateway < ServerError
+    end
+
+    class ServiceUnavailable < ServerError
+    end
+
+    class GatewayTimeout < ServerError
     end
 
     class UnexpectedStatus < ServerError
@@ -86,6 +101,17 @@ module JsonApiClient
 
         msg = "Unexpected response status: #{code} from: #{uri.to_s}"
         super nil, msg
+      end
+    end
+
+    class RecordNotSaved < ServerError
+      attr_reader :record
+
+      def initialize(message = nil, record = nil)
+        @record = record
+      end
+      def message
+        "Record not saved"
       end
     end
   end
