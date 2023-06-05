@@ -2,6 +2,7 @@
 
 ## Unreleased
 - [#404](https://github.com/JsonApiClient/json_api_client/pull/404) - Expose NotFound json errors
+- [378](https://github.com/JsonApiClient/json_api_client/pull/378) - Add the ability to create a subclass of JsonApiClient::Resource to have a modified id method
 
 ## 1.21.0
 - [#395](https://github.com/JsonApiClient/json_api_client/pull/395) - relaxing faraday dependency to anything less than 2.0

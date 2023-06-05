@@ -24,7 +24,7 @@ module JsonApiClient
       end
 
       grouped_included_set.each do |type, resources|
-        grouped_included_set[type] = resources.index_by(&:id)
+        grouped_included_set[type] = resources.index_by { |resource| resource.attributes[:id] }
       end
 
       @data = grouped_included_set
