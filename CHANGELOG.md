@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#406](https://github.com/JsonApiClient/json_api_client/pull/406) - Deep-merge nested `additional_params`
+
 ## 1.21.1
 - [#404](https://github.com/JsonApiClient/json_api_client/pull/404) - Expose NotFound json errors
 - [#378](https://github.com/JsonApiClient/json_api_client/pull/378) - Add the ability to create a subclass of JsonApiClient::Resource to have a modified id method
