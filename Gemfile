@@ -12,5 +12,4 @@ gem "codeclimate-test-reporter", group: :test, require: nil
 
 group :development, :test do
   gem 'byebug', '~> 10.0', platforms: [:mri_20, :mri_21, :mri_22]
-  gem "minitest", "~> 5"
 end
