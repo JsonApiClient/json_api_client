@@ -7,6 +7,11 @@ module JsonApiClient
       # the type_name is an absolute reference.
       return type_name.constantize if type_name.match(/^::/)
 
+      # Check the klass association definitions
+      association_klass_match = klass.associations.find { |a| a.attr_name.to_s.singularize == type_name.underscore }
+      association_klass = association_klass_match.options[:class] if association_klass_match
+      return association_klass if association_klass
+
       # Build a list of candidates to search for
       candidates = []
       klass.name.scan(/::|$/) { candidates.unshift "#{$`}::#{type_name}" }
