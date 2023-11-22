@@ -7,7 +7,6 @@ gem "appraisal"
 gem "activesupport", "~> 6.0.0"
 gem "addressable", "~> 2.2"
 gem "codeclimate-test-reporter", :group => :test, :require => nil
-gem "minitest", "~> 5"
 
 group :development, :test do
   gem "byebug", :platforms => [:mri_25]
