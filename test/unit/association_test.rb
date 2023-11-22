@@ -103,8 +103,7 @@ module CrossNamespaceOne
   end
 end
 
-class AssociationTest < MiniTest::Test
-
+class AssociationTest < Minitest::Test
   def test_default_properties_no_changes
     stub_request(:post, 'http://example.com/accounts').
         with(headers: { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json' }, body: {

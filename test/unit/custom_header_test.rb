@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CustomHeaderTest < MiniTest::Test
+class CustomHeaderTest < Minitest::Test
 
   class CustomHeaderResource < TestResource
   end

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CompoundNonIncludedDocumentTest < MiniTest::Test
+class CompoundNonIncludedDocumentTest < Minitest::Test
 
   TEST_DATA = %{
     {

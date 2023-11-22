@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class NestedParamPaginatorTest < MiniTest::Test
+class NestedParamPaginatorTest < Minitest::Test
 
   class Book < JsonApiClient::Resource
     self.site = "http://example.com/"
