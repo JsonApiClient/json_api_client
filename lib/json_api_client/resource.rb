@@ -260,10 +260,11 @@ module JsonApiClient
         metaclass = class << self
           self
         end
+        endpoint_name = _name_for_route_format(name)
         metaclass.instance_eval do
           define_method(name) do |*params|
             request_params = params.first || {}
-            requestor.custom(name, options, request_params)
+            requestor.custom(endpoint_name, options, request_params)
           end
         end
       end
@@ -274,10 +275,11 @@ module JsonApiClient
       # @param options [Hash] endpoint options
       # @option options [Symbol] :request_method The request method (:get, :post, etc)
       def member_endpoint(name, options = {})
+        endpoint_name = self._name_for_route_format(name)
         define_method name do |*params|
           request_params = params.first || {}
           request_params[self.class.primary_key] = attributes.fetch(self.class.primary_key)
-          self.class.requestor.custom(name, options, request_params)
+          self.class.requestor.custom(endpoint_name, options, request_params)
         end
       end
 
@@ -346,6 +348,17 @@ module JsonApiClient
         return connection_object unless connection_object.nil? || rebuild
         self.connection_object = connection_class.new(connection_options.merge(site: site)).tap do |conn|
           yield(conn) if block_given?
+        end
+      end
+
+      def _name_for_route_format(name)
+        case self.route_format
+        when :dasherized_route
+          name.to_s.dasherize
+        when :camelized_route
+          name.to_s.camelize(:lower)
+        else
+          name
         end
       end
     end
