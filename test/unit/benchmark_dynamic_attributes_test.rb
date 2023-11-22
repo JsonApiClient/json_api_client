@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'benchmark'
 
-class BenchmarkDynamicAttributesTest < MiniTest::Test
+class BenchmarkDynamicAttributesTest < Minitest::Test
   def test_can_parse_global_meta_data
     stub_request(:get, "http://example.com/articles/1")
       .to_return(headers: {content_type: "application/vnd.api+json"}, body: {

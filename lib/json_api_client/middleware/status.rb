@@ -37,7 +37,7 @@ module JsonApiClient
         when 403
           raise Errors::AccessDenied, env
         when 404
-          raise Errors::NotFound, env[:url]
+          raise Errors::NotFound, env
         when 408
           raise Errors::RequestTimeout, env
         when 409

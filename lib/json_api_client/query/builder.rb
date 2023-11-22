@@ -92,7 +92,7 @@ module JsonApiClient
 
       def find(args = {})
         if klass.raise_on_blank_find_param && args.blank?
-          raise Errors::NotFound, 'blank .find param'
+          raise Errors::NotFound, nil, 'blank .find param'
         end
 
         case args
@@ -136,7 +136,7 @@ module JsonApiClient
              primary_key:       opts.fetch( :primary_key, @primary_key ),
              pagination_params: @pagination_params.merge( opts.fetch( :pagination_params, {} ) ),
              path_params:       @path_params.merge( opts.fetch( :path_params, {} ) ),
-             additional_params: @additional_params.merge( opts.fetch( :additional_params, {} ) ),
+             additional_params: @additional_params.deep_merge( opts.fetch( :additional_params, {} ) ),
              filters:           @filters.merge( opts.fetch( :filters, {} ) ),
              includes:          @includes + opts.fetch( :includes, [] ),
              orders:            @orders + opts.fetch( :orders, [] ),

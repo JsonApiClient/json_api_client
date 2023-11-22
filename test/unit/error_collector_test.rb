@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ErrorCollectorTest < MiniTest::Test
+class ErrorCollectorTest < Minitest::Test
 
   def test_can_handle_no_errors
     stub_request(:post, "http://example.com/articles")

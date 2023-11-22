@@ -27,7 +27,7 @@ class MultipleSchema < TestResource
   properties :name, :short_name, :long_name, type: :string
 end
 
-class SchemableTest < MiniTest::Test
+class SchemableTest < Minitest::Test
 
   def test_default_attributes
     resource = SchemaResource.new
