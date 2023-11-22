@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CustomPaginatorTest < MiniTest::Test
+class CustomPaginatorTest < Minitest::Test
 
   class CustomPaginator < JsonApiClient::Paginating::Paginator
     self.page_param = 'pagina'

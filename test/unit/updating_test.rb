@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class UpdatingTest < MiniTest::Test
+class UpdatingTest < Minitest::Test
 
   class Author < TestResource
     def relationships_for_serialization

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CreationTest < MiniTest::Test
+class CreationTest < Minitest::Test
 
   class CallbackTest < TestResource
     include JsonApiClient::Helpers::Callbacks

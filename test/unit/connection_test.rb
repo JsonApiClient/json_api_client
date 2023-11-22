@@ -36,7 +36,7 @@ class CustomAdapterResource < TestResource
   }
 end
 
-class ConnectionTest < MiniTest::Test
+class ConnectionTest < Minitest::Test
 
   def test_basic
     assert_equal(NullConnection, CustomConnectionResource.connection_class)

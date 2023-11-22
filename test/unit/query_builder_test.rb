@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class QueryBuilderTest < MiniTest::Test
+class QueryBuilderTest < Minitest::Test
 
   def test_can_filter
     stub_request(:get, "http://example.com/articles")
