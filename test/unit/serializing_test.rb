@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SerializingTest < MiniTest::Test
+class SerializingTest < Minitest::Test
 
   class LimitedField < TestResource
     self.read_only_attributes += ['foo']

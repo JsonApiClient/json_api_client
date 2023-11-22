@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ServerSideErrorTest < MiniTest::Test
+class ServerSideErrorTest < Minitest::Test
 
   def test_can_handle_validations
     stub_request(:post, "http://example.com/users")

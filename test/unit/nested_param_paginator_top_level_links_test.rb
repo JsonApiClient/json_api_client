@@ -2,7 +2,7 @@ require 'test_helper'
 
 # Copied from TopLevelLinksTest and modified to have consistent
 # pagination params using the new NestedParamPaginator
-class NestedParamPaginatorTopLevelLinksTest < MiniTest::Test
+class NestedParamPaginatorTopLevelLinksTest < Minitest::Test
 
   def setup
     @nested_param_paginator = JsonApiClient::Paginating::NestedParamPaginator

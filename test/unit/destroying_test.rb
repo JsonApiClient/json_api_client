@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DestroyingTest < MiniTest::Test
+class DestroyingTest < Minitest::Test
 
   class CallbackTest < TestResource
     include JsonApiClient::Helpers::Callbacks

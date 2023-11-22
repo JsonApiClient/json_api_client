@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TopLevelLinksTest < MiniTest::Test
+class TopLevelLinksTest < Minitest::Test
 
   def test_can_parse_global_links
     stub_request(:get, "http://example.com/articles/1")

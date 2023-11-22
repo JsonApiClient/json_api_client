@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class StatusTest < MiniTest::Test
+class StatusTest < Minitest::Test
 
   def test_server_responding_with_status_meta
     stub_request(:get, "http://example.com/users/1")

@@ -2,8 +2,12 @@
 
 ## Unreleased
 
-## 1.22.0
+
 - [#400](https://github.com/JsonApiClient/json_api_client/pull/400) - Fix for multi-word custom endpoint and route format
+
+## 1.22.0
+- [#403](https://github.com/JsonApiClient/json_api_client/pull/403) - Feature: Use the association options to lookup relationship class
+- [#406](https://github.com/JsonApiClient/json_api_client/pull/406) - Deep-merge nested `additional_params`
 
 ## 1.21.1
 - [#404](https://github.com/JsonApiClient/json_api_client/pull/404) - Expose NotFound json errors

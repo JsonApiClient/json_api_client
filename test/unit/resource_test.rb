@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ResourceTest < MiniTest::Test
+class ResourceTest < Minitest::Test
 
   def test_basic
     assert_equal :id, Article.primary_key
