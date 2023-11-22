@@ -89,7 +89,7 @@ class Employee < TestResource
   has_one :chief, klass: 'Employee'
 end
 
-class AssociationTest < MiniTest::Test
+class AssociationTest < Minitest::Test
 
   def test_default_properties_no_changes
     stub_request(:post, 'http://example.com/accounts').

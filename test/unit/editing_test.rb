@@ -3,7 +3,7 @@ require 'test_helper'
 class Author < TestResource
 end
 
-class EditingTest < MiniTest::Test
+class EditingTest < Minitest::Test
 
   def test_attribute_changed
     stub_request(:get, "http://example.com/authors/1")

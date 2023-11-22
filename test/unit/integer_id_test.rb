@@ -24,7 +24,7 @@ end
 
 NUMERIC_ASSERTION = Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4') ? Fixnum : Integer
 
-class IntegerIdTestAssociationTest < MiniTest::Test
+class IntegerIdTestAssociationTest < Minitest::Test
 
   def test_included_document_test_id_from_method_as_integer
     stub_request(:get, 'http://example.com/movies/1?include=actor')

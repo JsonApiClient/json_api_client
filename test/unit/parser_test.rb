@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ParserTest < MiniTest::Test
+class ParserTest < Minitest::Test
 
   def test_can_parse_single_record
     stub_request(:get, "http://example.com/articles/1")

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ErrorsTest < MiniTest::Test
+class ErrorsTest < Minitest::Test
 
   def test_connection_errors
     stub_request(:get, "http://example.com/users")
