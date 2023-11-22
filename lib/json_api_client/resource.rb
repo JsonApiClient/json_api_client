@@ -319,7 +319,7 @@ module JsonApiClient
           a.to_prefix_path(route_formatter)
         end
 
-        paths.join("/")
+        paths.compact.join("/")
       end
 
       def _set_prefix_path(attrs)
@@ -327,7 +327,7 @@ module JsonApiClient
           a.set_prefix_path(attrs, route_formatter)
         end
 
-        paths.join("/")
+        paths.compact.join("/")
       end
 
       def _new_scope
