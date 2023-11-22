@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- [#402](https://github.com/JsonApiClient/json_api_client/pull/402) - Remove deprecated faraday_middleware and add faraday-gzip
 - [#403](https://github.com/JsonApiClient/json_api_client/pull/403) - Feature: Use the association options to lookup relationship class
 - [#406](https://github.com/JsonApiClient/json_api_client/pull/406) - Deep-merge nested `additional_params`
 

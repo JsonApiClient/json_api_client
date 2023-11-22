@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport", '>= 3.2.0'
   s.add_dependency "faraday", '>= 0.15.2', '< 2.0'
-  s.add_dependency "faraday_middleware", '>= 0.9.0', '< 2.0'
+  s.add_dependency "faraday-gzip", '>= 0.1.0', '< 2.0'
   s.add_dependency "addressable", '~> 2.2'
   s.add_dependency "activemodel", '>= 3.2.0'
   s.add_dependency "rack", '>= 0.2'
