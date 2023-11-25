@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "webmock", '~> 3.5.1'
   s.add_development_dependency "mocha"
+  s.add_development_dependency "appraisal"
 
   s.license = "MIT"
 
