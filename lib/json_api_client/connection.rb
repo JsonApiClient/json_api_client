@@ -13,7 +13,7 @@ module JsonApiClient
         builder.request :json
         builder.use Middleware::JsonRequest
         builder.use Middleware::Status, status_middleware_options
-        builder.use Middleware::ParseJson
+        builder.response :json
         builder.use ::Faraday::Gzip::Middleware
         builder.adapter(*adapter_options)
       end
@@ -24,7 +24,7 @@ module JsonApiClient
     #   inserted middleware will run after json parsed
     def use(middleware, *args, &block)
       return if faraday.builder.locked?
-      faraday.builder.insert_before(Middleware::ParseJson, middleware, *args, &block)
+      faraday.builder.insert_before(::Faraday::Response::Json, middleware, *args, &block)
     end
 
     def delete(middleware)
