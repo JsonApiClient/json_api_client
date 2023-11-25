@@ -1,5 +1,5 @@
 require 'faraday'
-require 'faraday_middleware'
+require 'faraday/gzip'
 require 'json'
 require 'addressable/uri'
 require 'json_api_client/formatter'

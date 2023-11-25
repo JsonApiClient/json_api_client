@@ -3,7 +3,6 @@ source "https://rubygems.org"
 gemspec
 
 gem 'rake'
-gem 'appraisal'
 
 gem "activesupport"
 gem 'addressable', '~> 2.2'
