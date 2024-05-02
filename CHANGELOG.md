@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-
+- [#412](https://github.com/JsonApiClient/json_api_client/pull/412)
+  - Add support for faraday 2.x
+  - Drop support for Ruby < 3.0 (EOL)
+  - Drop support for activesupport < 6.0 (EOL)
+  - Remove deprecated faraday_middleware and add faraday-gzip (from [#402](https://github.com/JsonApiClient/json_api_client/pull/402))
 - [#400](https://github.com/JsonApiClient/json_api_client/pull/400) - Fix for multi-word custom endpoint and route format
 
 ## 1.22.0
