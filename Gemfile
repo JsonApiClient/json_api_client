@@ -3,9 +3,8 @@ source "https://rubygems.org"
 gemspec
 
 gem 'rake'
-gem 'appraisal'
 
-gem "activesupport"
+gem "activesupport", ">= 4.0.13"
 gem 'addressable', '~> 2.2'
 
 gem "codeclimate-test-reporter", group: :test, require: nil
