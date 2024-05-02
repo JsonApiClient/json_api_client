@@ -4,7 +4,7 @@ gemspec
 
 gem 'rake'
 
-gem "activesupport"
+gem "activesupport", ">= 4.0.13"
 gem 'addressable', '~> 2.2'
 
 gem "codeclimate-test-reporter", group: :test, require: nil

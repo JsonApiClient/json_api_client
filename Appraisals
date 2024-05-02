@@ -1,20 +1,15 @@
-appraise 'activesupport-3.2' do
-  gem 'activesupport', '~> 3.2.22'
-  gem 'minitest', '~> 5'
+appraise 'activesupport-6.0' do
+  gem 'activesupport', '~> 6.0.0'
 end
 
-appraise 'activesupport-4.0' do
-  gem 'activesupport', '~> 4.0.13'
+appraise 'activesupport-6.1' do
+  gem 'activesupport', '~> 6.1.0'
 end
 
-appraise 'activesupport-4.1' do
-  gem 'activesupport', '~> 4.1.14'
+appraise 'activesupport-7.0' do
+  gem 'activesupport', '~> 7.0.0'
 end
 
-appraise 'activesupport-4.2' do
-  gem 'activesupport', '~> 4.2.5.1'
-end
-
-appraise 'activesupport-5.0' do
-  gem 'activesupport', '~> 5.0.0'
+appraise 'activesupport-7.1' do
+  gem 'activesupport', '~> 7.1.0'
 end
