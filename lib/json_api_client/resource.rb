@@ -378,11 +378,6 @@ module JsonApiClient
 
       setup_default_properties
 
-      self.class.associations.each do |association|
-        if params.has_key?(association.attr_name.to_s)
-          set_attribute(association.attr_name, params[association.attr_name.to_s])
-        end
-      end
       self.request_params = self.class.request_params_class.new(self.class)
     end
 
