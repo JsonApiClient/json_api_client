@@ -700,6 +700,24 @@ Contributions are welcome! Please fork this repo and send a pull request. Your p
 Ideally, the PR has 2 commits - the first showing the failed test and the second with the fix - although this is not
 required. The commits will be squashed into master once accepted.
 
+### Set up development locally
+
+- With a decent ruby version:
+  ```shell
+  bundle install
+  appraisal install
+  ```
+
+- Run all tests for that ruby version:
+  ```shell
+  appraisal rake
+  ```
+
+- For more info on appraisal:
+  ```shell
+  appraisal help
+  ```
+
 ## Changelog
 
 See [changelog](https://github.com/JsonApiClient/json_api_client/blob/master/CHANGELOG.md)

@@ -2,8 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "faraday", "~> 2.0"
-gem "faraday-gzip", "~> 2.0"
+gem "activesupport", "~> 7.1.0"
+gem "activemodel", "~> 7.1.0"
+gem "faraday", "~> 1.10"
+gem "faraday-gzip", "~> 1.0"
 
 group :test do
   gem "codeclimate-test-reporter", require: nil

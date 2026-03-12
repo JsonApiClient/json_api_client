@@ -17,8 +17,9 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-22.04
+  test_ruby_version:
+    runs-on: ubuntu-latest
+    name: ruby-${{ matrix.ruby }}, ${{ matrix.gemfile }}
     strategy:
       fail-fast: false
       matrix:
@@ -27,6 +28,12 @@ jobs:
           - "3.1"
           - "3.2"
           - "3.3"
+          - "3.4"
+        gemfile:
+          - "faraday_1.x"
+          - "faraday_2.x"
+    env:
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
@@ -34,7 +41,86 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: Run tests
+    - name: Configure bundler
       run: |
-        bundle exec appraisal install
-        bundle exec appraisal rake test
+        bundle config path vendor/bundle
+    - name: Create bundler lockfile
+      run: |
+        bundle lock
+    - uses: actions/cache@v3
+      with:
+        # NOTE: Bundler expands the path relative to the gemfile, not the
+        # current directory.
+        path: ./gemfiles/vendor/bundle
+        key: bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ hashFiles( 'gemfiles/*.lock' ) }}
+        restore-keys: |
+          bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-${{ matrix.gemfile }}-
+          bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-
+    - name: Install gems
+      run: |
+        bundle install --jobs 4
+    - name: Run tests
+      run: bundle exec rake
+
+  test_active_support:
+    needs: test_ruby_version
+    runs-on: ubuntu-latest
+    name: ruby-${{ matrix.ruby }}, ${{ matrix.gemfile }}, ${{ matrix.faraday }}
+    strategy:
+      fail-fast: false
+      # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
+      matrix:
+        ruby:
+          - "3.0"
+          - "3.1"
+          - "3.2"
+          - "3.3"
+          - "3.4"
+        faraday:
+          - "faraday_1.x"
+          - "faraday_2.x"
+        gemfile:
+          - "activesupport_6.0"
+          - "activesupport_6.1"
+          - "activesupport_7.0"
+          - "activesupport_7.1"
+          - "activesupport_7.2"
+          - "activesupport_8.0"
+        exclude:
+          - ruby: "3.0"
+            gemfile: "activesupport_7.2"
+          - ruby: "3.0"
+            gemfile: "activesupport_8.0"
+          - ruby: "3.1"
+            gemfile: "activesupport_8.0"
+
+    env:
+      BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}_${{ matrix.faraday }}.gemfile
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Configure bundler
+      run: |
+        bundle config path vendor/bundle
+    - name: Create bundler lockfile
+      run: |
+        bundle lock
+    - uses: actions/cache@v3
+      with:
+        # NOTE: Bundler expands the path relative to the gemfile, not the
+        # current directory.
+        path: ./gemfiles/vendor/bundle
+        key: bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ matrix.faraday }}-${{ hashFiles( 'gemfiles/*.lock' ) }}
+        restore-keys: |
+          bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ matrix.faraday }}
+          bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-${{ matrix.gemfile }}-
+          bundled-gems-${{ runner.os }}-ruby-${{ matrix.ruby }}-
+    - name: Install gems
+      run: |
+        bundle install --jobs 4
+    - name: Run tests
+      run: bundle exec rake
