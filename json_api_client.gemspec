@@ -12,15 +12,19 @@ Gem::Specification.new do |s|
   s.summary = 'Build client libraries compliant with specification defined by jsonapi.org'
 
   s.add_dependency "activesupport", '>= 6.0.0'
-  s.add_dependency "faraday", '>= 1.10', '< 3.0'
-  s.add_dependency "faraday-gzip", '>= 1.0', '< 4.0'
   s.add_dependency "addressable", '~> 2.2'
   s.add_dependency "activemodel", '>= 6.0.0'
+
+  s.add_dependency "faraday", '>= 1.10', '< 3.0'
+  s.add_dependency "faraday-gzip", '>= 1.0', '< 4.0'
+
   s.add_dependency "rack", '>= 0.2'
 
   s.add_development_dependency "webmock", '~> 3.5.1'
   s.add_development_dependency "mocha"
   s.add_development_dependency "appraisal"
+  s.add_development_dependency "base64"
+  s.add_development_dependency "mutex_m"
 
   s.license = "MIT"
 
