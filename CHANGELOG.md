@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.24.0
+- [#416](https://github.com/JsonApiClient/json_api_client/pull/416)
+  - Relax faraday-gzip upper bound
+
 ## 1.23.0
 
 - [#412](https://github.com/JsonApiClient/json_api_client/pull/412)
