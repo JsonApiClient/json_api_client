@@ -184,10 +184,11 @@ module JsonApiClient
       # @param headers [Hash] The headers to send along
       # @param block [Block] The block where headers will be set for
       def with_headers(headers)
+        previous_headers = self.custom_headers
         self._custom_headers = headers
         yield
       ensure
-        self._custom_headers = {}
+        self._custom_headers = previous_headers
       end
 
       # The current custom headers to send with any request made by this
