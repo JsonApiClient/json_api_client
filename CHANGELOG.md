@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- [#418](https://github.com/JsonApiClient/json_api_client/pull/418)
+  - Support nested usage of `JsonApiClient::Resource.with_headers`
 
 ## 1.24.0
 - [#416](https://github.com/JsonApiClient/json_api_client/pull/416)
