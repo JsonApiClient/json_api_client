@@ -23,6 +23,39 @@ class CustomHeaderTest < Minitest::Test
     end
   end
 
+  def test_can_nest_with_headers
+    stub_request(:get, "http://example.com/custom_header_resources/1")
+      .with(headers: {"X-My-Header" => "nested_value"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "1",
+          attributes: {
+            title: "Rails is Omakase"
+          }
+        }
+      }.to_json)
+
+    stub_request(:get, "http://example.com/custom_header_resources/2")
+      .with(headers: {"X-My-Header" => "first_value"})
+      .to_return(headers: {content_type: "application/vnd.api+json"}, body: {
+        data: {
+          type: "custom_header_resources",
+          id: "2",
+          attributes: {
+            title: "Hello World"
+          }
+        }
+      }.to_json)
+
+    CustomHeaderResource.with_headers(x_my_header: "first_value") do
+      CustomHeaderResource.with_headers(x_my_header: "nested_value") do
+        CustomHeaderResource.find(1)
+      end
+      CustomHeaderResource.find(2)
+    end
+  end
+
   def test_can_set_custom_accept_headers
     stub_request(:get, "http://example.com/custom_header_resources/1")
       .with(headers: {"Accept" => "application/vnd.api+json,application/vnd.api+json;version=2"})
