@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "faraday", "~> 2.0"
-gem "faraday-gzip", "~> 2.0"
+gem "faraday-gzip", "~> 3.0"
 
 group :test do
   gem "codeclimate-test-reporter", require: nil

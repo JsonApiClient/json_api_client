@@ -2,8 +2,12 @@
 
 ## Unreleased
 
-## 1.23.0
+## 1.24.0
+- [#?](https://github.com/JsonApiClient/json_api_client/pull/?)
+  - Add support for faraday ?
+  - Drop support for Ruby < 4.0
 
+## 1.23.0
 - [#412](https://github.com/JsonApiClient/json_api_client/pull/412)
   - Add support for faraday 2.x
   - Drop support for Ruby < 3.0 (EOL)

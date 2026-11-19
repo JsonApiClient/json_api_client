@@ -29,9 +29,13 @@ jobs:
           - "3.2"
           - "3.3"
           - "3.4"
+          - "4.0"
         gemfile:
           - "faraday_1.x"
           - "faraday_2.x"
+        exclude:
+          - ruby: "4.0"
+            gemfile: "faraday_1.x"
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
     steps:
@@ -76,6 +80,7 @@ jobs:
           - "3.2"
           - "3.3"
           - "3.4"
+          - "4.0"
         faraday:
           - "faraday_1.x"
           - "faraday_2.x"
@@ -93,6 +98,19 @@ jobs:
             gemfile: "activesupport_8.0"
           - ruby: "3.1"
             gemfile: "activesupport_8.0"
+          - ruby: "4.0"
+            gemfile: "activesupport_6.0"
+          - ruby: "4.0"
+            gemfile: "activesupport_6.1"
+          - ruby: "4.0"
+            gemfile: "activesupport_7.0"
+          - ruby: "4.0"
+            gemfile: "activesupport_7.1"
+          - ruby: "4.0"
+            gemfile: "activesupport_7.2"
+          - ruby: "4.0"
+            gemfile: "activesupport_8.0"
+            faraday: "faraday_1.x"
 
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}_${{ matrix.faraday }}.gemfile
